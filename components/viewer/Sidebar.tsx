@@ -9,6 +9,7 @@ import { useState } from 'react';
 type NavItem = {
   label: string;
   href?: string;
+  experiment?: true;
   children?: NavItem[];
 };
 
@@ -40,6 +41,12 @@ const NAV: NavItem[] = [
     ],
   },
   {
+    label: 'Effects',
+    children: [
+      { label: 'Gravity Well', href: '/effects/gravity-well', experiment: true },
+    ],
+  },
+  {
     label: 'Patterns',
     children: [
       { label: 'Overview', href: '/patterns' },
@@ -57,13 +64,18 @@ function NavLink({ item }: { item: NavItem }) {
     <Link
       href={item.href}
       className={cn(
-        'block rounded-md px-3 py-1.5 text-sm transition-colors',
+        'flex items-center justify-between rounded-md px-3 py-1.5 text-sm transition-colors',
         isActive
           ? 'bg-zinc-100 text-zinc-900 font-medium'
           : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-800'
       )}
     >
-      {item.label}
+      <span>{item.label}</span>
+      {item.experiment && (
+        <span className="ml-2 rounded border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-600">
+          Experiment
+        </span>
+      )}
     </Link>
   );
 }
