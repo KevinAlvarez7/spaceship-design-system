@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import { GravityWell } from '@/components/effects';
 import { PropsTable, type PropRow } from '@/components/viewer/PropsTable';
+import { ExperimentBadge } from '@/components/viewer/ExperimentBadge';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -53,6 +54,7 @@ const PROPS: PropRow[] = [
   { name: 'background',      type: 'string',                               default: "'#fafafa'",              description: 'Canvas background color' },
   { name: 'lineColorBase',   type: 'string',                               default: "'#e4e4e7'",              description: 'Grid line color at rest (neutral-200)' },
   { name: 'lineColorActive', type: 'string',                               default: "'#d4d4d8'",              description: 'Grid line color under gravitational influence (neutral-300)' },
+  { name: 'lineColors',      type: 'string[]',                             default: '[]',                     description: 'Ordered ring of hex colors for angle-based rainbow. Colors are evenly spaced around 360° from each source.' },
   { name: 'dotColor',        type: 'string',                               default: 'rgba(161,161,170,0.18)', description: 'Vertex dot color (neutral-400 @ 18%)' },
   { name: 'massColor',       type: 'string',                               default: 'rgba(113,113,122,0.22)', description: 'Cursor mass indicator color (neutral-500 @ 22%)' },
   { name: 'sources',         type: 'Array<{ x, y, mass? }>',              default: '[]',                     description: 'External gravity sources (prop-based). Each entry warps the grid at that position.' },
@@ -68,11 +70,24 @@ const USAGE = `import { GravityWell } from '@/components/effects';
   <GravityWell />
 </div>
 
+// Rainbow mode — angle-based brand colors around each gravity source
+<div style={{ position: 'relative', height: 480 }}>
+  <GravityWell
+    lineColors={[
+      '#f9614d',  // Solar Coral 500
+      '#f9c600',  // Lumen Yellow 500
+      '#26e6b5',  // Nova Mint 500
+      '#3c7dff',  // Orbit Blue 500
+      '#9b6bff',  // Cosmic Lilac 500
+    ]}
+  />
+</div>
+
 // Ref-based sources — zero re-renders during interaction
 const sourcesRef = useRef(null);
 // write sourcesRef.current from a RAF loop, drag handler, etc.
 <div style={{ position: 'relative', height: 480 }}>
-  <GravityWell sourcesRef={sourcesRef} />
+  <GravityWell sourcesRef={sourcesRef} lineColors={[...]} />
 </div>`;
 
 // ── useDragMode ────────────────────────────────────────────────────────────────
@@ -322,6 +337,14 @@ function DemoCard({
 
 // ── Preview area (shared between page and modal) ───────────────────────────────
 
+const BRAND_COLORS = [
+  '#f9614d',  // Solar Coral 500
+  '#f9c600',  // Lumen Yellow 500
+  '#26e6b5',  // Nova Mint 500
+  '#3c7dff',  // Orbit Blue 500
+  '#9b6bff',  // Cosmic Lilac 500
+];
+
 interface PreviewAreaProps {
   radius: number;
   mass: number;
@@ -358,6 +381,7 @@ function PreviewArea({
         softness={softness}
         spring={spring}
         sourcesRef={mode !== 'cursor' ? sourcesRef : undefined}
+        lineColors={BRAND_COLORS}
       />
 
       {mode === 'drag' && dragCards.map(card => (
@@ -426,7 +450,10 @@ export function GravityWellPage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900">Gravity Well</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-zinc-900">Gravity Well</h1>
+          <ExperimentBadge />
+        </div>
         <p className="mt-2 text-sm text-zinc-500">
           An analytic gravitational displacement field. Each vertex finds its target
           analytically — no springs, no velocity accumulation, just math.
