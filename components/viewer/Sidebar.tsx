@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+import { ExperimentBadge } from '@/components/viewer/ExperimentBadge';
 
 type NavItem = {
   label: string;
@@ -71,11 +72,7 @@ function NavLink({ item }: { item: NavItem }) {
       )}
     >
       <span>{item.label}</span>
-      {item.experiment && (
-        <span className="ml-2 rounded border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-600">
-          Experiment
-        </span>
-      )}
+      {item.experiment && <ExperimentBadge />}
     </Link>
   );
 }
