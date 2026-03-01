@@ -16,7 +16,7 @@ const USAGE = `import { Button } from '@/components/ui';
 <Button variant="secondary">Cancel</Button>
 <Button variant="destructive" size="sm">Delete</Button>`;
 
-export async function ButtonPage() {
+export function ButtonPage() {
   return (
     <div className="max-w-3xl space-y-10">
       <div>

@@ -21,7 +21,7 @@ const USAGE = `import { Card, CardHeader, CardTitle, CardDescription, CardConten
   </CardFooter>
 </Card>`;
 
-export async function CardPage() {
+export function CardPage() {
   return (
     <div className="max-w-3xl space-y-10">
       <div>
@@ -39,7 +39,7 @@ export async function CardPage() {
                 <CardDescription>Supporting description text for context.</CardDescription>
               </CardHeader>
               <CardContent>
-                <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)' }}>
+                <p className="text-[var(--color-text-secondary)] text-[var(--text-sm)]">
                   Card body content area.
                 </p>
               </CardContent>

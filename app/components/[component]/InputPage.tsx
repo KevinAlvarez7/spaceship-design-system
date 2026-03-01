@@ -16,7 +16,7 @@ const USAGE = `import { Input } from '@/components/ui';
 <Input state="error" placeholder="Invalid email" />
 <Input disabled placeholder="Read only" />`;
 
-export async function InputPage() {
+export function InputPage() {
   return (
     <div className="max-w-3xl space-y-10">
       <div>

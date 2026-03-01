@@ -16,7 +16,7 @@ const USAGE = `import { Badge } from '@/components/ui';
 <Badge variant="destructive">Error</Badge>
 <Badge variant="outline">Beta</Badge>`;
 
-export async function BadgePage() {
+export function BadgePage() {
   return (
     <div className="max-w-3xl space-y-10">
       <div>
