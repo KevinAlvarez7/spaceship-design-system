@@ -1,0 +1,15 @@
+export type RadiusToken = {
+  name: string;
+  cssVar: string;
+  value: string;
+};
+
+export const radiusTokens: RadiusToken[] = [
+  { name: 'none', cssVar: '--radius-none', value: '0' },
+  { name: 'sm',   cssVar: '--radius-sm',   value: '4px' },
+  { name: 'md',   cssVar: '--radius-md',   value: '6px' },
+  { name: 'lg',   cssVar: '--radius-lg',   value: '8px' },
+  { name: 'xl',   cssVar: '--radius-xl',   value: '12px' },
+  { name: '2xl',  cssVar: '--radius-2xl',  value: '16px' },
+  { name: 'full', cssVar: '--radius-full', value: '9999px' },
+];
