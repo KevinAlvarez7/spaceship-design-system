@@ -1,1 +1,45 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
+
+@theme {
+  /* Colors — DS tokens wired into Tailwind utilities */
+  --color-action-primary:        var(--color-action-primary);
+  --color-action-primary-hover:  var(--color-action-primary-hover);
+  --color-surface-base:          var(--color-surface-base);
+  --color-surface-raised:        var(--color-surface-raised);
+  --color-text-primary:          var(--color-text-primary);
+  --color-text-secondary:        var(--color-text-secondary);
+  --color-text-muted:            var(--color-text-muted);
+  --color-border-default:        var(--color-border-default);
+  --color-destructive:           var(--color-destructive);
+
+  /* Typography */
+  --font-sans: var(--font-family-base);
+  --font-mono: var(--font-family-mono);
+
+  /* Radius */
+  --radius-sm:   var(--radius-sm);
+  --radius-md:   var(--radius-md);
+  --radius-lg:   var(--radius-lg);
+  --radius-xl:   var(--radius-xl);
+  --radius-full: var(--radius-full);
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-surface-base);
+    color: var(--color-text-primary);
+    font-family: var(--font-family-base);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+  }
+}
