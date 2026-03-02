@@ -42,8 +42,8 @@ const buttonVariants = cva(
       },
       surface: {
         default:         '',
-        'neo-brutalist': 'border-2 border-[var(--border-default)] shadow-[var(--shadow-neo-brutalist)]',
-        professional:    'shadow-[var(--shadow-border)] hover:shadow-[var(--shadow-border-hover)] transition-shadow',
+        'neo-brutalist': 'border-2 border-[var(--border-default)] shadow-[var(--shadow-neo-brutalist)] rounded-[var(--radius-sm)]',
+        professional:    'shadow-[var(--shadow-border)] hover:shadow-[var(--shadow-border-hover)] transition-shadow rounded-[var(--radius-xs)]',
       },
     },
     defaultVariants: {
