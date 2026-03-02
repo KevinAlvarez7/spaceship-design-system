@@ -25,7 +25,16 @@ export const assetCategories = {
   logo: {
     slug: 'logo',
     title: 'Logo',
-    assets: [],
+    assets: [
+      {
+        name: 'Spaceship Icon',
+        filePath: '/assets/logo/SpaceshipIcon.svg',
+        format: 'svg',
+        description: 'Primary icon mark',
+        tags: ['icon', 'primary'],
+        dimensions: { width: 110, height: 49 },
+      },
+    ],
   },
   icons: {
     slug: 'icons',
