@@ -42,7 +42,7 @@ const buttonVariants = cva(
       },
       surface: {
         default:         '',
-        'neo-brutalist': 'border-2 border-[var(--border-default)] shadow-[var(--shadow-hard)]',
+        'neo-brutalist': 'border-2 border-[var(--border-default)] shadow-[var(--shadow-neo-brutalist)]',
         professional:    'shadow-[var(--shadow-border)] hover:shadow-[var(--shadow-border-hover)] transition-shadow',
       },
     },
