@@ -4,12 +4,14 @@ import { ButtonPage }  from './ButtonPage';
 import { InputPage }   from './InputPage';
 import { CardPage }    from './CardPage';
 import { BadgePage }   from './BadgePage';
+import { ChatInputBoxPage } from './ChatInputBoxPage';
 
 const PAGES: Record<string, { title: string; Component: React.ComponentType }> = {
-  button: { title: 'Button', Component: ButtonPage },
-  input:  { title: 'Input',  Component: InputPage },
-  card:   { title: 'Card',   Component: CardPage },
-  badge:  { title: 'Badge',  Component: BadgePage },
+  button:           { title: 'Button',         Component: ButtonPage },
+  input:            { title: 'Input',          Component: InputPage },
+  card:             { title: 'Card',           Component: CardPage },
+  badge:            { title: 'Badge',          Component: BadgePage },
+  'chat-input-box': { title: 'Chat Input Box', Component: ChatInputBoxPage },
 };
 
 export function generateStaticParams() {
