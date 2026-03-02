@@ -8,6 +8,7 @@ import { ExperimentBadge } from '@/components/viewer/ExperimentBadge';
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 type DemoMode = 'cursor' | 'drag' | 'animate' | 'impact';
+type ColorMode = 'neutral' | 'rainbow';
 type GravitySources = Array<{ x: number; y: number; mass?: number }>;
 
 // ── Card + orbit definitions ───────────────────────────────────────────────────
@@ -299,6 +300,34 @@ function ModeToggle({
   );
 }
 
+// ── ColorModeToggle ──────────────────────────────────────────────────────────
+
+function ColorModeToggle({
+  colorMode,
+  onChange,
+}: {
+  colorMode: ColorMode;
+  onChange: (m: ColorMode) => void;
+}) {
+  return (
+    <div className="flex gap-0.5 bg-zinc-100 rounded-md p-0.5 text-xs">
+      {(['neutral', 'rainbow'] as ColorMode[]).map(m => (
+        <button
+          key={m}
+          onClick={() => onChange(m)}
+          className={
+            colorMode === m
+              ? 'bg-white text-zinc-900 shadow-sm rounded px-3 py-1 capitalize'
+              : 'text-zinc-500 hover:text-zinc-700 px-3 py-1 capitalize'
+          }
+        >
+          {m}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 // ── DemoCard ──────────────────────────────────────────────────────────────────
 
 function DemoCard({
@@ -350,6 +379,7 @@ interface PreviewAreaProps {
   mass: number;
   softness: number;
   spring: number;
+  colorMode: ColorMode;
   mode: DemoMode;
   containerRef: React.RefObject<HTMLDivElement | null>;
   sourcesRef: React.MutableRefObject<GravitySources | null>;
@@ -362,6 +392,7 @@ interface PreviewAreaProps {
 
 function PreviewArea({
   radius, mass, softness, spring,
+  colorMode,
   mode,
   containerRef, sourcesRef,
   dragCards, handlePointerDown,
@@ -381,7 +412,7 @@ function PreviewArea({
         softness={softness}
         spring={spring}
         sourcesRef={mode !== 'cursor' ? sourcesRef : undefined}
-        lineColors={BRAND_COLORS}
+        lineColors={colorMode === 'rainbow' ? BRAND_COLORS : []}
       />
 
       {mode === 'drag' && dragCards.map(card => (
@@ -437,6 +468,7 @@ export function GravityAssistPage() {
   const [springRaw, setSpringRaw] = useState(8);
   const [fullscreen, setFullscreen] = useState(false);
   const [mode, setMode] = useState<DemoMode>('cursor');
+  const [colorMode, setColorMode] = useState<ColorMode>('rainbow');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const sourcesRef = useRef<GravitySources | null>(null as GravitySources | null);
@@ -463,8 +495,12 @@ export function GravityAssistPage() {
       {/* Preview */}
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Preview</h2>
+        <div className="flex items-center gap-3 mb-3">
+          <ColorModeToggle colorMode={colorMode} onChange={setColorMode} />
+        </div>
         <PreviewArea
           radius={radius} mass={mass} softness={softness} spring={springRaw / 100}
+          colorMode={colorMode}
           mode={mode}
           containerRef={containerRef} sourcesRef={sourcesRef}
           dragCards={dragCards} handlePointerDown={handlePointerDown}
@@ -541,6 +577,7 @@ function FullScreenModal({
 }: FullScreenModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [mode, setMode] = useState<DemoMode>('cursor');
+  const [colorMode, setColorMode] = useState<ColorMode>('rainbow');
 
   // Each modal instance gets its own refs + hook instances
   const containerRef = useRef<HTMLDivElement>(null);
@@ -565,6 +602,7 @@ function FullScreenModal({
       <div className="relative w-full h-full">
         <PreviewArea
           radius={radius} mass={mass} softness={softness} spring={spring}
+          colorMode={colorMode}
           mode={mode}
           containerRef={containerRef} sourcesRef={sourcesRef}
           dragCards={dragCards} handlePointerDown={handlePointerDown}
@@ -600,6 +638,7 @@ function FullScreenModal({
             <Slider label="Mass"     value={mass}      min={1}   max={50}  onChange={onMassChange} />
             <Slider label="Softness" value={softness}  min={1}   max={100} onChange={onSoftnessChange} />
             <Slider label="Spring"   value={springRaw} min={1}   max={20}  onChange={onSpringRawChange} />
+            <ColorModeToggle colorMode={colorMode} onChange={setColorMode} />
             <ModeToggle mode={mode} onChange={setMode} />
           </div>
         </div>
