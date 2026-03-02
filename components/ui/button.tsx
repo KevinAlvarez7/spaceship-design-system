@@ -1,10 +1,13 @@
+"use client";
+
+import { motion, type HTMLMotionProps } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
   [
     'inline-flex items-center justify-center gap-2 whitespace-nowrap',
-    'font-sans [font-weight:var(--font-weight-semibold)] transition-all',
+    'font-sans [font-weight:var(--font-weight-semibold)] transition-colors',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
     'focus-visible:ring-[var(--border-input-focus)]',
     'disabled:pointer-events-none disabled:opacity-50',
@@ -54,14 +57,52 @@ const buttonVariants = cva(
   }
 );
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {}
+type SurfaceKey = NonNullable<VariantProps<typeof buttonVariants>['surface']>;
 
-export function Button({ className, variant, size, surface, ...props }: ButtonProps) {
+const SCALE: Record<SurfaceKey, { hover: number; tap: number }> = {
+  default:         { hover: 1.03, tap: 0.97 },
+  'neo-brutalist': { hover: 1.04, tap: 0.96 },
+  professional:    { hover: 1.02, tap: 0.98 },
+};
+
+const SPRING_TRANSITION = { type: 'spring' as const, stiffness: 400, damping: 17 };
+
+export interface ButtonProps
+  extends HTMLMotionProps<'button'>,
+    VariantProps<typeof buttonVariants> {
+  disableMotion?: boolean;
+}
+
+export function Button({
+  className,
+  variant,
+  size,
+  surface,
+  disableMotion = false,
+  disabled,
+  ...props
+}: ButtonProps) {
+  const classes = cn(buttonVariants({ variant, size, surface }), className);
+
+  if (disableMotion || disabled) {
+    return (
+      <button
+        className={classes}
+        disabled={disabled}
+        {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+      />
+    );
+  }
+
+  const surfaceKey: SurfaceKey = surface ?? 'default';
+  const scale = SCALE[surfaceKey];
+
   return (
-    <button
-      className={cn(buttonVariants({ variant, size, surface }), className)}
+    <motion.button
+      className={classes}
+      whileHover={{ scale: scale.hover }}
+      whileTap={{ scale: scale.tap }}
+      transition={SPRING_TRANSITION}
       {...props}
     />
   );
