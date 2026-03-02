@@ -22,7 +22,7 @@ export default function GravityChatPlayground() {
         x: inputRect.left + inputRect.width / 2 - containerRect.left,
         y: inputRect.top + inputRect.height / 2 - containerRect.top,
       };
-      (sourcesRef as React.MutableRefObject<Source[] | null>).current = [
+      (sourcesRef as { current: Source[] | null }).current = [
         { x: inputCenterRef.current.x, y: inputCenterRef.current.y, mass: 6 },
       ];
     }
