@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
@@ -112,7 +114,7 @@ export function ChatInputBox({
           onClick={handleSubmit}
         >
           {submitLabel}
-          {SURFACE_ICON[surface]}
+          {SURFACE_ICON[surface ?? 'professional']}
         </Button>
       </div>
     </div>
