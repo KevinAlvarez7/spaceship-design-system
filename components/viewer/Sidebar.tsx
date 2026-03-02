@@ -27,6 +27,15 @@ const NAV: NavItem[] = [
     ],
   },
   {
+    label: 'Assets',
+    children: [
+      { label: 'Logo',          href: '/assets/logo' },
+      { label: 'Icons',         href: '/assets/icons' },
+      { label: 'Illustrations', href: '/assets/illustrations' },
+      { label: 'Animations',    href: '/assets/animations' },
+    ],
+  },
+  {
     label: 'Typography',
     children: [
       { label: 'Specimens', href: '/typography' },

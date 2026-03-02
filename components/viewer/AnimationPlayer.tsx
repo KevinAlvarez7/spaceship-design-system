@@ -33,8 +33,8 @@ export function AnimationPlayer({ asset }: AnimationPlayerProps) {
   }
 
   if (asset.format === 'svg-anim') {
-    // eslint-disable-next-line @next/next/no-img-element
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={asset.filePath}
         alt={asset.name}
