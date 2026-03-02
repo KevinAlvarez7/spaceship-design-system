@@ -16,23 +16,28 @@ export function AssetCard({ asset }: AssetCardProps) {
 
   async function handleCopy() {
     let text = asset.filePath;
-    try {
-      if (asset.format === 'svg' || asset.format === 'svg-anim') {
+    if (asset.format === 'svg' || asset.format === 'svg-anim') {
+      try {
         const res = await fetch(asset.filePath);
         text = await res.text();
+      } catch {
+        // fetch failed — fall back to copying the path
       }
+    }
+    try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
-      // clipboard unavailable or fetch failed
+      // clipboard unavailable (non-secure context or permission denied)
     }
   }
 
   function handleDownload() {
     const a = document.createElement('a');
     a.href = asset.filePath;
-    a.download = asset.name;
+    // Derive filename from path to preserve extension (e.g. "arrow.svg" not "Arrow Icon")
+    a.download = asset.filePath.split('/').pop() ?? asset.name;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
