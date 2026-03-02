@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
-import { Button } from './button';
+import { Button } from './button'; // direct sibling import — avoids circular dep with barrel
 
 const chatInputBoxVariants = cva(
   [
