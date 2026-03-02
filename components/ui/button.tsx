@@ -71,6 +71,7 @@ export interface ButtonProps
   extends HTMLMotionProps<'button'>,
     VariantProps<typeof buttonVariants> {
   disableMotion?: boolean;
+  children?: React.ReactNode;
 }
 
 export function Button({

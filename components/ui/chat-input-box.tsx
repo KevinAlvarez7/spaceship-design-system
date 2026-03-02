@@ -14,7 +14,7 @@ const chatInputBoxVariants = cva(
     variants: {
       surface: {
         professional: [
-          'rounded-[var(--radius-sm)]',
+          'rounded-[var(--radius-xxl)]',
           'shadow-[var(--shadow-border)]',
         ],
         'neo-brutalist': [
@@ -71,6 +71,7 @@ export function ChatInputBox({
   submitLabel = 'Explore',
   ...props
 }: ChatInputBoxProps) {
+  
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   function handleSubmit() {
@@ -98,7 +99,7 @@ export function ChatInputBox({
         className={cn(
           'w-full resize-none bg-transparent',
           'text-[length:var(--font-size-base)] leading-[var(--line-height-base)]',
-          'font-[family-name:var(--font-family-secondary)]',
+          'font-(family-name:--font-family-secondary)',
           'text-[var(--text-primary)] placeholder:text-[var(--text-placeholder)]',
           'focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
           className
