@@ -1,7 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
-import React from 'react';
+import { useRef, useEffect, useState, type MutableRefObject } from 'react';
 import { motion, useAnimation } from 'motion/react';
 import { GravityWell } from '@/components/effects/GravityWell/GravityWell';
 import { ChatInputBox } from '@/components/ui';
@@ -14,7 +13,7 @@ export default function GravityChatPlayground() {
   const modeRef = useRef<Mode>('idle');
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const sourcesRef = useRef<Source[] | null>(null) as React.MutableRefObject<Source[] | null>;
+  const sourcesRef = useRef<Source[] | null>(null) as MutableRefObject<Source[] | null>;
   const inputWrapperRef = useRef<HTMLDivElement>(null);
   const inputCenterRef = useRef({ x: 0, y: 0 });
 
