@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState, type MutableRefObject } from 'react';
-import { motion, useAnimation } from 'motion/react';
+import { motion, useAnimation, useMotionValue } from 'motion/react';
 import { GravityWell } from '@/components/effects/GravityWell/GravityWell';
 import { ChatInputBox } from '@/components/ui';
 
@@ -19,6 +19,9 @@ export default function GravityChatPlayground() {
 
   const circleControls = useAnimation();
   const idleCooldownRef = useRef(false);
+
+  const cursorX = useMotionValue(-200);
+  const cursorY = useMotionValue(-200);
 
   // Sync modeRef + drive circle animation + restore idle source on mode change
   useEffect(() => {
@@ -70,6 +73,23 @@ export default function GravityChatPlayground() {
     window.addEventListener('resize', updateCenter);
     return () => window.removeEventListener('resize', updateCenter);
   }, []);
+
+  // Global mouse tracking — feeds cursor motion values + dual sources in blackHole mode
+  useEffect(() => {
+    function onMouseMove(e: MouseEvent) {
+      cursorX.set(e.clientX);
+      cursorY.set(e.clientY);
+      if (modeRef.current !== 'blackHole') return;
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      sourcesRef.current = [
+        { x: inputCenterRef.current.x, y: inputCenterRef.current.y, mass: 6 },
+        { x: e.clientX - rect.left, y: e.clientY - rect.top, mass: 10 },
+      ];
+    }
+    window.addEventListener('mousemove', onMouseMove);
+    return () => window.removeEventListener('mousemove', onMouseMove);
+  }, [cursorX, cursorY]);
 
   return (
     <div
