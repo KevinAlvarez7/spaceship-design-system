@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation';
-import { Topbar }          from '@/components/viewer/Topbar';
-import { GravityWellPage } from './GravityWellPage';
+import { Topbar }            from '@/components/viewer/Topbar';
+import { GravityAssistPage } from './GravityAssistPage';
 
 const PAGES: Record<string, { title: string; Component: React.ComponentType }> = {
-  'gravity-well': { title: 'Gravity Well', Component: GravityWellPage },
+  'gravity-assist': { title: 'Gravity Assist', Component: GravityAssistPage },
 };
 
 export function generateStaticParams() {
