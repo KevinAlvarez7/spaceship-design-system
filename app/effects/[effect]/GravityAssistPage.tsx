@@ -63,16 +63,16 @@ const PROPS: PropRow[] = [
 
 // ── Usage ──────────────────────────────────────────────────────────────────────
 
-const USAGE = `import { GravityWell } from '@/components/effects';
+const USAGE = `import { GravityAssist } from '@/components/effects';
 
 // Cursor mode — move mouse over canvas
 <div style={{ position: 'relative', height: 480 }}>
-  <GravityWell />
+  <GravityAssist />
 </div>
 
 // Rainbow mode — angle-based brand colors around each gravity source
 <div style={{ position: 'relative', height: 480 }}>
-  <GravityWell
+  <GravityAssist
     lineColors={[
       '#f9614d',  // Solar Coral 500
       '#f9c600',  // Lumen Yellow 500
@@ -87,7 +87,7 @@ const USAGE = `import { GravityWell } from '@/components/effects';
 const sourcesRef = useRef(null);
 // write sourcesRef.current from a RAF loop, drag handler, etc.
 <div style={{ position: 'relative', height: 480 }}>
-  <GravityWell sourcesRef={sourcesRef} lineColors={[...]} />
+  <GravityAssist sourcesRef={sourcesRef} lineColors={[...]} />
 </div>`;
 
 // ── useDragMode ────────────────────────────────────────────────────────────────
