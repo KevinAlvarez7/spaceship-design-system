@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 const buttonVariants = cva(
   [
     'inline-flex items-center justify-center gap-2 whitespace-nowrap',
-    'font-[var(--font-family-secondary)] font-[var(--font-weight-semibold)] transition-all',
+    'font-sans [font-weight:var(--font-weight-semibold)] transition-all',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
     'focus-visible:ring-[var(--border-input-focus)]',
     'disabled:pointer-events-none disabled:opacity-50',
@@ -36,14 +36,14 @@ const buttonVariants = cva(
         ],
       },
       size: {
-        sm: 'h-8 px-3 text-[var(--font-size-sm)] leading-[var(--line-height-sm)] rounded-[var(--radius-md)]',
-        md: 'h-10 px-4 text-[var(--font-size-sm)] leading-[var(--line-height-sm)] rounded-[var(--radius-md)]',
-        lg: 'h-12 px-6 text-[var(--font-size-base)] leading-[var(--line-height-base)] rounded-[var(--radius-lg)]',
+        sm: 'h-8 px-3 [font-size:var(--font-size-sm)] leading-[var(--line-height-sm)] rounded-[var(--radius-md)]',
+        md: 'h-10 px-4 [font-size:var(--font-size-sm)] leading-[var(--line-height-sm)] rounded-[var(--radius-md)]',
+        lg: 'h-12 px-6 [font-size:var(--font-size-base)] leading-[var(--line-height-base)] rounded-[var(--radius-lg)]',
       },
       surface: {
         default:         '',
         'neo-brutalist': 'border-2 border-[var(--border-default)] shadow-[var(--shadow-neo-brutalist)] rounded-[var(--radius-sm)]',
-        professional:    'shadow-[var(--shadow-border)] hover:shadow-[var(--shadow-border-hover)] transition-shadow rounded-[var(--radius-xs)]',
+        professional:    'shadow-[var(--shadow-border)] hover:shadow-[var(--shadow-border-hover)] transition-shadow rounded-[var(--radius-xl)]',
       },
     },
     defaultVariants: {
