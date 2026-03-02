@@ -7,12 +7,12 @@ type Source = { x: number; y: number; mass?: number };
 
 export default function GravityChatPlayground() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const sourcesRef = useRef<Source[] | null>([]);
+  const sourcesRef = useRef<Source[] | null>(null);
 
   return (
     <div ref={containerRef} className="relative flex-1 overflow-hidden">
       <GravityWell
-        sourcesRef={sourcesRef as React.RefObject<Source[] | null>}
+        sourcesRef={sourcesRef}
         softness={150}
       />
     </div>
