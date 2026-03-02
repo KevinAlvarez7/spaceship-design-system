@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState, type MutableRefObject } from 'react';
-import { motion, useAnimation, useMotionValue } from 'motion/react';
+import { motion, useAnimation, useMotionValue, useSpring, AnimatePresence } from 'motion/react';
 import { GravityWell } from '@/components/effects/GravityWell/GravityWell';
 import { ChatInputBox } from '@/components/ui';
 
@@ -22,6 +22,8 @@ export default function GravityChatPlayground() {
 
   const cursorX = useMotionValue(-200);
   const cursorY = useMotionValue(-200);
+  const springX = useSpring(cursorX, { stiffness: 500, damping: 35 });
+  const springY = useSpring(cursorY, { stiffness: 500, damping: 35 });
 
   // Sync modeRef + drive circle animation + restore idle source on mode change
   useEffect(() => {
@@ -100,6 +102,27 @@ export default function GravityChatPlayground() {
         sourcesRef={sourcesRef}
         softness={150}
       />
+
+      <AnimatePresence>
+        {mode === 'blackHole' && (
+          <motion.div
+            key="blackhole-cursor"
+            className="pointer-events-none fixed z-50 w-4 h-4 rounded-full"
+            style={{
+              x: springX,
+              y: springY,
+              translateX: '-50%',
+              translateY: '-50%',
+              background: 'radial-gradient(circle, rgba(9,9,11,0.95) 0%, rgba(9,9,11,0.3) 60%, transparent 100%)',
+              boxShadow: '0 0 0 1.5px rgba(9,9,11,0.8), 0 0 14px rgba(9,9,11,0.15)',
+            }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Positioned stack: circle logo above ChatInputBox */}
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 w-[520px]">
