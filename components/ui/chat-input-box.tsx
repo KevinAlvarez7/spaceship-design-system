@@ -8,19 +8,19 @@ import { Button } from './button'; // direct sibling import — avoids circular 
 const chatInputBoxVariants = cva(
   [
     'w-full flex flex-col gap-3 p-3',
-    'bg-[var(--bg-surface-primary)]',
+    'bg-(--bg-surface-primary)',
   ],
   {
     variants: {
       surface: {
         professional: [
-          'rounded-[var(--radius-xxl)]',
-          'shadow-[var(--shadow-border)]',
+          'rounded-(--radius-2xl)',
+          'shadow-(--shadow-border)',
         ],
         'neo-brutalist': [
-          'rounded-[var(--radius-sm)]',
-          'border-2 border-[var(--border-default)]',
-          'shadow-[var(--shadow-neo-brutalist)]',
+          'rounded-(--radius-sm)',
+          'border-2 border-(--border-default)',
+          'shadow-(--shadow-neo-brutalist)',
         ],
       },
     },
@@ -71,7 +71,7 @@ export function ChatInputBox({
   submitLabel = 'Explore',
   ...props
 }: ChatInputBoxProps) {
-  
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   function handleSubmit() {
@@ -98,9 +98,9 @@ export function ChatInputBox({
         rows={3}
         className={cn(
           'w-full resize-none bg-transparent',
-          'text-[length:var(--font-size-base)] leading-[var(--line-height-base)]',
+          'text-(length:--font-size-base) leading-(--line-height-base)',
           'font-(family-name:--font-family-secondary)',
-          'text-[var(--text-primary)] placeholder:text-[var(--text-placeholder)]',
+          'text-(--text-primary) placeholder:text-(--text-placeholder)',
           'focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
           className
         )}

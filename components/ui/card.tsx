@@ -1,13 +1,29 @@
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+const cardVariants = cva(
+  'rounded-(--radius-xl) bg-(--bg-surface-primary)',
+  {
+    variants: {
+      surface: {
+        default:       'border border-(--border-default) shadow-(--shadow-sm)',
+        'shadow-border': 'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow',
+      },
+    },
+    defaultVariants: {
+      surface: 'default',
+    },
+  }
+);
+
+export interface CardProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof cardVariants> {}
+
+export function Card({ className, surface, ...props }: CardProps) {
   return (
     <div
-      className={cn(
-        'rounded-[var(--radius-xl)] border border-[var(--color-border-default)]',
-        'bg-[var(--color-surface-raised)] shadow-[var(--shadow-sm)]',
-        className
-      )}
+      className={cn(cardVariants({ surface }), className)}
       {...props}
     />
   );
@@ -15,7 +31,7 @@ export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
 
 export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('flex flex-col gap-[var(--space-1)] p-[var(--space-6)]', className)} {...props} />
+    <div className={cn('flex flex-col gap-(--spacing-5xs) p-(--spacing-sm)', className)} {...props} />
   );
 }
 
@@ -23,7 +39,7 @@ export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHead
   return (
     <h3
       className={cn(
-        'text-[var(--text-lg)] font-[var(--font-semibold)] text-[var(--color-text-primary)]',
+        'text-(--font-size-lg) font-(--font-weight-semibold) text-(--text-primary)',
         className
       )}
       {...props}
@@ -34,18 +50,20 @@ export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHead
 export function CardDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
-      className={cn('text-[var(--text-sm)] text-[var(--color-text-secondary)]', className)}
+      className={cn('text-(--font-size-sm) text-(--text-secondary)', className)}
       {...props}
     />
   );
 }
 
 export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('p-[var(--space-6)] pt-0', className)} {...props} />;
+  return <div className={cn('p-(--spacing-sm) pt-0', className)} {...props} />;
 }
 
 export function CardFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('flex items-center p-[var(--space-6)] pt-0', className)} {...props} />
+    <div className={cn('flex items-center p-(--spacing-sm) pt-0', className)} {...props} />
   );
 }
+
+export { cardVariants };
