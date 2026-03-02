@@ -495,9 +495,6 @@ export function GravityAssistPage() {
       {/* Preview */}
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Preview</h2>
-        <div className="flex items-center gap-3 mb-3">
-          <ColorModeToggle colorMode={colorMode} onChange={setColorMode} />
-        </div>
         <PreviewArea
           radius={radius} mass={mass} softness={softness} spring={springRaw / 100}
           colorMode={colorMode}
@@ -507,6 +504,7 @@ export function GravityAssistPage() {
           animCardElsRef={animCardElsRef} handleImpactClick={handleImpactClick}
         />
         <div className="flex items-center gap-3 mt-3">
+          <ColorModeToggle colorMode={colorMode} onChange={setColorMode} />
           <ModeToggle mode={mode} onChange={setMode} />
           <button
             onClick={() => setFullscreen(true)}
