@@ -6,6 +6,7 @@ import { CodeBlock }  from '@/components/viewer/CodeBlock';
 const PROPS: PropRow[] = [
   { name: 'variant',   type: '"primary" | "secondary" | "outline" | "ghost" | "destructive"', default: '"primary"', description: 'Visual style' },
   { name: 'size',      type: '"sm" | "md" | "lg"',  default: '"md"',   description: 'Height and padding scale' },
+  { name: 'surface',   type: '"default" | "neo-brutalist" | "professional"', default: '"default"', description: 'Surface treatment: default (no border), neo-brutalist (hard shadow + border), professional (soft shadow ring)' },
   { name: 'disabled',  type: 'boolean',              default: 'false',  description: 'Prevents interaction, reduces opacity' },
   { name: 'className', type: 'string',               default: '—',      description: 'Additional classes merged via cn()' },
 ];
@@ -50,6 +51,24 @@ export function ButtonPage() {
           <Button disabled>Disabled</Button>
           <Button variant="secondary" disabled>Disabled</Button>
           <Button variant="outline"   disabled>Disabled</Button>
+        </Preview>
+      </section>
+
+      <section>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">Neo-Brutalist Surface</h2>
+        <Preview label='surface="neo-brutalist"'>
+          <Button variant="primary"   surface="neo-brutalist">Primary</Button>
+          <Button variant="secondary" surface="neo-brutalist">Secondary</Button>
+          <Button variant="outline"   surface="neo-brutalist">Outline</Button>
+        </Preview>
+      </section>
+
+      <section>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">Professional Surface</h2>
+        <Preview label='surface="professional"'>
+          <Button variant="primary"   surface="professional">Primary</Button>
+          <Button variant="secondary" surface="professional">Secondary</Button>
+          <Button variant="outline"   surface="professional">Outline</Button>
         </Preview>
       </section>
 

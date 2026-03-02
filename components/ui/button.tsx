@@ -20,7 +20,7 @@ const buttonVariants = cva(
         ],
         secondary: [
           'bg-[var(--bg-interactive-secondary-default)] text-[var(--text-primary)]',
-          'hover:',
+          'hover:bg-[var(--bg-interactive-secondary-hover)]',
         ],
         outline: [
           'bg-[var(--bg-interactive-secondary-default)] text-[var(--text-interactive-primary)]',
@@ -42,33 +42,10 @@ const buttonVariants = cva(
       },
       surface: {
         default:         '',
-        'shadow-border': '',
+        'neo-brutalist': 'border-2 border-[var(--border-default)] shadow-[var(--shadow-hard)]',
+        professional:    'shadow-[var(--shadow-border)] hover:shadow-[var(--shadow-border-hover)] transition-shadow',
       },
     },
-    compoundVariants: [
-      // default surface — restore borders that belonged to each bordered variant
-      {
-        variant: 'secondary',
-        surface: 'default',
-        class: '',
-      },
-      {
-        variant: 'outline',
-        surface: 'default',
-        class: 'border border-[var(--border-default)]',
-      },
-      // shadow-border surface — replace border with shadow ring
-      {
-        variant: 'secondary',
-        surface: 'shadow-border',
-        class: 'shadow-[var(--shadow-border)] hover:shadow-[var(--shadow-border-hover)] transition-shadow',
-      },
-      {
-        variant: 'outline',
-        surface: 'shadow-border',
-        class: 'shadow-[var(--shadow-border)] hover:shadow-[var(--shadow-border-hover)] transition-shadow',
-      },
-    ],
     defaultVariants: {
       variant: 'primary',
       size: 'md',
