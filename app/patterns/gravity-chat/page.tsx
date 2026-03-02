@@ -13,6 +13,7 @@ export default function GravityChatPlayground() {
   const modeRef = useRef<Mode>('idle');
 
   const containerRef = useRef<HTMLDivElement>(null);
+  // useRef(null) returns RefObject (readonly .current) in React 18+ types; cast to write directly.
   const sourcesRef = useRef<Source[] | null>(null) as MutableRefObject<Source[] | null>;
   const inputWrapperRef = useRef<HTMLDivElement>(null);
   const inputCenterRef = useRef({ x: 0, y: 0 });
