@@ -38,7 +38,8 @@ const NAV: NavItem[] = [
       { label: 'Button', href: '/components/button' },
       { label: 'Input',  href: '/components/input' },
       { label: 'Card',   href: '/components/card' },
-      { label: 'Badge',  href: '/components/badge' },
+      { label: 'Badge',          href: '/components/badge' },
+      { label: 'Chat Input Box', href: '/components/chat-input-box' },
     ],
   },
   {
