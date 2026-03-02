@@ -16,25 +16,30 @@ export type AssetEntry = {
 };
 
 export type AssetCategory = {
+  slug: string;
   title: string;
   assets: AssetEntry[];
 };
 
-export const ASSETS: Record<string, AssetCategory> = {
+export const assetCategories = {
   logo: {
+    slug: 'logo',
     title: 'Logo',
     assets: [],
   },
   icons: {
+    slug: 'icons',
     title: 'Icons',
     assets: [],
   },
   illustrations: {
+    slug: 'illustrations',
     title: 'Illustrations',
     assets: [],
   },
   animations: {
+    slug: 'animations',
     title: 'Animations',
     assets: [],
   },
-};
+} satisfies Record<string, AssetCategory>;
