@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
+import React from 'react';
 import { motion, useAnimation } from 'motion/react';
 import { GravityWell } from '@/components/effects/GravityWell/GravityWell';
 import { ChatInputBox } from '@/components/ui';
@@ -13,17 +14,18 @@ export default function GravityChatPlayground() {
   const modeRef = useRef<Mode>('idle');
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const sourcesRef = useRef<Source[] | null>(null);
+  const sourcesRef = useRef<Source[] | null>(null) as React.MutableRefObject<Source[] | null>;
   const inputWrapperRef = useRef<HTMLDivElement>(null);
   const inputCenterRef = useRef({ x: 0, y: 0 });
 
   const circleControls = useAnimation();
+  const idleCooldownRef = useRef(false);
 
   // Sync modeRef + drive circle animation + restore idle source on mode change
   useEffect(() => {
     modeRef.current = mode;
     if (mode === 'idle') {
-      (sourcesRef as { current: Source[] | null }).current = [
+      sourcesRef.current = [
         { x: inputCenterRef.current.x, y: inputCenterRef.current.y, mass: 6 },
       ];
       circleControls.start({
@@ -40,6 +42,14 @@ export default function GravityChatPlayground() {
     }
   }, [mode, circleControls]);
 
+  // Cooldown after idle transition — prevents circle immediately re-triggering
+  useEffect(() => {
+    if (mode !== 'idle') return;
+    idleCooldownRef.current = true;
+    const timer = setTimeout(() => { idleCooldownRef.current = false; }, 400);
+    return () => clearTimeout(timer);
+  }, [mode]);
+
   // Track input box center in canvas-local coords; update static source
   useEffect(() => {
     function updateCenter() {
@@ -51,7 +61,7 @@ export default function GravityChatPlayground() {
         y: inputRect.top + inputRect.height / 2 - containerRect.top,
       };
       if (modeRef.current === 'idle') {
-        (sourcesRef as { current: Source[] | null }).current = [
+        sourcesRef.current = [
           { x: inputCenterRef.current.x, y: inputCenterRef.current.y, mass: 6 },
         ];
       }
@@ -80,7 +90,7 @@ export default function GravityChatPlayground() {
           initial={{ scale: 1, opacity: 1 }}
           whileHover={mode === 'idle' ? { scale: 0.6, transition: { type: 'spring', stiffness: 400, damping: 28 } } : undefined}
           className="w-10 h-10 rounded-full border-[1.5px] border-zinc-700 cursor-pointer"
-          onHoverStart={() => { if (mode === 'idle') setMode('blackHole'); }}
+          onHoverStart={() => { if (mode === 'idle' && !idleCooldownRef.current) setMode('blackHole'); }}
         />
 
         {/* ChatInputBox wrapper — resets to idle when cursor enters */}
