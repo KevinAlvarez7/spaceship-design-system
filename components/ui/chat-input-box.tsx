@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Button } from './button'; // direct sibling import — avoids circular dep with barrel
@@ -32,6 +33,7 @@ export interface ChatInputBoxProps
     VariantProps<typeof chatInputBoxVariants> {
   onSubmit?: (value: string) => void;
   containerClassName?: string;
+  submitLabel?: string;
 }
 
 function UpArrowIcon() {
@@ -50,6 +52,11 @@ function RightArrowIcon() {
   );
 }
 
+const SURFACE_ICON: Record<NonNullable<ChatInputBoxProps['surface']>, React.ReactNode> = {
+  professional:    <UpArrowIcon />,
+  'neo-brutalist': <RightArrowIcon />,
+};
+
 export function ChatInputBox({
   surface = 'professional',
   onSubmit,
@@ -59,10 +66,14 @@ export function ChatInputBox({
   onChange,
   placeholder = 'Explore any problems, prototype any ideas...',
   disabled,
+  submitLabel = 'Explore',
   ...props
 }: ChatInputBoxProps) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   function handleSubmit() {
-    if (typeof value === 'string') onSubmit?.(value);
+    const val = typeof value === 'string' ? value : (textareaRef.current?.value ?? '');
+    onSubmit?.(val);
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -75,6 +86,7 @@ export function ChatInputBox({
   return (
     <div className={cn(chatInputBoxVariants({ surface }), containerClassName)}>
       <textarea
+        ref={textareaRef}
         value={value}
         onChange={onChange}
         onKeyDown={handleKeyDown}
@@ -99,8 +111,8 @@ export function ChatInputBox({
           disabled={disabled}
           onClick={handleSubmit}
         >
-          Explore
-          {surface === 'neo-brutalist' ? <RightArrowIcon /> : <UpArrowIcon />}
+          {submitLabel}
+          {SURFACE_ICON[surface ?? 'professional']}
         </Button>
       </div>
     </div>
