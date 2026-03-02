@@ -16,24 +16,26 @@ export function AssetCard({ asset }: AssetCardProps) {
 
   async function handleCopy() {
     let text = asset.filePath;
-    if (asset.format === 'svg' || asset.format === 'svg-anim') {
-      try {
+    try {
+      if (asset.format === 'svg' || asset.format === 'svg-anim') {
         const res = await fetch(asset.filePath);
         text = await res.text();
-      } catch {
-        // fall back to path if fetch fails
       }
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // clipboard unavailable or fetch failed
     }
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
   }
 
   function handleDownload() {
     const a = document.createElement('a');
     a.href = asset.filePath;
     a.download = asset.name;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
   }
 
   const isAnimation = ['lottie', 'rive', 'svg-anim'].includes(asset.format);
