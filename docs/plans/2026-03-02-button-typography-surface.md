@@ -83,7 +83,7 @@ Replace with:
 ```ts
 surface: {
   default:          '',
-  'neo-brutalist':  'border-2 border-[var(--border-default)]',
+  'neo-brutalist':  'border-2 border-[var(--border-default)] shadow-[var(--shadow-hard)]',
   professional:     'shadow-[var(--shadow-border)] hover:shadow-[var(--shadow-border-hover)] transition-shadow',
 },
 ```
@@ -168,7 +168,7 @@ const buttonVariants = cva(
       },
       surface: {
         default:         '',
-        'neo-brutalist': 'border-2 border-[var(--border-default)]',
+        'neo-brutalist': 'border-2 border-[var(--border-default)] shadow-[var(--shadow-hard)]',
         professional:    'shadow-[var(--shadow-border)] hover:shadow-[var(--shadow-border-hover)] transition-shadow',
       },
     },
@@ -210,7 +210,7 @@ npm run dev
 ```
 Navigate to `/components/button` in the viewer. Confirm:
 - Buttons render with the correct font (Outfit / sans-serif)
-- `surface="neo-brutalist"` shows a 2px solid black border on every variant
+- `surface="neo-brutalist"` shows a 2px solid black border + hard 2px offset shadow on every variant
 - `surface="professional"` shows a soft shadow ring on every variant
 - `surface="default"` (primary, ghost, destructive) is flat — no border, no shadow
 
