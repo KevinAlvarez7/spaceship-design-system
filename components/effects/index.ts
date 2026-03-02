@@ -6,3 +6,6 @@ export type { GravityWellProps as GravityAssistProps } from './GravityWell';
 
 export { GravityWellBackground } from './GravityWell';
 export type { GravityWellBackgroundProps } from './GravityWell';
+
+export { SpaceshipLogo } from './SpaceshipLogo';
+export type { SpaceshipLogoProps } from './SpaceshipLogo';

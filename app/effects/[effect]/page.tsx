@@ -1,9 +1,11 @@
 import { notFound } from 'next/navigation';
 import { Topbar }            from '@/components/viewer/Topbar';
 import { GravityAssistPage } from './GravityAssistPage';
+import { SpaceshipLogoPage } from './SpaceshipLogoPage';
 
 const PAGES: Record<string, { title: string; Component: React.ComponentType }> = {
-  'gravity-assist': { title: 'Gravity Assist', Component: GravityAssistPage },
+  'gravity-assist':  { title: 'Gravity Assist',  Component: GravityAssistPage },
+  'spaceship-logo':  { title: 'Spaceship Logo',  Component: SpaceshipLogoPage },
 };
 
 export function generateStaticParams() {

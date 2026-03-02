@@ -55,6 +55,7 @@ const NAV: NavItem[] = [
     label: 'Effects',
     children: [
       { label: 'Gravity Assist', href: '/effects/gravity-assist', experiment: true },
+      { label: 'Spaceship Logo', href: '/effects/spaceship-logo', experiment: true },
     ],
   },
   {
