@@ -112,7 +112,7 @@ export function ChatInputBox({
           onClick={handleSubmit}
         >
           {submitLabel}
-          {SURFACE_ICON[surface ?? 'professional']}
+          {SURFACE_ICON[surface]}
         </Button>
       </div>
     </div>
