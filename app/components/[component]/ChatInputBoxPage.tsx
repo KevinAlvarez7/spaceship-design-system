@@ -9,9 +9,10 @@ import { CodeBlock }  from '@/components/viewer/CodeBlock';
 const PROPS: PropRow[] = [
   { name: 'surface',      type: '"professional" | "neo-brutalist"', default: '"professional"', description: 'Surface treatment — controls container and button styling' },
   { name: 'submitLabel',  type: 'string',   default: '"Explore"',  description: 'Text label on the submit button' },
-  { name: 'placeholder',  type: 'string',   default: '"Explore any problems..."', description: 'Textarea placeholder text' },
+  { name: 'placeholder',  type: 'string',   default: '"Explore any problems, prototype any ideas..."', description: 'Textarea placeholder text' },
   { name: 'value',        type: 'string',   default: '—',          description: 'Controlled textarea value' },
-  { name: 'onChange',     type: '(e) => void', default: '—',       description: 'Textarea change handler' },
+  { name: 'onChange',     type: '(e: React.ChangeEvent<HTMLTextAreaElement>) => void', default: '—', description: 'Textarea change handler' },
+  { name: 'className',    type: 'string',   default: '—',          description: 'Extra classes applied to the textarea element' },
   { name: 'onSubmit',     type: '(value: string) => void', default: '—', description: 'Called on button click or Cmd/Ctrl+Enter' },
   { name: 'disabled',     type: 'boolean',  default: 'false',      description: 'Disables textarea and button' },
   { name: 'containerClassName', type: 'string', default: '—',      description: 'Extra classes on the container div' },
@@ -43,7 +44,7 @@ function ControlledDemo({ surface }: { surface: 'professional' | 'neo-brutalist'
       value={value}
       onChange={e => setValue(e.target.value)}
       onSubmit={val => console.log('submit:', val)}
-      className="w-full max-w-lg"
+      containerClassName="w-full max-w-lg"
     />
   );
 }
@@ -75,7 +76,7 @@ export function ChatInputBoxPage() {
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Disabled</h2>
         <Preview label="disabled">
-          <ChatInputBox surface="professional" disabled placeholder="Disabled state" className="w-full max-w-lg" />
+          <ChatInputBox surface="professional" disabled placeholder="Disabled state" containerClassName="w-full max-w-lg" />
         </Preview>
       </section>
 
