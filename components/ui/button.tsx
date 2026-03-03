@@ -1,13 +1,15 @@
 "use client";
 
+import { type ReactNode } from 'react';
 import { motion, type HTMLMotionProps } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
   [
-    'inline-flex items-center justify-center gap-2 whitespace-nowrap',
-    'font-sans [font-weight:var(--font-weight-semibold)] transition-colors',
+    'inline-flex items-center justify-center whitespace-nowrap',
+    'font-sans [font-weight:var(--font-weight-semibold)]',
+    'transition-colors duration-(--duration-base) ease-(--ease-in-out)',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
     'focus-visible:ring-(--border-input-focus)',
     'disabled:pointer-events-none disabled:opacity-50',
@@ -40,24 +42,32 @@ const buttonVariants = cva(
         ],
       },
       size: {
-        sm: 'h-8 px-3 [font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-md)',
-        md: 'h-10 px-4 [font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-md)',
-        lg: 'h-12 px-6 [font-size:var(--font-size-base)] leading-(--line-height-base) rounded-(--radius-lg)',
+        sm: [
+          'py-(--spacing-4xs) px-(--spacing-3xs) gap-(--spacing-5xs)',
+          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-md)',
+        ],
+        md: [
+          'py-(--spacing-3xs) px-(--spacing-2xs) gap-(--spacing-4xs)',
+          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-md)',
+        ],
+        'icon-sm': 'h-[2.25rem] w-[2.25rem] p-0 rounded-(--radius-md)',
+        icon:      'h-(--spacing-xl) w-(--spacing-xl) p-0 rounded-(--radius-md)',
       },
       surface: {
         default: '',
-        shadow:  'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow rounded-(--radius-xl)',
+        shadow:  'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow duration-(--duration-base) ease-(--ease-in-out) rounded-(--radius-xl)',
       },
     },
     defaultVariants: {
       variant: 'primary',
-      size: 'md',
+      size: 'sm',
       surface: 'default',
     },
   }
 );
 
 type SurfaceKey = NonNullable<VariantProps<typeof buttonVariants>['surface']>;
+type SizeKey = NonNullable<VariantProps<typeof buttonVariants>['size']>;
 
 const SCALE: Record<SurfaceKey, { hover: number; tap: number }> = {
   default: { hover: 1.03, tap: 0.97 },
@@ -66,10 +76,31 @@ const SCALE: Record<SurfaceKey, { hover: number; tap: number }> = {
 
 const SPRING_TRANSITION = { type: 'spring' as const, stiffness: 400, damping: 17 };
 
+// Icon sizes auto-scaled per button size.
+// Text buttons: sm=16px, md=20px.
+// Icon-only buttons: sm=20px, md=24px.
+const ICON_CLASSES: Record<SizeKey, string> = {
+  sm:        '[&>svg]:h-(--spacing-2xs) [&>svg]:w-(--spacing-2xs)',
+  md:        '[&>svg]:h-(--spacing-xs)  [&>svg]:w-(--spacing-xs)',
+  'icon-sm': '[&>svg]:h-(--spacing-xs)  [&>svg]:w-(--spacing-xs)',
+  icon:      '[&>svg]:h-(--spacing-sm)  [&>svg]:w-(--spacing-sm)',
+};
+
+function IconSlot({ icon, sizeKey }: { icon: ReactNode; sizeKey: SizeKey }) {
+  if (!icon) return null;
+  return (
+    <span className={cn('inline-flex shrink-0 items-center justify-center', ICON_CLASSES[sizeKey])}>
+      {icon}
+    </span>
+  );
+}
+
 export interface ButtonProps
   extends HTMLMotionProps<'button'>,
     VariantProps<typeof buttonVariants> {
   disableMotion?: boolean;
+  leadingIcon?: ReactNode;
+  trailingIcon?: ReactNode;
 }
 
 export function Button({
@@ -79,9 +110,21 @@ export function Button({
   surface,
   disableMotion = false,
   disabled,
+  leadingIcon,
+  trailingIcon,
+  children,
   ...props
 }: ButtonProps) {
+  const sizeKey: SizeKey = size ?? 'sm';
   const classes = cn(buttonVariants({ variant, size, surface }), className);
+
+  const content = (
+    <>
+      <IconSlot icon={leadingIcon} sizeKey={sizeKey} />
+      {children}
+      <IconSlot icon={trailingIcon} sizeKey={sizeKey} />
+    </>
+  );
 
   if (disableMotion || disabled) {
     return (
@@ -89,7 +132,9 @@ export function Button({
         className={classes}
         disabled={disabled}
         {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
-      />
+      >
+        {content}
+      </button>
     );
   }
 
@@ -103,7 +148,9 @@ export function Button({
       whileTap={{ scale: scale.tap }}
       transition={SPRING_TRANSITION}
       {...props}
-    />
+    >
+      {content}
+    </motion.button>
   );
 }
 

@@ -1,39 +1,25 @@
 "use client";
 
 import { useRef } from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Button } from './button'; // direct sibling import — avoids circular dep with barrel
 
-const chatInputBoxVariants = cva(
-  [
-    'w-full flex flex-col gap-3 p-3',
-    'bg-(--bg-surface-primary)',
-  ],
-  {
-    variants: {
-      surface: {
-        default: [
-          'rounded-(--radius-md)',
-        ],
-        shadow: [
-          'rounded-(--radius-2xl)',
-          'shadow-(--shadow-border)',
-        ],
-      },
-    },
-    defaultVariants: {
-      surface: 'shadow',
-    },
-  }
-);
+const chatInputBoxVariants = cva([
+  'w-full flex flex-col gap-3',
+  'p-(--spacing-2xs)',
+  'bg-(--bg-surface-primary)',
+  'rounded-(--radius-2xl)',
+  'shadow-(--shadow-border)',
+  'data-[disabled]:opacity-50',
+]);
 
 export interface ChatInputBoxProps
-  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onSubmit'>,
-    VariantProps<typeof chatInputBoxVariants> {
+  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onSubmit'> {
   onSubmit?: (value: string) => void;
   containerClassName?: string;
   submitLabel?: string;
+  size?: 'md' | 'sm';
 }
 
 function UpArrowIcon() {
@@ -45,7 +31,6 @@ function UpArrowIcon() {
 }
 
 export function ChatInputBox({
-  surface = 'shadow',
   onSubmit,
   containerClassName,
   className,
@@ -54,6 +39,7 @@ export function ChatInputBox({
   placeholder = 'Explore any problems, prototype any ideas...',
   disabled,
   submitLabel = 'Explore',
+  size = 'md',
   ...props
 }: ChatInputBoxProps) {
 
@@ -72,7 +58,10 @@ export function ChatInputBox({
   }
 
   return (
-    <div className={cn(chatInputBoxVariants({ surface }), containerClassName)}>
+    <div
+      data-disabled={disabled || undefined}
+      className={cn(chatInputBoxVariants(), containerClassName)}
+    >
       <textarea
         ref={textareaRef}
         value={value}
@@ -80,13 +69,13 @@ export function ChatInputBox({
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
-        rows={3}
+        rows={size === 'sm' ? 1 : 3}
         className={cn(
           'w-full resize-none bg-transparent',
           'text-(length:--font-size-base) leading-(--line-height-base)',
           'font-(family-name:--font-family-secondary)',
           'text-(--text-primary) placeholder:text-(--text-placeholder)',
-          'focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+          'focus:outline-none disabled:cursor-not-allowed',
           className
         )}
         {...props}
@@ -94,13 +83,13 @@ export function ChatInputBox({
       <div className="flex justify-end">
         <Button
           variant="primary"
-          size="md"
-          surface={surface}
+          size="sm"
+          surface="default"
+          trailingIcon={<UpArrowIcon />}
           disabled={disabled}
           onClick={handleSubmit}
         >
           {submitLabel}
-          <UpArrowIcon />
         </Button>
       </div>
     </div>
