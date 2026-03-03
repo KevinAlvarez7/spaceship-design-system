@@ -95,7 +95,7 @@ export function ChatInputBox({
         <Button
           variant="primary"
           size="md"
-          surface={surface ?? 'shadow'}
+          surface={surface}
           disabled={disabled}
           onClick={handleSubmit}
         >
