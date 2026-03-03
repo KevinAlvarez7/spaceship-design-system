@@ -9,7 +9,7 @@ const buttonVariants = cva(
     'inline-flex items-center justify-center gap-2 whitespace-nowrap',
     'font-sans [font-weight:var(--font-weight-semibold)] transition-colors',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-    'focus-visible:ring-[var(--border-input-focus)]',
+    'focus-visible:ring-(--border-input-focus)',
     'disabled:pointer-events-none disabled:opacity-50',
     'cursor-pointer select-none',
   ],
@@ -17,36 +17,36 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: [
-          'bg-[var(--bg-interactive-primary-default)] text-[var(--text-inverse)]',
-          'hover:bg-[var(--bg-interactive-primary-hover)]',
-          'active:bg-[var(--bg-interactive-primary-pressed)]',
+          'bg-(--bg-interactive-primary-default) text-(--text-inverse)',
+          'hover:bg-(--bg-interactive-primary-hover)',
+          'active:bg-(--bg-interactive-primary-pressed)',
         ],
         secondary: [
-          'bg-[var(--bg-interactive-secondary-default)] text-[var(--text-primary)]',
-          'hover:bg-[var(--bg-interactive-secondary-hover)]',
+          'bg-(--bg-interactive-secondary-default) text-(--text-primary)',
+          'hover:bg-(--bg-interactive-secondary-hover)',
         ],
         ghost: [
-          'text-[var(--text-primary)]',
-          'hover:bg-[var(--bg-interactive-secondary-default)]',
+          'text-(--text-primary)',
+          'hover:bg-(--bg-interactive-secondary-default)',
         ],
         success: [
-          'bg-[var(--bg-interactive-success-default)] text-[var(--text-inverse)]',
-          'hover:bg-[var(--bg-interactive-success-hover)]',
-          'active:bg-[var(--bg-interactive-success-pressed)]',
+          'bg-(--bg-interactive-success-default) text-(--text-inverse)',
+          'hover:bg-(--bg-interactive-success-hover)',
+          'active:bg-(--bg-interactive-success-pressed)',
         ],
         destructive: [
-          'bg-[var(--bg-interactive-error-default)] text-[var(--text-inverse)]',
-          'hover:bg-[var(--bg-interactive-error-hover)]',
+          'bg-(--bg-interactive-error-default) text-(--text-inverse)',
+          'hover:bg-(--bg-interactive-error-hover)',
         ],
       },
       size: {
-        sm: 'h-8 px-3 [font-size:var(--font-size-sm)] leading-[var(--line-height-sm)] rounded-[var(--radius-md)]',
-        md: 'h-10 px-4 [font-size:var(--font-size-sm)] leading-[var(--line-height-sm)] rounded-[var(--radius-md)]',
-        lg: 'h-12 px-6 [font-size:var(--font-size-base)] leading-[var(--line-height-base)] rounded-[var(--radius-lg)]',
+        sm: 'h-8 px-3 [font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-md)',
+        md: 'h-10 px-4 [font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-md)',
+        lg: 'h-12 px-6 [font-size:var(--font-size-base)] leading-(--line-height-base) rounded-(--radius-lg)',
       },
       surface: {
         default: '',
-        shadow:  'shadow-[var(--shadow-border)] hover:shadow-[var(--shadow-border-hover)] transition-shadow rounded-[var(--radius-xl)]',
+        shadow:  'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow rounded-(--radius-xl)',
       },
     },
     defaultVariants: {
