@@ -4,9 +4,9 @@ import { PropsTable, type PropRow } from '@/components/viewer/PropsTable';
 import { CodeBlock }  from '@/components/viewer/CodeBlock';
 
 const PROPS: PropRow[] = [
-  { name: 'variant',       type: '"primary" | "secondary" | "outline" | "ghost" | "destructive"', default: '"primary"', description: 'Visual style' },
+  { name: 'variant',       type: '"primary" | "secondary" | "ghost" | "success" | "destructive"', default: '"primary"', description: 'Visual style' },
   { name: 'size',          type: '"sm" | "md" | "lg"',  default: '"md"',   description: 'Height and padding scale' },
-  { name: 'surface',       type: '"default" | "neo-brutalist" | "professional"', default: '"default"', description: 'Surface treatment: default (no border), neo-brutalist (hard shadow + border), professional (soft shadow ring)' },
+  { name: 'surface',       type: '"default" | "shadow"', default: '"default"', description: 'Surface treatment: default (flat) or shadow (border shadow ring)' },
   { name: 'disabled',      type: 'boolean',              default: 'false',  description: 'Prevents interaction, reduces opacity. Also disables motion.' },
   { name: 'disableMotion', type: 'boolean',              default: 'false',  description: 'Opt out of spring hover/press animation. Renders a plain <button> with no motion overhead.' },
   { name: 'className',     type: 'string',               default: '—',      description: 'Additional classes merged via cn()' },
@@ -16,6 +16,7 @@ const USAGE = `import { Button } from '@/components/ui';
 
 <Button variant="primary" size="md">Get started</Button>
 <Button variant="secondary">Cancel</Button>
+<Button variant="success">Confirm</Button>
 <Button variant="destructive" size="sm">Delete</Button>
 
 {/* Opt out of spring animation */}
@@ -34,8 +35,8 @@ export function ButtonPage() {
         <Preview label="All variants">
           <Button variant="primary">Primary</Button>
           <Button variant="secondary">Secondary</Button>
-          <Button variant="outline">Outline</Button>
           <Button variant="ghost">Ghost</Button>
+          <Button variant="success">Success</Button>
           <Button variant="destructive">Destructive</Button>
         </Preview>
       </section>
@@ -54,25 +55,16 @@ export function ButtonPage() {
         <Preview label="Disabled state">
           <Button disabled>Disabled</Button>
           <Button variant="secondary" disabled>Disabled</Button>
-          <Button variant="outline"   disabled>Disabled</Button>
+          <Button variant="ghost"     disabled>Disabled</Button>
         </Preview>
       </section>
 
       <section>
-        <h2 className="text-base font-semibold text-zinc-800 mb-3">Neo-Brutalist Surface</h2>
-        <Preview label='surface="neo-brutalist"'>
-          <Button variant="primary"   surface="neo-brutalist">Primary</Button>
-          <Button variant="secondary" surface="neo-brutalist">Secondary</Button>
-          <Button variant="outline"   surface="neo-brutalist">Outline</Button>
-        </Preview>
-      </section>
-
-      <section>
-        <h2 className="text-base font-semibold text-zinc-800 mb-3">Professional Surface</h2>
-        <Preview label='surface="professional"'>
-          <Button variant="primary"   surface="professional">Primary</Button>
-          <Button variant="secondary" surface="professional">Secondary</Button>
-          <Button variant="outline"   surface="professional">Outline</Button>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">Shadow Surface</h2>
+        <Preview label='surface="shadow"'>
+          <Button variant="primary"   surface="shadow">Primary</Button>
+          <Button variant="secondary" surface="shadow">Secondary</Button>
+          <Button variant="success"   surface="shadow">Success</Button>
         </Preview>
       </section>
 
@@ -82,17 +74,12 @@ export function ButtonPage() {
         <Preview label="default surface — hover: 1.03×, tap: 0.97×">
           <Button variant="primary">Primary</Button>
           <Button variant="secondary">Secondary</Button>
-          <Button variant="outline">Outline</Button>
+          <Button variant="ghost">Ghost</Button>
         </Preview>
-        <Preview label='neo-brutalist — hover: 1.04×, tap: 0.96× (more dramatic)'>
-          <Button variant="primary"   surface="neo-brutalist">Primary</Button>
-          <Button variant="secondary" surface="neo-brutalist">Secondary</Button>
-          <Button variant="outline"   surface="neo-brutalist">Outline</Button>
-        </Preview>
-        <Preview label='professional — hover: 1.02×, tap: 0.98× (restrained)'>
-          <Button variant="primary"   surface="professional">Primary</Button>
-          <Button variant="secondary" surface="professional">Secondary</Button>
-          <Button variant="outline"   surface="professional">Outline</Button>
+        <Preview label='shadow — hover: 1.02×, tap: 0.98× (restrained)'>
+          <Button variant="primary"   surface="shadow">Primary</Button>
+          <Button variant="secondary" surface="shadow">Secondary</Button>
+          <Button variant="success"   surface="shadow">Success</Button>
         </Preview>
       </section>
 
@@ -102,7 +89,7 @@ export function ButtonPage() {
         <Preview label="disableMotion — no spring animation">
           <Button variant="primary"   disableMotion>Primary</Button>
           <Button variant="secondary" disableMotion>Secondary</Button>
-          <Button variant="outline"   disableMotion>Outline</Button>
+          <Button variant="ghost"     disableMotion>Ghost</Button>
         </Preview>
       </section>
 

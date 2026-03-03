@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 const buttonVariants = cva(
   [
     'inline-flex items-center justify-center gap-2 whitespace-nowrap',
-    'font-sans (font-weight:--font-weight-semibold) transition-colors',
+    'font-sans [font-weight:var(--font-weight-semibold)] transition-colors',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
     'focus-visible:ring-(--border-input-focus)',
     'disabled:pointer-events-none disabled:opacity-50',
@@ -25,13 +25,14 @@ const buttonVariants = cva(
           'bg-(--bg-interactive-secondary-default) text-(--text-primary)',
           'hover:bg-(--bg-interactive-secondary-hover)',
         ],
-        outline: [
-          'bg-(--bg-interactive-secondary-default) text-(--text-interactive-primary)',
-          'hover:bg-(--bg-interactive-primary-default) hover:text-(--text-inverse)',
-        ],
         ghost: [
           'text-(--text-primary)',
           'hover:bg-(--bg-interactive-secondary-default)',
+        ],
+        success: [
+          'bg-(--bg-interactive-success-default) text-(--text-inverse)',
+          'hover:bg-(--bg-interactive-success-hover)',
+          'active:bg-(--bg-interactive-success-pressed)',
         ],
         destructive: [
           'bg-(--bg-interactive-error-default) text-(--text-inverse)',
@@ -39,14 +40,13 @@ const buttonVariants = cva(
         ],
       },
       size: {
-        sm: 'h-8 px-3 (font-size:--font-size-sm) leading-(--line-height-sm) rounded-(--radius-md)',
-        md: 'h-10 px-4 (font-size:--font-size-sm) leading-(--line-height-sm) rounded-(--radius-md)',
-        lg: 'h-12 px-6 (font-size:--font-size-base) leading-(--line-height-base) rounded-(--radius-lg)',
+        sm: 'h-8 px-3 [font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-md)',
+        md: 'h-10 px-4 [font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-md)',
+        lg: 'h-12 px-6 [font-size:var(--font-size-base)] leading-(--line-height-base) rounded-(--radius-lg)',
       },
       surface: {
-        default:         '',
-        'neo-brutalist': 'border-2 border-(--border-default) shadow-(--shadow-neo-brutalist) rounded-(--radius-sm)',
-        professional:    'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow rounded-(--radius-xl)',
+        default: '',
+        shadow:  'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow rounded-(--radius-xl)',
       },
     },
     defaultVariants: {
@@ -60,9 +60,8 @@ const buttonVariants = cva(
 type SurfaceKey = NonNullable<VariantProps<typeof buttonVariants>['surface']>;
 
 const SCALE: Record<SurfaceKey, { hover: number; tap: number }> = {
-  default:         { hover: 1.03, tap: 0.97 },
-  'neo-brutalist': { hover: 1.04, tap: 0.96 },
-  professional:    { hover: 1.02, tap: 0.98 },
+  default: { hover: 1.03, tap: 0.97 },
+  shadow:  { hover: 1.02, tap: 0.98 },
 };
 
 const SPRING_TRANSITION = { type: 'spring' as const, stiffness: 400, damping: 17 };
@@ -71,7 +70,6 @@ export interface ButtonProps
   extends HTMLMotionProps<'button'>,
     VariantProps<typeof buttonVariants> {
   disableMotion?: boolean;
-  children?: React.ReactNode;
 }
 
 export function Button({
