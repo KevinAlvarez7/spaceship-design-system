@@ -12,3 +12,6 @@ export type { BadgeProps } from './badge';
 
 export { ChatInputBox, chatInputBoxVariants } from './chat-input-box';
 export type { ChatInputBoxProps } from './chat-input-box';
+
+export { ChatBubble, chatBubbleVariants } from './chat-bubble';
+export type { ChatBubbleProps } from './chat-bubble';
