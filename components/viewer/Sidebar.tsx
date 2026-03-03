@@ -57,17 +57,21 @@ const NAV: NavItem[] = [
   {
     label: 'Effects',
     children: [
-      { label: 'Gravity Assist', href: '/effects/gravity-assist', experiment: true },
-      { label: 'Spaceship Logo', href: '/effects/spaceship-logo', experiment: true },
-      { label: 'Spaceship Dot',  href: '/effects/spaceship-dot',  experiment: true },
+      { label: 'Gravity Assist',   href: '/effects/gravity-assist',   experiment: true },
+      { label: 'Spaceship Logo',   href: '/effects/spaceship-logo',   experiment: true },
+      { label: 'Spaceship Dot',    href: '/effects/spaceship-dot',    experiment: true },
+      { label: 'Grid Background',  href: '/effects/grid-background',  experiment: true },
     ],
   },
   {
     label: 'Patterns',
     children: [
-      { label: 'Overview',     href: '/patterns' },
-      { label: 'Gravity Chat', href: '/patterns/gravity-chat', experiment: true },
-      { label: 'Chat', href: '/patterns/chat' },
+      { label: 'Overview',              href: '/patterns' },
+      { label: 'Gravity Chat',          href: '/patterns/gravity-chat',          experiment: true },
+      { label: 'Chat',                  href: '/patterns/chat' },
+      { label: 'Preview Panel',         href: '/patterns/preview-panel' },
+      { label: 'Sidebar Toggle',        href: '/patterns/sidebar-toggle' },
+      { label: 'Prototype Workspace',   href: '/patterns/prototype-workspace',   experiment: true },
     ],
   },
 ];
