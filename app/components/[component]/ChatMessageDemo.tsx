@@ -23,7 +23,7 @@ export function ChatMessageStreamingDemo() {
       return;
     }
     const timer = setTimeout(() => {
-      setDisplayed(FULL_TEXT.slice(0, displayed.length + 3));
+      setDisplayed(prev => FULL_TEXT.slice(0, prev.length + 3));
     }, 30);
     return () => clearTimeout(timer);
   }, [displayed, streaming]);
