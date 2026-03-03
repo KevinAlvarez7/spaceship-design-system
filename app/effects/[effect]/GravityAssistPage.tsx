@@ -47,21 +47,22 @@ const MODES: DemoMode[] = ['cursor', 'drag', 'animate', 'impact'];
 // ── Props table ────────────────────────────────────────────────────────────────
 
 const PROPS: PropRow[] = [
-  { name: 'radius',          type: 'number',                               default: '150',                    description: 'Gravitational influence radius in pixels' },
-  { name: 'mass',            type: 'number',                               default: '18',                     description: 'Deformation strength at the cursor' },
-  { name: 'softness',        type: 'number',                               default: '65',                     description: 'Smoothing factor for displacement falloff' },
-  { name: 'spring',          type: 'number',                               default: '0.08',                   description: 'Return-to-rest speed (0–1)' },
-  { name: 'cols',            type: 'number',                               default: '52',                     description: 'Number of grid columns' },
-  { name: 'rows',            type: 'number',                               default: '36',                     description: 'Number of grid rows' },
-  { name: 'background',      type: 'string',                               default: "'#fafafa'",              description: 'Canvas background color' },
-  { name: 'lineColorBase',   type: 'string',                               default: "'#e4e4e7'",              description: 'Grid line color at rest (neutral-200)' },
-  { name: 'lineColorActive', type: 'string',                               default: "'#d4d4d8'",              description: 'Grid line color under gravitational influence (neutral-300)' },
-  { name: 'lineColors',      type: 'string[]',                             default: '[]',                     description: 'Ordered ring of hex colors for angle-based rainbow. Colors are evenly spaced around 360° from each source.' },
-  { name: 'dotColor',        type: 'string',                               default: 'rgba(161,161,170,0.18)', description: 'Vertex dot color (neutral-400 @ 18%)' },
-  { name: 'massColor',       type: 'string',                               default: 'rgba(113,113,122,0.22)', description: 'Cursor mass indicator color (neutral-500 @ 22%)' },
-  { name: 'sources',         type: 'Array<{ x, y, mass? }>',              default: '[]',                     description: 'External gravity sources (prop-based). Each entry warps the grid at that position.' },
-  { name: 'sourcesRef',      type: 'RefObject<Array<{x,y,mass?}> | null>', default: 'undefined',             description: 'Ref-based source list for zero-rerender updates. Canvas reads on each RAF tick.' },
-  { name: 'invert',          type: 'boolean',                              default: 'false',                  description: 'When true, vertices are repelled away from gravity sources instead of attracted.' },
+  { name: 'radius',          type: 'number',                               default: '150',                                   description: 'Gravitational influence radius in pixels' },
+  { name: 'mass',            type: 'number',                               default: '18',                                    description: 'Deformation strength at the cursor' },
+  { name: 'softness',        type: 'number',                               default: '65',                                    description: 'Smoothing factor for displacement falloff' },
+  { name: 'spring',          type: 'number',                               default: '0.08',                                  description: 'Return-to-rest speed (0–1)' },
+  { name: 'cols',            type: 'number',                               default: '52',                                    description: 'Number of grid columns' },
+  { name: 'rows',            type: 'number',                               default: '36',                                    description: 'Number of grid rows' },
+  { name: 'background',      type: 'string',                               default: "'var(--neutral-50, #fafafa)'",          description: 'Canvas background color. Accepts hex, rgba, or var(--token) syntax.' },
+  { name: 'lineColorBase',   type: 'string',                               default: "'var(--neutral-300, #d4d4d8)'",         description: 'Grid line color at rest. Accepts hex, rgba, or var(--token) syntax.' },
+  { name: 'lineColorActive', type: 'string',                               default: "'var(--neutral-400, #a1a1aa)'",         description: 'Grid line color under gravitational influence. Accepts hex, rgba, or var(--token) syntax.' },
+  { name: 'lineColors',      type: 'string[]',                             default: '[]',                                    description: 'Ordered ring of hex colors for angle-based rainbow. Colors are evenly spaced around 360° from each source.' },
+  { name: 'dotColor',        type: 'string',                               default: "'var(--effect-gravity-dot)'",           description: 'Vertex dot color. Accepts hex, rgba, or var(--token) syntax.' },
+  { name: 'massColor',       type: 'string',                               default: 'rgba(113,113,122,0.35)',                 description: 'Cursor mass indicator color (neutral-500 @ 35%)' },
+  { name: 'staticGridColor', type: 'string',                               default: "'var(--effect-gravity-grid)'",           description: 'Faint static background grid color. Accepts hex, rgba, or var(--token) syntax.' },
+  { name: 'sources',         type: 'Array<{ x, y, mass? }>',              default: '[]',                                    description: 'External gravity sources (prop-based). Each entry warps the grid at that position.' },
+  { name: 'sourcesRef',      type: 'RefObject<Array<{x,y,mass?}> | null>', default: 'undefined',                            description: 'Ref-based source list for zero-rerender updates. Canvas reads on each RAF tick.' },
+  { name: 'invert',          type: 'boolean',                              default: 'false',                                 description: 'When true, vertices are repelled away from gravity sources instead of attracted.' },
 ];
 
 // ── Usage ──────────────────────────────────────────────────────────────────────

@@ -1,10 +1,8 @@
-'use client';
-
-import { useState } from 'react';
 import { ChatInputBox } from '@/components/ui';
 import { Preview }    from '@/components/viewer/Preview';
 import { PropsTable, type PropRow } from '@/components/viewer/PropsTable';
 import { CodeBlock }  from '@/components/viewer/CodeBlock';
+import { ChatInputBoxDemo } from './ChatInputBoxDemo';
 
 const PROPS: PropRow[] = [
   { name: 'size',         type: '"md" | "sm"', default: '"md"',        description: 'md shows 3 lines before overflow; sm shows 1 line' },
@@ -34,19 +32,6 @@ const USAGE = `import { ChatInputBox } from '@/components/ui';
   onSubmit={val => console.log(val)}
 />`;
 
-function ControlledDemo({ size }: { size?: 'md' | 'sm' }) {
-  const [value, setValue] = useState('');
-  return (
-    <ChatInputBox
-      size={size}
-      value={value}
-      onChange={e => setValue(e.target.value)}
-      onSubmit={val => console.log('submit:', val)}
-      containerClassName="w-full max-w-lg"
-    />
-  );
-}
-
 export function ChatInputBoxPage() {
   return (
     <div className="max-w-3xl space-y-10">
@@ -60,21 +45,21 @@ export function ChatInputBoxPage() {
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Medium (default)</h2>
         <Preview label='size="md"'>
-          <ControlledDemo size="md" />
+          <ChatInputBoxDemo size="md" />
         </Preview>
       </section>
 
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Small</h2>
         <Preview label='size="sm"'>
-          <ControlledDemo size="sm" />
+          <ChatInputBoxDemo size="sm" />
         </Preview>
       </section>
 
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Disabled</h2>
         <Preview label="disabled">
-          <ChatInputBox disabled placeholder="Disabled state" containerClassName="w-full max-w-lg" />
+          <ChatInputBox disabled placeholder="Disabled state" />
         </Preview>
       </section>
 

@@ -8,6 +8,11 @@ import {
   useTransform,
 } from 'motion/react';
 
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+const SAUCER_TILT_DEG = -8;
+const SAUCER_TILT_RAD = SAUCER_TILT_DEG * (Math.PI / 180);
+
 // ── SVG path data ─────────────────────────────────────────────────────────────
 
 const PATHS = {
@@ -59,7 +64,7 @@ export function SpaceshipLogo({
   const rawY = useMotionValue(0);
   const x = useSpring(rawX, { stiffness: 80, damping: 18 });
   const y = useSpring(rawY, { stiffness: 80, damping: 18 });
-  const rotate = useTransform(x, [-maxDisplacement, maxDisplacement], [-15, 15]);
+  const rotate = useTransform(x, [-maxDisplacement, maxDisplacement], [-30, 30]);
 
   // Derived dimensions (saucer natural width = 110, beam natural width = 68)
   const scale = width / 110;
@@ -68,7 +73,7 @@ export function SpaceshipLogo({
   const beamH = Math.round(68 * scale);
   const overlapPx = Math.round(14 * scale);
   const totalH = saucerH + beamH - overlapPx;
-  const beamLeft = Math.round((width - beamW) / 2);
+  const beamLeft = Math.round((width - beamW) / 2) + Math.round(overlapPx * Math.sin(SAUCER_TILT_RAD));
   const beamTop = saucerH - overlapPx;
 
   // Mouse-flee logic
@@ -139,7 +144,7 @@ export function SpaceshipLogo({
         <div style={{ position: 'absolute', top: beamTop, left: beamLeft, zIndex: 0 }}>
           {beamSvg}
         </div>
-        <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10, transform: `rotate(${SAUCER_TILT_DEG}deg)`, transformOrigin: '50% 100%' }}>
           {saucerSvg}
         </div>
       </div>
@@ -169,7 +174,7 @@ export function SpaceshipLogo({
       </motion.div>
 
       {/* Saucer layer */}
-      <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10, transform: `rotate(${SAUCER_TILT_DEG}deg)`, transformOrigin: '50% 100%' }}>
         {saucerSvg}
       </div>
     </motion.div>

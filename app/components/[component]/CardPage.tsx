@@ -40,7 +40,7 @@ export function CardPage() {
                 <CardDescription>Supporting description text for context.</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-[var(--text-secondary)] text-[var(--font-size-sm)]">
+                <p className="text-sm text-zinc-500">
                   Card body content area.
                 </p>
               </CardContent>
@@ -63,7 +63,7 @@ export function CardPage() {
                 <CardDescription>Shadow-border surface — no CSS border, depth via box-shadow.</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-[var(--text-secondary)] text-[var(--font-size-sm)]">
+                <p className="text-sm text-zinc-500">
                   Card body content area.
                 </p>
               </CardContent>

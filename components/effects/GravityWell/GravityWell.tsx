@@ -9,12 +9,18 @@ interface Vertex {
   hy: number;
 }
 
+export type GravitySource = { x: number; y: number; mass?: number };
+
 export interface GravityWellProps {
   // Physics
   radius?: number;
   mass?: number;
   softness?: number;
   spring?: number;
+  colorSensitivity?: number; // 0–1 multiplier for color ramp threshold (default 1)
+  attractStrength?: number;  // pull force override — replaces per-source mass when set (default: uses mass prop)
+  repelStrength?: number;    // push force — subtracted from attract; net < 0 = repulsion (default 0)
+  disableMouse?: boolean;    // when true, canvas mouse-hover fallback is suppressed (default false)
   // Grid
   cols?: number;
   rows?: number;
@@ -27,14 +33,19 @@ export interface GravityWellProps {
   dotColor?: string;
   massColor?: string;
   background?: string;
+  staticGridColor?: string;
   // Multi-source (prop-based, triggers re-renders)
-  sources?: Array<{ x: number; y: number; mass?: number }>;
+  sources?: GravitySource[];
   // Ref-based source list for zero-rerender updates. Canvas reads on each RAF tick.
-  sourcesRef?: React.RefObject<Array<{ x: number; y: number; mass?: number }> | null>;
+  sourcesRef?: React.RefObject<GravitySource[] | null>;
   // When true, vertices are repelled away from gravity sources instead of attracted.
   invert?: boolean;
   // When false, skips drawing the metallic mass sphere (useful when a custom element marks the gravity center).
   showMass?: boolean;
+  // Layer toggles — useful when composing GravityWell on top of a standalone GridBackground.
+  showDots?: boolean;
+  showStaticGrid?: boolean;
+  showDynamicGrid?: boolean;
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -74,6 +85,15 @@ function lerpColor(base: string, active: string, t: number): string {
   return `rgba(${Math.round(lerp(r1, r2, t))},${Math.round(lerp(g1, g2, t))},${Math.round(lerp(b1, b2, t))},${lerp(a1, a2, t).toFixed(2)})`;
 }
 
+const CSS_VAR_RE = /^var\(\s*(--[^,)]+)\s*(?:,\s*(.+?))?\s*\)$/;
+
+function resolveColor(value: string, element: Element): string {
+  const match = value.match(CSS_VAR_RE);
+  if (!match) return value;
+  const resolved = getComputedStyle(element).getPropertyValue(match[1]).trim();
+  return resolved || match[2] || value;
+}
+
 // Maps angle (0→2π) to a position on a pre-parsed color ring with wrapping lerp.
 function sampleColorRing(
   angle: number,
@@ -90,6 +110,17 @@ function sampleColorRing(
   return [lerp(r0, r1, t), lerp(g0, g1, t), lerp(b0, b1, t), lerp(a0, a1, t)];
 }
 
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+interface ResolvedColors {
+  lineColorBase: string;
+  lineColorActive: string;
+  dotColor: string;
+  massColor: string;
+  background: string;
+  staticGridColor: string;
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function GravityWell({
@@ -97,20 +128,28 @@ export function GravityWell({
   mass = 18,
   softness = 65,
   spring = 0.08,
+  colorSensitivity = 1,
+  attractStrength,
+  repelStrength = 0,
+  disableMouse = false,
   cols = 52,
   rows = 36,
   className,
   style,
-  lineColorBase = '#e4e4e7',
-  lineColorActive = '#d4d4d8',
+  lineColorBase = 'var(--neutral-300, #d4d4d8)',
+  lineColorActive = 'var(--neutral-400, #a1a1aa)',
   lineColors = [],
-  dotColor = 'rgba(161, 161, 170, 0.18)',
-  massColor = 'rgba(113, 113, 122, 0.22)',
-  background = '#fafafa',
+  dotColor = 'var(--effect-gravity-dot, rgba(161, 161, 170, 0.32))',
+  massColor = 'rgba(113, 113, 122, 0.35)',
+  background = 'var(--neutral-50, #fafafa)',
+  staticGridColor = 'var(--effect-gravity-grid, rgba(161, 161, 170, 0.13))',
   sources = [],
   sourcesRef,
   invert = false,
   showMass = true,
+  showDots = true,
+  showStaticGrid = true,
+  showDynamicGrid = true,
 }: GravityWellProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
@@ -125,16 +164,25 @@ export function GravityWell({
   // after commit so the ref is up-to-date before the next RAF tick.
   // NOTE: sourcesRef is already a ref — do NOT add it to propsRef.
   const propsRef = useRef({
-    radius, mass, softness, spring, cols, rows,
-    lineColorBase, lineColorActive, lineColors, dotColor, massColor, background, sources, invert, showMass,
+    radius, mass, softness, spring, colorSensitivity, attractStrength, repelStrength, disableMouse, cols, rows,
+    lineColorBase, lineColorActive, lineColors, dotColor, massColor, background, staticGridColor, sources, invert, showMass, showDots, showStaticGrid, showDynamicGrid,
   });
   const parsedRingRef = useRef<[number, number, number, number][]>([]);
+  const resolveRef = useRef<() => void>(() => {});
+  const resolvedColorsRef = useRef<ResolvedColors>({
+    lineColorBase: '#d4d4d8',
+    lineColorActive: '#a1a1aa',
+    dotColor: 'rgba(161, 161, 170, 0.32)',
+    massColor: 'rgba(113, 113, 122, 0.35)',
+    background: '#fafafa',
+    staticGridColor: 'rgba(161, 161, 170, 0.13)',
+  });
   useLayoutEffect(() => {
     propsRef.current = {
-      radius, mass, softness, spring, cols, rows,
-      lineColorBase, lineColorActive, lineColors, dotColor, massColor, background, sources, invert, showMass,
+      radius, mass, softness, spring, colorSensitivity, attractStrength, repelStrength, disableMouse, cols, rows,
+      lineColorBase, lineColorActive, lineColors, dotColor, massColor, background, staticGridColor, sources, invert, showMass, showDots, showStaticGrid, showDynamicGrid,
     };
-    parsedRingRef.current = lineColors.map(c => parseColor(c));
+    resolveRef.current();
   });
 
   // Stable mirror so the useEffect closure always sees the latest ref object
@@ -188,7 +236,7 @@ export function GravityWell({
     // No velocity — vertices lerp directly toward their computed target.
 
     function targetPos(hx: number, hy: number): { tx: number; ty: number } {
-      const { radius, mass: defaultMass, softness, invert } = propsRef.current;
+      const { radius, mass: defaultMass, softness, invert, attractStrength, repelStrength, disableMouse } = propsRef.current;
       const refSrcs = sourcesRefRef.current?.current;
       const propSrcs = propsRef.current.sources;
 
@@ -199,6 +247,7 @@ export function GravityWell({
       } else if (propSrcs && propSrcs.length > 0) {
         points = propSrcs.map(s => ({ x: s.x, y: s.y, mass: s.mass ?? defaultMass }));
       } else {
+        if (disableMouse) return { tx: hx, ty: hy };
         const { x, y, active } = mouseRef.current;
         if (!active) return { tx: hx, ty: hy };
         points = [{ x, y, mass: defaultMass }];
@@ -211,9 +260,11 @@ export function GravityWell({
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist > radius) continue;
         const denom = dist * dist + softness * softness;
-        const pull = src.mass * radius * radius / denom;
+        const effectivePull = (attractStrength ?? src.mass) * radius * radius / denom;
+        const effectivePush = repelStrength * radius * radius / denom;
         const rim = 1 - dist / radius;
-        const amount = Math.min(pull * rim * rim, dist * 0.92);
+        const net = (effectivePull - effectivePush) * rim * rim;
+        const amount = Math.sign(net) * Math.min(Math.abs(net), dist * 0.92);
         totalDx += (dx / (dist + 0.001)) * amount;
         totalDy += (dy / (dist + 0.001)) * amount;
       }
@@ -274,9 +325,10 @@ export function GravityWell({
 
     // Compute the RGBA color + width for a single vertex.
     function vertexStyle(v: Vertex): { rgba: [number, number, number, number]; width: number } {
-      const { radius, lineColorBase, lineColorActive } = propsRef.current;
+      const { radius, colorSensitivity } = propsRef.current;
+      const { lineColorBase, lineColorActive } = resolvedColorsRef.current;
       const disp = vertexDisp(v);
-      const raw = Math.min(disp / (radius * 0.2), 1);
+      const raw = Math.min(disp / (radius * 0.2 * colorSensitivity), 1);
       const t = raw * raw * (3 - 2 * raw);
       const { influence, angle } = vertexInfluenceAndAngle(v.hx, v.hy);
 
@@ -343,7 +395,8 @@ export function GravityWell({
 
     function drawBg() {
       const { W, H } = sizeRef.current;
-      const { dotColor, background } = propsRef.current;
+      const { background, dotColor, staticGridColor } = resolvedColorsRef.current;
+      const { showDots, showStaticGrid } = propsRef.current;
       const step = 38;
 
       if (background && background !== 'transparent') {
@@ -351,23 +404,25 @@ export function GravityWell({
         ctx.fillRect(0, 0, W, H);
       }
 
-      // Static dot grid
-      ctx.fillStyle = dotColor;
-      for (let x = step / 2; x < W; x += step) {
-        for (let y = step / 2; y < H; y += step) {
-          ctx.beginPath();
-          ctx.arc(x, y, 0.9, 0, Math.PI * 2);
-          ctx.fill();
+      if (showDots) {
+        ctx.fillStyle = dotColor;
+        for (let x = step / 2; x < W; x += step) {
+          for (let y = step / 2; y < H; y += step) {
+            ctx.beginPath();
+            ctx.arc(x, y, 0.9, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
       }
 
-      // Faint static line grid
-      ctx.strokeStyle = 'rgba(161, 161, 170, 0.07)';  // neutral-400 @ 7%
-      ctx.lineWidth = 0.4;
-      ctx.beginPath();
-      for (let x = step / 2; x < W; x += step) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
-      for (let y = step / 2; y < H; y += step) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
-      ctx.stroke();
+      if (showStaticGrid) {
+        ctx.strokeStyle = staticGridColor;
+        ctx.lineWidth = 0.4;
+        ctx.beginPath();
+        for (let x = step / 2; x < W; x += step) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
+        for (let y = step / 2; y < H; y += step) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
+        ctx.stroke();
+      }
     }
 
     function drawGrid() {
@@ -383,7 +438,7 @@ export function GravityWell({
     }
 
     function drawOneMass(cx: number, cy: number) {
-      const { massColor } = propsRef.current;
+      const { massColor } = resolvedColorsRef.current;
 
       // Tight shadow just under the ball
       const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 14);
@@ -426,7 +481,7 @@ export function GravityWell({
       update();
       ctx.clearRect(0, 0, W, H);
       drawBg();
-      drawGrid();
+      if (propsRef.current.showDynamicGrid !== false) drawGrid();
       if (propsRef.current.showMass !== false) drawMass();
       rafRef.current = requestAnimationFrame(loop);
     }
@@ -456,6 +511,22 @@ export function GravityWell({
     // ── Init ──────────────────────────────────────────────────────────────────
     buildGrid();
 
+    function resolveAllColors() {
+      const p = propsRef.current;
+      resolvedColorsRef.current = {
+        lineColorBase: resolveColor(p.lineColorBase, canvas),
+        lineColorActive: resolveColor(p.lineColorActive, canvas),
+        dotColor: resolveColor(p.dotColor, canvas),
+        massColor: resolveColor(p.massColor, canvas),
+        background: resolveColor(p.background, canvas),
+        staticGridColor: resolveColor(p.staticGridColor, canvas),
+      };
+      parsedRingRef.current = p.lineColors.map(c => parseColor(resolveColor(c, canvas)));
+    }
+
+    resolveRef.current = resolveAllColors;
+    resolveAllColors();
+
     canvas.addEventListener('mousemove', onMouseMove);
     canvas.addEventListener('mouseleave', onMouseLeave);
     canvas.addEventListener('touchmove', onTouchMove, { passive: false });
@@ -463,6 +534,12 @@ export function GravityWell({
 
     const ro = new ResizeObserver(buildGrid);
     ro.observe(canvas.parentElement ?? canvas);
+
+    const mo = new MutationObserver(() => resolveAllColors());
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
 
     rafRef.current = requestAnimationFrame(loop);
 
@@ -473,6 +550,7 @@ export function GravityWell({
       canvas.removeEventListener('touchmove', onTouchMove);
       canvas.removeEventListener('touchend', onTouchEnd);
       ro.disconnect();
+      mo.disconnect();
     };
   }, []); // intentionally empty — all prop reads go through propsRef
 

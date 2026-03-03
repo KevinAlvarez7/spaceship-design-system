@@ -44,14 +44,14 @@ const buttonVariants = cva(
       size: {
         sm: [
           'py-(--spacing-4xs) px-(--spacing-3xs) gap-(--spacing-5xs)',
-          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-md)',
+          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-lg)',
         ],
         md: [
           'py-(--spacing-3xs) px-(--spacing-2xs) gap-(--spacing-4xs)',
-          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-md)',
+          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-xl)',
         ],
-        'icon-sm': 'h-[2.25rem] w-[2.25rem] p-0 rounded-(--radius-md)',
-        icon:      'h-(--spacing-xl) w-(--spacing-xl) p-0 rounded-(--radius-md)',
+        'icon-sm': 'h-[2.25rem] w-[2.25rem] p-0 rounded-(--radius-lg)',
+        icon:      'h-(--spacing-xl) w-(--spacing-xl) p-0 rounded-(--radius-xl)',
       },
       surface: {
         default: '',

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useState } from 'react';
 import { ExperimentBadge } from '@/components/viewer/ExperimentBadge';
 
@@ -57,24 +57,40 @@ const NAV: NavItem[] = [
   {
     label: 'Effects',
     children: [
-      { label: 'Gravity Assist',   href: '/effects/gravity-assist',   experiment: true },
-      { label: 'Spaceship Logo',   href: '/effects/spaceship-logo',   experiment: true },
-      { label: 'Spaceship Dot',    href: '/effects/spaceship-dot',    experiment: true },
-      { label: 'Grid Background',  href: '/effects/grid-background',  experiment: true },
+      { label: 'Gravity Assist',    href: '/effects/gravity-assist',    experiment: true },
+      { label: 'Spaceship Logo',    href: '/effects/spaceship-logo',    experiment: true },
+      { label: 'Spaceship Dot',     href: '/effects/spaceship-dot',     experiment: true },
+      { label: 'Grid Background',   href: '/effects/grid-background',   experiment: true },
+      { label: 'Spaceship Logo V2', href: '/effects/spaceship-logo-v2', experiment: true },
+      { label: 'Spaceship Planet',  href: '/effects/spaceship-planet',  experiment: true },
+      { label: 'Spaceship Star',    href: '/effects/spaceship-star',    experiment: true },
     ],
   },
   {
     label: 'Patterns',
     children: [
       { label: 'Overview',              href: '/patterns' },
-      { label: 'Gravity Chat',          href: '/patterns/gravity-chat',          experiment: true },
       { label: 'Chat',                  href: '/patterns/chat' },
       { label: 'Preview Panel',         href: '/patterns/preview-panel' },
+      { label: 'Preview Panel Header',  href: '/patterns/preview-panel-header' },
+      { label: 'Editable Title',        href: '/patterns/editable-title' },
+      { label: 'Shareable Link',        href: '/patterns/shareable-link' },
       { label: 'Sidebar Toggle',        href: '/patterns/sidebar-toggle' },
-      { label: 'Prototype Workspace',   href: '/patterns/prototype-workspace',   experiment: true },
+    ],
+  },
+  {
+    label: 'Pages',
+    children: [
+      { label: 'Gravity Chat',        href: '/patterns/gravity-chat',        experiment: true },
+      { label: 'Prototype Workspace', href: '/patterns/prototype-workspace', experiment: true },
     ],
   },
 ];
+
+interface SidebarProps {
+  collapsed?: boolean;
+  onToggle?: () => void;
+}
 
 function NavLink({ item }: { item: NavItem }) {
   const pathname = usePathname();
@@ -121,17 +137,43 @@ function NavSection({ item }: { item: NavItem }) {
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   return (
-    <aside className="flex h-screen w-60 flex-shrink-0 flex-col border-r border-zinc-200 bg-white">
-      <div className="flex h-14 items-center border-b border-zinc-200 px-4">
-        <span className="text-sm font-semibold text-zinc-900 tracking-tight">Spaceship DS</span>
+    <aside
+      className={cn(
+        'flex h-screen flex-shrink-0 flex-col border-r border-zinc-200 bg-white transition-[width] duration-200 ease-in-out overflow-hidden',
+        collapsed ? 'w-12' : 'w-60'
+      )}
+    >
+      <div className="flex h-14 flex-shrink-0 items-center border-b border-zinc-200 px-3">
+        {collapsed ? (
+          <button
+            onClick={onToggle}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 transition-colors"
+            aria-label="Expand sidebar"
+          >
+            <PanelLeftOpen className="h-4 w-4" />
+          </button>
+        ) : (
+          <>
+            <span className="flex-1 text-sm font-semibold text-zinc-900 tracking-tight">Spaceship DS</span>
+            <button
+              onClick={onToggle}
+              className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 transition-colors"
+              aria-label="Collapse sidebar"
+            >
+              <PanelLeftClose className="h-4 w-4" />
+            </button>
+          </>
+        )}
       </div>
-      <nav className="flex-1 overflow-y-auto p-3 space-y-4">
-        {NAV.map(section => (
-          <NavSection key={section.label} item={section} />
-        ))}
-      </nav>
+      {!collapsed && (
+        <nav className="flex-1 overflow-y-auto p-3 space-y-4">
+          {NAV.map(section => (
+            <NavSection key={section.label} item={section} />
+          ))}
+        </nav>
+      )}
     </aside>
   );
 }

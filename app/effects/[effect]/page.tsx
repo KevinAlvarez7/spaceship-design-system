@@ -1,11 +1,21 @@
 import { notFound } from 'next/navigation';
 import { Topbar }            from '@/components/viewer/Topbar';
-import { GravityAssistPage } from './GravityAssistPage';
-import { SpaceshipLogoPage } from './SpaceshipLogoPage';
+import { GravityAssistPage }    from './GravityAssistPage';
+import { SpaceshipLogoPage }    from './SpaceshipLogoPage';
+import { SpaceshipDotPage }     from './SpaceshipDotPage';
+import { GridBackgroundPage }   from './GridBackgroundPage';
+import { SpaceshipLogoV2Page }  from './SpaceshipLogoV2Page';
+import { SpaceshipPlanetPage }  from './SpaceshipPlanetPage';
+import { SpaceshipStarPage }    from './SpaceshipStarPage';
 
 const PAGES: Record<string, { title: string; Component: React.ComponentType }> = {
-  'gravity-assist':  { title: 'Gravity Assist',  Component: GravityAssistPage },
-  'spaceship-logo':  { title: 'Spaceship Logo',  Component: SpaceshipLogoPage },
+  'gravity-assist':    { title: 'Gravity Assist',    Component: GravityAssistPage },
+  'spaceship-logo':    { title: 'Spaceship Logo',    Component: SpaceshipLogoPage },
+  'spaceship-dot':     { title: 'Spaceship Dot',     Component: SpaceshipDotPage },
+  'grid-background':   { title: 'Grid Background',   Component: GridBackgroundPage },
+  'spaceship-logo-v2': { title: 'Spaceship Logo V2', Component: SpaceshipLogoV2Page },
+  'spaceship-planet':  { title: 'Spaceship Planet',  Component: SpaceshipPlanetPage },
+  'spaceship-star':    { title: 'Spaceship Star',    Component: SpaceshipStarPage },
 };
 
 export function generateStaticParams() {

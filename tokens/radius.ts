@@ -14,6 +14,7 @@ export const radiusTokens: RadiusToken[] = [
   { name: 'lg', cssVar: '--radius-lg', value: '8px' },
   { name: 'xl', cssVar: '--radius-xl', value: '12px' },
   { name: '2xl', cssVar: '--radius-2xl', value: '16px' },
-  { name: '3xl', cssVar: '--radius-3xl', value: '24px' },
+  { name: '3xl', cssVar: '--radius-3xl', value: '20px' },
+  { name: '4xl', cssVar: '--radius-4xl', value: '24px' },
   { name: 'full', cssVar: '--radius-full', value: '9999px' },
 ];

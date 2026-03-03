@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Zilla_Slab, Outfit, JetBrains_Mono } from 'next/font/google';
-import { Sidebar } from '@/components/viewer/Sidebar';
+import { ViewerShell } from '@/components/viewer/ViewerShell';
 
 const zillaSlab = Zilla_Slab({
   subsets: ['latin'],
@@ -33,10 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${zillaSlab.variable} ${outfit.variable} ${jetbrainsMono.variable} flex h-screen overflow-hidden bg-white`}>
-        <Sidebar />
-        <div className="flex flex-1 flex-col overflow-hidden">
-          {children}
-        </div>
+        <ViewerShell>{children}</ViewerShell>
       </body>
     </html>
   );

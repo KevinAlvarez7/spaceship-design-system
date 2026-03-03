@@ -2,8 +2,8 @@
 
 import { useRef, useEffect, useState, type MutableRefObject } from 'react';
 import { motion, useAnimation, useMotionValue, useSpring, AnimatePresence } from 'motion/react';
-import { GravityWell } from '@/components/effects/GravityWell/GravityWell';
-import { SpaceshipLogo } from '@/components/effects';
+import { GravityWell } from '@/components/effects';
+import { SpaceshipLogoV2 } from '@/components/effects';
 import { ChatInputBox } from '@/components/ui';
 
 type Mode = 'idle' | 'blackHole';
@@ -17,7 +17,6 @@ export default function GravityChatPlayground() {
   // useRef(null) returns RefObject (readonly .current) in React 18+ types; cast to write directly.
   const sourcesRef = useRef<Source[] | null>(null) as MutableRefObject<Source[] | null>;
   const inputWrapperRef = useRef<HTMLDivElement>(null);
-  const inputCenterRef = useRef({ x: 0, y: 0 });
   const triggerRef = useRef<HTMLDivElement>(null);
   const triggerCenterRef = useRef({ x: 0, y: 0 });
 
@@ -33,9 +32,7 @@ export default function GravityChatPlayground() {
   useEffect(() => {
     modeRef.current = mode;
     if (mode === 'idle') {
-      sourcesRef.current = [
-        { x: triggerCenterRef.current.x, y: triggerCenterRef.current.y, mass: 6 },
-      ];
+      sourcesRef.current = [];
       circleControls.start({
         scale: 1,
         opacity: 1,
@@ -58,7 +55,7 @@ export default function GravityChatPlayground() {
     return () => clearTimeout(timer);
   }, [mode]);
 
-  // Track input box center and SpaceshipLogo center in canvas-local coords; update static source
+  // Track SpaceshipLogo center in canvas-local coords; update static source
   useEffect(() => {
     function updateCenter() {
       if (!containerRef.current) return;
@@ -72,18 +69,8 @@ export default function GravityChatPlayground() {
         };
       }
 
-      if (inputWrapperRef.current) {
-        const inputRect = inputWrapperRef.current.getBoundingClientRect();
-        inputCenterRef.current = {
-          x: inputRect.left + inputRect.width / 2 - containerRect.left,
-          y: inputRect.top + inputRect.height / 2 - containerRect.top,
-        };
-      }
-
       if (modeRef.current === 'idle') {
-        sourcesRef.current = [
-          { x: triggerCenterRef.current.x, y: triggerCenterRef.current.y, mass: 6 },
-        ];
+        sourcesRef.current = [];
       }
     }
 
@@ -101,7 +88,6 @@ export default function GravityChatPlayground() {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       sourcesRef.current = [
-        { x: inputCenterRef.current.x, y: inputCenterRef.current.y, mass: 6 },
         { x: e.clientX - rect.left, y: e.clientY - rect.top, mass: 10 },
       ];
     }
@@ -116,8 +102,22 @@ export default function GravityChatPlayground() {
     >
       <GravityWell
         sourcesRef={sourcesRef}
-        softness={150}
+        radius={150}
+        softness={50}
         showMass={false}
+        colorSensitivity={0.2}
+        attractStrength={0}
+        repelStrength={20}
+        disableMouse={mode === 'idle'}
+        // lineColorBase="var(--neutral-100)"
+        // lineColorActive="var(--neutral-200)"
+        lineColors={[
+          'var(--solar-coral-300)',
+          'var(--lumen-yellow-300)',
+          'var(--nova-mint-300)',
+          'var(--orbit-blue-300)',
+          'var(--cosmic-lilac-300)',
+        ]}
       />
 
       <AnimatePresence>
@@ -143,36 +143,38 @@ export default function GravityChatPlayground() {
       </AnimatePresence>
 
       {/* Positioned stack: spaceship logo, heading, ChatInputBox — centered in viewport */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 w-full pointer-events-none">
-        {/* Spaceship logo — easter egg trigger (catch the ship!) */}
-        <motion.div
-          ref={triggerRef}
-          animate={circleControls}
-          initial={{ scale: 1, opacity: 1 }}
-          className="pointer-events-auto"
-        >
-          <SpaceshipLogo
-            width={64}
-            interactive
-            fleeRadius={200}
-            maxDisplacement={60}
-            onMouseEnter={() => {
-              if (mode === 'idle' && !idleCooldownRef.current) setMode('blackHole');
-            }}
-          />
-        </motion.div>
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="flex flex-col items-center gap-4 w-full max-w-2xl pointer-events-none">
+          {/* Spaceship logo — easter egg trigger (catch the ship!) */}
+          <motion.div
+            ref={triggerRef}
+            animate={circleControls}
+            initial={{ scale: 1, opacity: 1 }}
+            className="pointer-events-auto"
+          >
+            <SpaceshipLogoV2
+              width={110}
+              interactive
+              fleeRadius={80}
+              maxDisplacement={60}
+              onMouseEnter={() => {
+                if (mode === 'idle' && !idleCooldownRef.current) setMode('blackHole');
+              }}
+            />
+          </motion.div>
 
-        <h1 className="text-3xl font-bold text-zinc-900 text-center">
-          What ideas do you want to explore?
-        </h1>
+          <h1 className="font-serif text-(length:--font-size-4xl) font-(--font-weight-bold) leading-(--line-height-4xl) text-text-primary text-center">
+            What ideas do you want to explore?
+          </h1>
 
-        {/* ChatInputBox wrapper — resets to idle when cursor enters */}
-        <div
-          ref={inputWrapperRef}
-          className="max-w-[520px] w-full pointer-events-auto"
-          onMouseEnter={() => { if (mode === 'blackHole') setMode('idle'); }}
-        >
-          <ChatInputBox placeholder="Explore any problems, prototype any ideas..." />
+          {/* ChatInputBox wrapper — resets to idle when cursor enters */}
+          <div
+            ref={inputWrapperRef}
+            className="w-full pointer-events-auto"
+            onMouseEnter={() => { if (mode === 'blackHole') setMode('idle'); }}
+          >
+            <ChatInputBox size="md" placeholder="Explore any problems, prototype any ideas..." />
+          </div>
         </div>
       </div>
     </div>
