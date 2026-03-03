@@ -5,9 +5,6 @@ export type ShadowToken = {
 };
 
 export const shadowTokens: ShadowToken[] = [
-  { name: 'none', cssVar: '--shadow-none', description: 'No elevation' },
-  { name: 'sm',   cssVar: '--shadow-sm',   description: 'Subtle depth. Inputs, inline elements.' },
-  { name: 'md',   cssVar: '--shadow-md',   description: 'Cards, dropdowns, popovers.' },
-  { name: 'lg',   cssVar: '--shadow-lg',   description: 'Dialogs, modals, floating panels.' },
-  { name: 'xl',   cssVar: '--shadow-xl',   description: 'Commanding elevation. Full-screen overlays.' },
+  { name: 'border',      cssVar: '--shadow-border',      description: 'Shadow-border. Replaces CSS border with depth-aware shadow ring.' },
+  { name: 'border-hover', cssVar: '--shadow-border-hover', description: 'Shadow-border hover. Increased opacity for interactive feedback.' },
 ];

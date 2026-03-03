@@ -5,6 +5,7 @@ import { CodeBlock }  from '@/components/viewer/CodeBlock';
 
 const PROPS: PropRow[] = [
   { name: 'variant',   type: '"default" | "primary" | "secondary" | "destructive" | "outline"', default: '"default"', description: 'Visual style' },
+  { name: 'surface',   type: '"default" | "shadow-border"', default: '"default"', description: 'Border treatment for bordered variants (default, secondary, outline)' },
   { name: 'className', type: 'string',    default: '—', description: 'Additional classes' },
   { name: 'children',  type: 'ReactNode', default: '—', description: 'Badge label content' },
 ];
@@ -32,6 +33,17 @@ export function BadgePage() {
           <Badge variant="secondary">Secondary</Badge>
           <Badge variant="destructive">Destructive</Badge>
           <Badge variant="outline">Outline</Badge>
+        </Preview>
+      </section>
+
+      <section>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">Shadow-Border</h2>
+        <Preview label="surface=&quot;shadow-border&quot; (bordered variants only)">
+          <Badge surface="shadow-border">Default</Badge>
+          <Badge variant="primary">Primary</Badge>
+          <Badge variant="secondary" surface="shadow-border">Secondary</Badge>
+          <Badge variant="destructive">Destructive</Badge>
+          <Badge variant="outline" surface="shadow-border">Outline</Badge>
         </Preview>
       </section>
 

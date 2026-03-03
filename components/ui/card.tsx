@@ -6,7 +6,7 @@ const cardVariants = cva(
   {
     variants: {
       surface: {
-        default:       'border border-(--border-default) shadow-(--shadow-sm)',
+        default:       'border border-(--border-default) shadow-(--shadow-border)',
         'shadow-border': 'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow',
       },
     },

@@ -145,9 +145,9 @@
   --bg-surface-secondary: var(--secondary-100);
   --bg-surface-tertiary: var(--secondary-200);
   --bg-surface-base: var(--white);
-  --bg-interactive-primary-default: var(--primary-300);
-  --bg-interactive-primary-hover: var(--primary-500);
-  --bg-interactive-primary-pressed: var(--primary-600);
+  --bg-interactive-primary-default: var(--primary-500);
+  --bg-interactive-primary-hover: var(--primary-600);
+  --bg-interactive-primary-pressed: var(--primary-700);
   --bg-interactive-primary-disabled: #e5e5e5;
   --border-input-default: var(--black);
   --border-input-focus: var(--orbit-blue-600);
@@ -242,29 +242,9 @@
   --radius-3xl: 24px;
   --radius-full: 9999px;
 
-  /* ── Elevation ───────────────────────────────────────────────
+  /* ── Shadow-Border ───────────────────────────────────────────
      Not in Figma variables — maintained manually.
      ──────────────────────────────────────────────────────────── */
-  --shadow-none: none;
-  --shadow-sm:
-    0px 0px 0px 1px rgba(0, 0, 0, 0.06),
-    0px 1px 2px -1px rgba(0, 0, 0, 0.06),
-    0px 2px 4px rgba(0, 0, 0, 0.04);
-  --shadow-md:
-    0px 0px 0px 1px rgba(0, 0, 0, 0.08),
-    0px 2px 4px -1px rgba(0, 0, 0, 0.08),
-    0px 4px 8px rgba(0, 0, 0, 0.06);
-  --shadow-lg:
-    0px 0px 0px 1px rgba(0, 0, 0, 0.08),
-    0px 4px 8px -2px rgba(0, 0, 0, 0.12),
-    0px 12px 24px rgba(0, 0, 0, 0.08);
-  --shadow-xl:
-    0px 0px 0px 1px rgba(0, 0, 0, 0.08),
-    0px 8px 16px -4px rgba(0, 0, 0, 0.16),
-    0px 24px 48px rgba(0, 0, 0, 0.12);
-  --shadow-hard: 2px 2px 0px 0px #000000;
-
-  /* ── Shadow-Border ── */
   --shadow-border:
     0px 0px 0px 1px rgba(0, 0, 0, 0.06),
     0px 1px 2px -1px rgba(0, 0, 0, 0.06),
@@ -273,7 +253,6 @@
     0px 0px 0px 1px rgba(0, 0, 0, 0.08),
     0px 1px 2px -1px rgba(0, 0, 0, 0.08),
     0px 2px 4px 0px rgba(0, 0, 0, 0.06);
-  --shadow-neo-brutalist: var(--shadow-hard);
 
   /* ── Motion ──────────────────────────────────────────────────
      Not in Figma variables — maintained manually.
@@ -318,20 +297,6 @@
   --border-default: var(--neutral-700);
   --border-subtle:  var(--neutral-600);
   --border-input-default: var(--neutral-600);
-
-  /* Elevation — dark adjustments */
-  --shadow-sm:
-    0px 0px 0px 1px rgba(255, 255, 255, 0.06),
-    0px 1px 2px -1px rgba(0, 0, 0, 0.4),
-    0px 2px 4px rgba(0, 0, 0, 0.3);
-  --shadow-md:
-    0px 0px 0px 1px rgba(255, 255, 255, 0.06),
-    0px 2px 4px -1px rgba(0, 0, 0, 0.5),
-    0px 4px 8px rgba(0, 0, 0, 0.4);
-  --shadow-lg:
-    0px 0px 0px 1px rgba(255, 255, 255, 0.06),
-    0px 4px 8px -2px rgba(0, 0, 0, 0.6),
-    0px 12px 24px rgba(0, 0, 0, 0.5);
 
   /* Shadow-Border — dark adjustments */
   --shadow-border:

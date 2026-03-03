@@ -1,4 +1,4 @@
-import { fontFamilies, fontSizes, fontWeights, lineHeights, letterSpacings } from '@/tokens';
+import { fontFamilies, fontSizes, fontWeights, lineHeights } from '@/tokens';
 
 function TokenTable({ title, rows }: { title: string; rows: { name: string; cssVar: string; value: string }[] }) {
   return (
@@ -35,7 +35,6 @@ export function TypographyPage() {
       <TokenTable title="Font Sizes"      rows={fontSizes} />
       <TokenTable title="Font Weights"    rows={fontWeights} />
       <TokenTable title="Line Heights"    rows={lineHeights} />
-      <TokenTable title="Letter Spacing"  rows={letterSpacings} />
     </div>
   );
 }

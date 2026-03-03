@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState, type MutableRefObject } from 'react';
 import { motion, useAnimation, useMotionValue, useSpring, AnimatePresence } from 'motion/react';
 import { GravityWell } from '@/components/effects/GravityWell/GravityWell';
+import { SpaceshipLogo } from '@/components/effects';
 import { ChatInputBox } from '@/components/ui';
 
 type Mode = 'idle' | 'blackHole';
@@ -17,6 +18,8 @@ export default function GravityChatPlayground() {
   const sourcesRef = useRef<Source[] | null>(null) as MutableRefObject<Source[] | null>;
   const inputWrapperRef = useRef<HTMLDivElement>(null);
   const inputCenterRef = useRef({ x: 0, y: 0 });
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const triggerCenterRef = useRef({ x: 0, y: 0 });
 
   const circleControls = useAnimation();
   const idleCooldownRef = useRef(false);
@@ -31,7 +34,7 @@ export default function GravityChatPlayground() {
     modeRef.current = mode;
     if (mode === 'idle') {
       sourcesRef.current = [
-        { x: inputCenterRef.current.x, y: inputCenterRef.current.y, mass: 6 },
+        { x: triggerCenterRef.current.x, y: triggerCenterRef.current.y, mass: 6 },
       ];
       circleControls.start({
         scale: 1,
@@ -55,19 +58,31 @@ export default function GravityChatPlayground() {
     return () => clearTimeout(timer);
   }, [mode]);
 
-  // Track input box center in canvas-local coords; update static source
+  // Track input box center and SpaceshipLogo center in canvas-local coords; update static source
   useEffect(() => {
     function updateCenter() {
-      if (!inputWrapperRef.current || !containerRef.current) return;
+      if (!containerRef.current) return;
       const containerRect = containerRef.current.getBoundingClientRect();
-      const inputRect = inputWrapperRef.current.getBoundingClientRect();
-      inputCenterRef.current = {
-        x: inputRect.left + inputRect.width / 2 - containerRect.left,
-        y: inputRect.top + inputRect.height / 2 - containerRect.top,
-      };
+
+      if (triggerRef.current) {
+        const triggerRect = triggerRef.current.getBoundingClientRect();
+        triggerCenterRef.current = {
+          x: triggerRect.left + triggerRect.width / 2 - containerRect.left,
+          y: triggerRect.top + triggerRect.height / 2 - containerRect.top,
+        };
+      }
+
+      if (inputWrapperRef.current) {
+        const inputRect = inputWrapperRef.current.getBoundingClientRect();
+        inputCenterRef.current = {
+          x: inputRect.left + inputRect.width / 2 - containerRect.left,
+          y: inputRect.top + inputRect.height / 2 - containerRect.top,
+        };
+      }
+
       if (modeRef.current === 'idle') {
         sourcesRef.current = [
-          { x: inputCenterRef.current.x, y: inputCenterRef.current.y, mass: 6 },
+          { x: triggerCenterRef.current.x, y: triggerCenterRef.current.y, mass: 6 },
         ];
       }
     }
@@ -102,6 +117,7 @@ export default function GravityChatPlayground() {
       <GravityWell
         sourcesRef={sourcesRef}
         softness={150}
+        showMass={false}
       />
 
       <AnimatePresence>
@@ -110,13 +126,14 @@ export default function GravityChatPlayground() {
             key="blackhole-cursor"
             className="pointer-events-none fixed z-50 w-4 h-4 rounded-full"
             style={{
+              left: 0,
+              top: 0,
               x: springX,
               y: springY,
-              translateX: '-50%',
-              translateY: '-50%',
               background: 'radial-gradient(circle, rgba(9,9,11,0.95) 0%, rgba(9,9,11,0.3) 60%, transparent 100%)',
               boxShadow: '0 0 0 1.5px rgba(9,9,11,0.8), 0 0 14px rgba(9,9,11,0.15)',
             }}
+            transformTemplate={(_, generated) => `${generated} translate(-50%, -50%)`}
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
@@ -125,21 +142,34 @@ export default function GravityChatPlayground() {
         )}
       </AnimatePresence>
 
-      {/* Positioned stack: circle logo above ChatInputBox */}
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 w-[520px]">
-        {/* Circle logo — easter egg trigger */}
+      {/* Positioned stack: spaceship logo, heading, ChatInputBox — centered in viewport */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 w-full pointer-events-none">
+        {/* Spaceship logo — easter egg trigger (catch the ship!) */}
         <motion.div
+          ref={triggerRef}
           animate={circleControls}
           initial={{ scale: 1, opacity: 1 }}
-          whileHover={mode === 'idle' ? { scale: 0.6, transition: { type: 'spring', stiffness: 400, damping: 28 } } : undefined}
-          className="w-10 h-10 rounded-full border-[1.5px] border-zinc-700 cursor-pointer"
-          onHoverStart={() => { if (mode === 'idle' && !idleCooldownRef.current) setMode('blackHole'); }}
-        />
+          className="pointer-events-auto"
+        >
+          <SpaceshipLogo
+            width={64}
+            interactive
+            fleeRadius={200}
+            maxDisplacement={60}
+            onMouseEnter={() => {
+              if (mode === 'idle' && !idleCooldownRef.current) setMode('blackHole');
+            }}
+          />
+        </motion.div>
+
+        <h1 className="text-3xl font-bold text-zinc-900 text-center">
+          What ideas do you want to explore?
+        </h1>
 
         {/* ChatInputBox wrapper — resets to idle when cursor enters */}
         <div
           ref={inputWrapperRef}
-          className="w-full"
+          className="max-w-[520px] w-full pointer-events-auto"
           onMouseEnter={() => { if (mode === 'blackHole') setMode('idle'); }}
         >
           <ChatInputBox placeholder="Explore any problems, prototype any ideas..." />

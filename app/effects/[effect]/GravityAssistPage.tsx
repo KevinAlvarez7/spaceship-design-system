@@ -9,6 +9,7 @@ import { ExperimentBadge } from '@/components/viewer/ExperimentBadge';
 
 type DemoMode = 'cursor' | 'drag' | 'animate' | 'impact';
 type ColorMode = 'neutral' | 'rainbow';
+type ForceDirection = 'pull' | 'push';
 type GravitySources = Array<{ x: number; y: number; mass?: number }>;
 
 // ── Card + orbit definitions ───────────────────────────────────────────────────
@@ -60,6 +61,7 @@ const PROPS: PropRow[] = [
   { name: 'massColor',       type: 'string',                               default: 'rgba(113,113,122,0.22)', description: 'Cursor mass indicator color (neutral-500 @ 22%)' },
   { name: 'sources',         type: 'Array<{ x, y, mass? }>',              default: '[]',                     description: 'External gravity sources (prop-based). Each entry warps the grid at that position.' },
   { name: 'sourcesRef',      type: 'RefObject<Array<{x,y,mass?}> | null>', default: 'undefined',             description: 'Ref-based source list for zero-rerender updates. Canvas reads on each RAF tick.' },
+  { name: 'invert',          type: 'boolean',                              default: 'false',                  description: 'When true, vertices are repelled away from gravity sources instead of attracted.' },
 ];
 
 // ── Usage ──────────────────────────────────────────────────────────────────────
@@ -82,6 +84,11 @@ const USAGE = `import { GravityAssist } from '@/components/effects';
       '#9b6bff',  // Cosmic Lilac 500
     ]}
   />
+</div>
+
+// Push mode — vertices repelled away from the source
+<div style={{ position: 'relative', height: 480 }}>
+  <GravityAssist invert />
 </div>
 
 // Ref-based sources — zero re-renders during interaction
@@ -328,6 +335,34 @@ function ColorModeToggle({
   );
 }
 
+// ── ForceToggle ───────────────────────────────────────────────────────────────
+
+function ForceToggle({
+  forceDir,
+  onChange,
+}: {
+  forceDir: ForceDirection;
+  onChange: (d: ForceDirection) => void;
+}) {
+  return (
+    <div className="flex gap-0.5 bg-zinc-100 rounded-md p-0.5 text-xs">
+      {(['pull', 'push'] as ForceDirection[]).map(d => (
+        <button
+          key={d}
+          onClick={() => onChange(d)}
+          className={
+            forceDir === d
+              ? 'bg-white text-zinc-900 shadow-sm rounded px-3 py-1 capitalize'
+              : 'text-zinc-500 hover:text-zinc-700 px-3 py-1 capitalize'
+          }
+        >
+          {d}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 // ── DemoCard ──────────────────────────────────────────────────────────────────
 
 function DemoCard({
@@ -380,6 +415,7 @@ interface PreviewAreaProps {
   softness: number;
   spring: number;
   colorMode: ColorMode;
+  forceDir: ForceDirection;
   mode: DemoMode;
   containerRef: React.RefObject<HTMLDivElement | null>;
   sourcesRef: React.MutableRefObject<GravitySources | null>;
@@ -393,6 +429,7 @@ interface PreviewAreaProps {
 function PreviewArea({
   radius, mass, softness, spring,
   colorMode,
+  forceDir,
   mode,
   containerRef, sourcesRef,
   dragCards, handlePointerDown,
@@ -413,6 +450,7 @@ function PreviewArea({
         spring={spring}
         sourcesRef={mode !== 'cursor' ? sourcesRef : undefined}
         lineColors={colorMode === 'rainbow' ? BRAND_COLORS : []}
+        invert={forceDir === 'push'}
       />
 
       {mode === 'drag' && dragCards.map(card => (
@@ -469,6 +507,7 @@ export function GravityAssistPage() {
   const [fullscreen, setFullscreen] = useState(false);
   const [mode, setMode] = useState<DemoMode>('cursor');
   const [colorMode, setColorMode] = useState<ColorMode>('rainbow');
+  const [forceDir, setForceDir] = useState<ForceDirection>('pull');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const sourcesRef = useRef<GravitySources | null>(null as GravitySources | null);
@@ -498,12 +537,14 @@ export function GravityAssistPage() {
         <PreviewArea
           radius={radius} mass={mass} softness={softness} spring={springRaw / 100}
           colorMode={colorMode}
+          forceDir={forceDir}
           mode={mode}
           containerRef={containerRef} sourcesRef={sourcesRef}
           dragCards={dragCards} handlePointerDown={handlePointerDown}
           animCardElsRef={animCardElsRef} handleImpactClick={handleImpactClick}
         />
         <div className="flex items-center gap-3 mt-3">
+          <ForceToggle forceDir={forceDir} onChange={setForceDir} />
           <ColorModeToggle colorMode={colorMode} onChange={setColorMode} />
           <ModeToggle mode={mode} onChange={setMode} />
           <button
@@ -576,6 +617,7 @@ function FullScreenModal({
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [mode, setMode] = useState<DemoMode>('cursor');
   const [colorMode, setColorMode] = useState<ColorMode>('rainbow');
+  const [forceDir, setForceDir] = useState<ForceDirection>('pull');
 
   // Each modal instance gets its own refs + hook instances
   const containerRef = useRef<HTMLDivElement>(null);
@@ -601,6 +643,7 @@ function FullScreenModal({
         <PreviewArea
           radius={radius} mass={mass} softness={softness} spring={spring}
           colorMode={colorMode}
+          forceDir={forceDir}
           mode={mode}
           containerRef={containerRef} sourcesRef={sourcesRef}
           dragCards={dragCards} handlePointerDown={handlePointerDown}
@@ -636,6 +679,7 @@ function FullScreenModal({
             <Slider label="Mass"     value={mass}      min={1}   max={50}  onChange={onMassChange} />
             <Slider label="Softness" value={softness}  min={1}   max={100} onChange={onSoftnessChange} />
             <Slider label="Spring"   value={springRaw} min={1}   max={20}  onChange={onSpringRawChange} />
+            <ForceToggle forceDir={forceDir} onChange={setForceDir} />
             <ColorModeToggle colorMode={colorMode} onChange={setColorMode} />
             <ModeToggle mode={mode} onChange={setMode} />
           </div>

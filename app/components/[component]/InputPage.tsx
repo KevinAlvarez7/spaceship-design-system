@@ -6,6 +6,7 @@ import { CodeBlock }  from '@/components/viewer/CodeBlock';
 const PROPS: PropRow[] = [
   { name: 'size',        type: '"sm" | "md" | "lg"',   default: '"md"',      description: 'Height of the input' },
   { name: 'state',       type: '"default" | "error"',  default: '"default"', description: 'Validation state' },
+  { name: 'surface',     type: '"default" | "shadow-border"', default: '"default"', description: 'Border treatment: CSS border or shadow-border ring' },
   { name: 'placeholder', type: 'string',               default: '—',         description: 'Placeholder text' },
   { name: 'disabled',    type: 'boolean',              default: 'false',     description: 'Disables the input' },
 ];
@@ -42,6 +43,16 @@ export function InputPage() {
             <Input state="default" placeholder="Default" />
             <Input state="error"   placeholder="Error state" />
             <Input disabled        placeholder="Disabled" />
+          </div>
+        </Preview>
+      </section>
+
+      <section>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">Shadow-Border</h2>
+        <Preview label="surface=&quot;shadow-border&quot;">
+          <div className="flex w-full max-w-xs flex-col gap-3">
+            <Input surface="shadow-border" placeholder="Default shadow-border" />
+            <Input surface="shadow-border" state="error" placeholder="Error shadow-border" />
           </div>
         </Preview>
       </section>

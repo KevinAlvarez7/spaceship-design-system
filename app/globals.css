@@ -2,26 +2,58 @@
 @import "../styles/tokens.css";
 
 @theme {
-  /* Colors — DS tokens wired into Tailwind utilities */
-  --color-action-primary:        var(--color-action-primary);
-  --color-action-primary-hover:  var(--color-action-primary-hover);
-  --color-surface-base:          var(--color-surface-base);
-  --color-surface-raised:        var(--color-surface-raised);
-  --color-text-primary:          var(--color-text-primary);
-  --color-text-secondary:        var(--color-text-secondary);
-  --color-text-muted:            var(--color-text-muted);
-  --color-border-default:        var(--color-border-default);
-  --color-destructive:           var(--color-destructive);
+  /* ── Semantic colors wired into Tailwind utilities ── */
+  --color-text-primary:           var(--text-primary);
+  --color-text-secondary:         var(--text-secondary);
+  --color-text-tertiary:          var(--text-tertiary);
+  --color-text-placeholder:       var(--text-placeholder);
+  --color-text-inverse:           var(--text-inverse);
 
-  /* Typography */
-  --font-sans: var(--font-family-base);
-  --font-mono: var(--font-family-mono);
+  --color-bg-surface-base:        var(--bg-surface-base);
+  --color-bg-surface-primary:     var(--bg-surface-primary);
+  --color-bg-surface-secondary:   var(--bg-surface-secondary);
+  --color-bg-surface-tertiary:    var(--bg-surface-tertiary);
 
-  /* Radius */
+  --color-bg-interactive-primary-default: var(--bg-interactive-primary-default);
+  --color-bg-interactive-primary-hover:   var(--bg-interactive-primary-hover);
+  --color-bg-interactive-primary-pressed: var(--bg-interactive-primary-pressed);
+
+  --color-bg-interactive-secondary-default: var(--bg-interactive-secondary-default);
+  --color-bg-interactive-secondary-hover:   var(--bg-interactive-secondary-hover);
+
+  --color-bg-interactive-error-default: var(--bg-interactive-error-default);
+  --color-bg-interactive-error-hover:   var(--bg-interactive-error-hover);
+
+  --color-bg-interactive-success-default: var(--bg-interactive-success-default);
+  --color-bg-interactive-warning-default: var(--bg-interactive-warning-default);
+
+  --color-border-default:     var(--border-default);
+  --color-border-subtle:      var(--border-subtle);
+  --color-border-input-default: var(--border-input-default);
+  --color-border-input-focus:   var(--border-input-focus);
+
+  --color-bg-status-success: var(--bg-status-success);
+  --color-bg-status-warning: var(--bg-status-warning);
+  --color-bg-status-error:   var(--bg-status-error);
+  --color-bg-status-info:    var(--bg-status-info);
+  --color-bg-status-neutral: var(--bg-status-neutral);
+
+  /* ── Typography ── */
+  --font-sans:  var(--font-family-secondary);
+  --font-serif: var(--font-family-primary);
+
+  /* ── Shadows ── */
+  --shadow-border:       var(--shadow-border);
+  --shadow-border-hover: var(--shadow-border-hover);
+
+  /* ── Radius ── */
+  --radius-xs:   var(--radius-xs);
   --radius-sm:   var(--radius-sm);
   --radius-md:   var(--radius-md);
   --radius-lg:   var(--radius-lg);
   --radius-xl:   var(--radius-xl);
+  --radius-2xl:  var(--radius-2xl);
+  --radius-3xl:  var(--radius-3xl);
   --radius-full: var(--radius-full);
 }
 
@@ -36,10 +68,10 @@
   }
 
   body {
-    background-color: var(--color-surface-base);
-    color: var(--color-text-primary);
-    font-family: var(--font-family-base);
-    font-size: var(--text-base);
-    line-height: var(--leading-normal);
+    background-color: var(--bg-surface-base);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
   }
 }

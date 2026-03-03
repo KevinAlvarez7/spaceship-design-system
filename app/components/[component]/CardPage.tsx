@@ -4,6 +4,7 @@ import { PropsTable, type PropRow } from '@/components/viewer/PropsTable';
 import { CodeBlock }  from '@/components/viewer/CodeBlock';
 
 const PROPS: PropRow[] = [
+  { name: 'surface',   type: '"default" | "shadow-border"', default: '"default"', description: 'Border treatment: CSS border or shadow-border ring' },
   { name: 'className', type: 'string',     default: '—', description: 'Additional classes for the card container' },
   { name: 'children',  type: 'ReactNode',  default: '—', description: 'Card content' },
 ];
@@ -39,7 +40,30 @@ export function CardPage() {
                 <CardDescription>Supporting description text for context.</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-[var(--color-text-secondary)] text-[var(--text-sm)]">
+                <p className="text-[var(--text-secondary)] text-[var(--font-size-sm)]">
+                  Card body content area.
+                </p>
+              </CardContent>
+              <CardFooter className="gap-2">
+                <Button size="sm">Primary</Button>
+                <Button size="sm" variant="secondary">Cancel</Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </Preview>
+      </section>
+
+      <section>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">Shadow-Border</h2>
+        <Preview label="surface=&quot;shadow-border&quot;">
+          <div className="w-full max-w-sm">
+            <Card surface="shadow-border">
+              <CardHeader>
+                <CardTitle>Card Title</CardTitle>
+                <CardDescription>Shadow-border surface — no CSS border, depth via box-shadow.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-[var(--text-secondary)] text-[var(--font-size-sm)]">
                   Card body content area.
                 </p>
               </CardContent>

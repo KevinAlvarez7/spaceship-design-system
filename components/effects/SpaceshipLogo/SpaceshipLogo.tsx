@@ -34,6 +34,7 @@ export interface SpaceshipLogoProps {
   beamSkewRange?: number;
   disableMotion?: boolean;
   className?: string;
+  onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 // ── SpaceshipLogo ─────────────────────────────────────────────────────────────
@@ -47,6 +48,7 @@ export function SpaceshipLogo({
   beamSkewRange = 15,
   disableMotion = false,
   className,
+  onMouseEnter,
 }: SpaceshipLogoProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isBeamVisible, setIsBeamVisible] = useState(true);
@@ -132,6 +134,7 @@ export function SpaceshipLogo({
         ref={containerRef}
         className={className}
         style={{ width, height: totalH, position: 'relative' }}
+        onMouseEnter={onMouseEnter}
       >
         <div style={{ position: 'absolute', top: beamTop, left: beamLeft, zIndex: 0 }}>
           {beamSvg}
@@ -148,28 +151,21 @@ export function SpaceshipLogo({
       ref={containerRef}
       className={className}
       style={{ x, y, rotate, width, height: totalH, position: 'relative' }}
+      onMouseEnter={onMouseEnter}
     >
-      {/* Beam layer */}
+      {/* Beam layer — opacity wrapper keeps fade separate from the skew loop */}
       <motion.div
-        style={{
-          position: 'absolute',
-          top: beamTop,
-          left: beamLeft,
-          zIndex: 0,
-          transformOrigin: 'top center',
-        }}
-        animate={
-          isBeamVisible
-            ? { skewX: [-beamSkewRange, beamSkewRange, -beamSkewRange], opacity: 1 }
-            : { skewX: 0, opacity: 0 }
-        }
-        transition={
-          isBeamVisible
-            ? { repeat: Infinity, duration: beamDuration, ease: 'easeInOut' }
-            : { duration: 0.2 }
-        }
+        style={{ position: 'absolute', top: beamTop, left: beamLeft, zIndex: 0 }}
+        animate={{ opacity: isBeamVisible ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
       >
-        {beamSvg}
+        <motion.div
+          style={{ transformOrigin: 'top center' }}
+          animate={{ skewX: [-beamSkewRange, beamSkewRange] }}
+          transition={{ repeat: Infinity, repeatType: 'mirror', duration: beamDuration / 2, ease: 'easeInOut' }}
+        >
+          {beamSvg}
+        </motion.div>
       </motion.div>
 
       {/* Saucer layer */}

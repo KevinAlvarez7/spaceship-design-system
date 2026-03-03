@@ -23,6 +23,7 @@ export interface GravityWellProps {
   style?: React.CSSProperties;
   lineColorBase?: string;
   lineColorActive?: string;
+  lineColors?: string[];
   dotColor?: string;
   massColor?: string;
   background?: string;
@@ -30,6 +31,10 @@ export interface GravityWellProps {
   sources?: Array<{ x: number; y: number; mass?: number }>;
   // Ref-based source list for zero-rerender updates. Canvas reads on each RAF tick.
   sourcesRef?: React.RefObject<Array<{ x: number; y: number; mass?: number }> | null>;
+  // When true, vertices are repelled away from gravity sources instead of attracted.
+  invert?: boolean;
+  // When false, skips drawing the metallic mass sphere (useful when a custom element marks the gravity center).
+  showMass?: boolean;
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -69,6 +74,22 @@ function lerpColor(base: string, active: string, t: number): string {
   return `rgba(${Math.round(lerp(r1, r2, t))},${Math.round(lerp(g1, g2, t))},${Math.round(lerp(b1, b2, t))},${lerp(a1, a2, t).toFixed(2)})`;
 }
 
+// Maps angle (0→2π) to a position on a pre-parsed color ring with wrapping lerp.
+function sampleColorRing(
+  angle: number,
+  ring: [number, number, number, number][],
+): [number, number, number, number] {
+  const n = ring.length;
+  const a = ((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+  const frac = (a / (Math.PI * 2)) * n;
+  const i0 = Math.floor(frac) % n;
+  const i1 = (i0 + 1) % n;
+  const t = frac - Math.floor(frac);
+  const [r0, g0, b0, a0] = ring[i0];
+  const [r1, g1, b1, a1] = ring[i1];
+  return [lerp(r0, r1, t), lerp(g0, g1, t), lerp(b0, b1, t), lerp(a0, a1, t)];
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function GravityWell({
@@ -82,11 +103,14 @@ export function GravityWell({
   style,
   lineColorBase = '#e4e4e7',
   lineColorActive = '#d4d4d8',
+  lineColors = [],
   dotColor = 'rgba(161, 161, 170, 0.18)',
   massColor = 'rgba(113, 113, 122, 0.22)',
   background = '#fafafa',
   sources = [],
   sourcesRef,
+  invert = false,
+  showMass = true,
 }: GravityWellProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
@@ -102,13 +126,15 @@ export function GravityWell({
   // NOTE: sourcesRef is already a ref — do NOT add it to propsRef.
   const propsRef = useRef({
     radius, mass, softness, spring, cols, rows,
-    lineColorBase, lineColorActive, dotColor, massColor, background, sources,
+    lineColorBase, lineColorActive, lineColors, dotColor, massColor, background, sources, invert, showMass,
   });
+  const parsedRingRef = useRef<[number, number, number, number][]>([]);
   useLayoutEffect(() => {
     propsRef.current = {
       radius, mass, softness, spring, cols, rows,
-      lineColorBase, lineColorActive, dotColor, massColor, background, sources,
+      lineColorBase, lineColorActive, lineColors, dotColor, massColor, background, sources, invert, showMass,
     };
+    parsedRingRef.current = lineColors.map(c => parseColor(c));
   });
 
   // Stable mirror so the useEffect closure always sees the latest ref object
@@ -162,7 +188,7 @@ export function GravityWell({
     // No velocity — vertices lerp directly toward their computed target.
 
     function targetPos(hx: number, hy: number): { tx: number; ty: number } {
-      const { radius, mass: defaultMass, softness } = propsRef.current;
+      const { radius, mass: defaultMass, softness, invert } = propsRef.current;
       const refSrcs = sourcesRefRef.current?.current;
       const propSrcs = propsRef.current.sources;
 
@@ -191,7 +217,8 @@ export function GravityWell({
         totalDx += (dx / (dist + 0.001)) * amount;
         totalDy += (dy / (dist + 0.001)) * amount;
       }
-      return { tx: hx + totalDx, ty: hy + totalDy };
+      const sign = invert ? -1 : 1;
+      return { tx: hx + sign * totalDx, ty: hy + sign * totalDy };
     }
 
     function update() {
@@ -211,44 +238,106 @@ export function GravityWell({
       return Math.hypot(v.x - v.hx, v.y - v.hy);
     }
 
-    function getLineStyle(disp: number): { color: string; width: number } {
+    // Returns influence (0–1) and the angle (0–2π) from the dominant source.
+    // Merges influence + angle into one pass to avoid traversing sources twice.
+    function vertexInfluenceAndAngle(hx: number, hy: number): { influence: number; angle: number } {
+      const { radius } = propsRef.current;
+      const refSrcs = sourcesRefRef.current?.current;
+      const propSrcs = propsRef.current.sources;
+
+      let points: Array<{ x: number; y: number }>;
+      if (refSrcs && refSrcs.length > 0) {
+        points = refSrcs;
+      } else if (propSrcs && propSrcs.length > 0) {
+        points = propSrcs;
+      } else {
+        const { x, y, active } = mouseRef.current;
+        if (!active) return { influence: 0, angle: 0 };
+        points = [{ x, y }];
+      }
+
+      let maxInfluence = 0;
+      let dominantAngle = 0;
+      for (const src of points) {
+        const dist = Math.hypot(src.x - hx, src.y - hy);
+        if (dist >= radius) continue;
+        // raw: 0 at dist=radius, 1 at dist≤radius/2
+        const raw = Math.min(1, 2 * (1 - dist / radius));
+        const smoothed = raw * raw * (3 - 2 * raw);
+        if (smoothed > maxInfluence) {
+          maxInfluence = smoothed;
+          dominantAngle = ((Math.atan2(hy - src.y, hx - src.x) % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+        }
+      }
+      return { influence: maxInfluence, angle: dominantAngle };
+    }
+
+    // Compute the RGBA color + width for a single vertex.
+    function vertexStyle(v: Vertex): { rgba: [number, number, number, number]; width: number } {
       const { radius, lineColorBase, lineColorActive } = propsRef.current;
-      // Normalize against radius so the gradient spans the full influence zone.
-      // Smoothstep easing gives a gentle ramp rather than a hard cutoff.
+      const disp = vertexDisp(v);
       const raw = Math.min(disp / (radius * 0.2), 1);
       const t = raw * raw * (3 - 2 * raw);
+      const { influence, angle } = vertexInfluenceAndAngle(v.hx, v.hy);
+
+      let r: number, g: number, b: number, a: number;
+      const ring = parsedRingRef.current;
+      if (ring.length > 0) {
+        const [br, bg, bb, ba] = parseColor(lineColorBase);
+        const [cr, cg, cb, ca] = sampleColorRing(angle, ring);
+        r = lerp(br, cr, t);
+        g = lerp(bg, cg, t);
+        b = lerp(bb, cb, t);
+        a = lerp(ba, ca, t);
+      } else {
+        [r, g, b, a] = parseColor(lerpColor(lineColorBase, lineColorActive, t));
+      }
+
       return {
-        color: lerpColor(lineColorBase, lineColorActive, t),
+        rgba: [Math.round(r), Math.round(g), Math.round(b), a * influence],
         width: lerp(0.55, 1.4, t),
       };
     }
 
-    // Per-segment bezier rendering — each segment gets its own color/width
+    function rgbaStr([r, g, b, a]: [number, number, number, number]): string {
+      return `rgba(${r},${g},${b},${a.toFixed(3)})`;
+    }
+
+    // Per-segment bezier rendering with linear gradients — smooth color transitions
+    // between adjacent vertices eliminate the discrete color-band artifact.
     function drawLinePerSegment(pts: Vertex[]) {
       if (pts.length < 2) return;
       let sx = pts[0].x, sy = pts[0].y;
       for (let i = 0; i < pts.length - 1; i++) {
         const mx = (pts[i].x + pts[i + 1].x) * 0.5;
         const my = (pts[i].y + pts[i + 1].y) * 0.5;
-        const disp = Math.max(vertexDisp(pts[i]), vertexDisp(pts[i + 1]));
-        const { color, width } = getLineStyle(disp);
+        const s0 = vertexStyle(pts[i]);
+        const s1 = vertexStyle(pts[i + 1]);
+        const grad = ctx.createLinearGradient(sx, sy, mx, my);
+        grad.addColorStop(0, rgbaStr(s0.rgba));
+        grad.addColorStop(1, rgbaStr(s1.rgba));
         ctx.beginPath();
         ctx.moveTo(sx, sy);
         ctx.quadraticCurveTo(pts[i].x, pts[i].y, mx, my);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = width;
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = (s0.width + s1.width) * 0.5;
         ctx.stroke();
         sx = mx;
         sy = my;
       }
       // Final straight segment to last vertex
       const last = pts[pts.length - 1];
-      const { color, width } = getLineStyle(vertexDisp(last));
+      const secondLast = pts[pts.length - 2];
+      const sA = vertexStyle(secondLast);
+      const sB = vertexStyle(last);
+      const grad = ctx.createLinearGradient(sx, sy, last.x, last.y);
+      grad.addColorStop(0, rgbaStr(sA.rgba));
+      grad.addColorStop(1, rgbaStr(sB.rgba));
       ctx.beginPath();
       ctx.moveTo(sx, sy);
       ctx.lineTo(last.x, last.y);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = (sA.width + sB.width) * 0.5;
       ctx.stroke();
     }
 
@@ -338,7 +427,7 @@ export function GravityWell({
       ctx.clearRect(0, 0, W, H);
       drawBg();
       drawGrid();
-      drawMass();
+      if (propsRef.current.showMass !== false) drawMass();
       rafRef.current = requestAnimationFrame(loop);
     }
 
