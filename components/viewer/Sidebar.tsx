@@ -67,6 +67,7 @@ const NAV: NavItem[] = [
     children: [
       { label: 'Overview',     href: '/patterns' },
       { label: 'Gravity Chat', href: '/patterns/gravity-chat', experiment: true },
+      { label: 'Chat', href: '/patterns/chat' },
     ],
   },
 ];
