@@ -7,7 +7,7 @@ import { PropsTable, type PropRow } from '@/components/viewer/PropsTable';
 import { CodeBlock }  from '@/components/viewer/CodeBlock';
 
 const PROPS: PropRow[] = [
-  { name: 'surface',      type: '"professional" | "neo-brutalist"', default: '"professional"', description: 'Surface treatment — controls container and button styling' },
+  { name: 'surface',      type: '"default" | "shadow"', default: '"shadow"', description: 'Surface treatment — controls container and button styling' },
   { name: 'submitLabel',  type: 'string',   default: '"Explore"',  description: 'Text label on the submit button' },
   { name: 'placeholder',  type: 'string',   default: '"Explore any problems, prototype any ideas..."', description: 'Textarea placeholder text' },
   { name: 'value',        type: 'string',   default: '—',          description: 'Controlled textarea value' },
@@ -20,23 +20,23 @@ const PROPS: PropRow[] = [
 
 const USAGE = `import { ChatInputBox } from '@/components/ui';
 
-// Professional
+// Shadow surface
 <ChatInputBox
-  surface="professional"
+  surface="shadow"
   value={value}
   onChange={e => setValue(e.target.value)}
   onSubmit={val => console.log(val)}
 />
 
-// Neo-brutalist
+// Default surface
 <ChatInputBox
-  surface="neo-brutalist"
+  surface="default"
   value={value}
   onChange={e => setValue(e.target.value)}
   onSubmit={val => console.log(val)}
 />`;
 
-function ControlledDemo({ surface }: { surface: 'professional' | 'neo-brutalist' }) {
+function ControlledDemo({ surface }: { surface: 'default' | 'shadow' }) {
   const [value, setValue] = useState('');
   return (
     <ChatInputBox
@@ -60,23 +60,23 @@ export function ChatInputBoxPage() {
       </div>
 
       <section>
-        <h2 className="text-base font-semibold text-zinc-800 mb-3">Professional</h2>
-        <Preview label='surface="professional"'>
-          <ControlledDemo surface="professional" />
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">Shadow</h2>
+        <Preview label='surface="shadow"'>
+          <ControlledDemo surface="shadow" />
         </Preview>
       </section>
 
       <section>
-        <h2 className="text-base font-semibold text-zinc-800 mb-3">Neo-brutalist</h2>
-        <Preview label='surface="neo-brutalist"'>
-          <ControlledDemo surface="neo-brutalist" />
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">Default</h2>
+        <Preview label='surface="default"'>
+          <ControlledDemo surface="default" />
         </Preview>
       </section>
 
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Disabled</h2>
         <Preview label="disabled">
-          <ChatInputBox surface="professional" disabled placeholder="Disabled state" containerClassName="w-full max-w-lg" />
+          <ChatInputBox surface="shadow" disabled placeholder="Disabled state" containerClassName="w-full max-w-lg" />
         </Preview>
       </section>
 

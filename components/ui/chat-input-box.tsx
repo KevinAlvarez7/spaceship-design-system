@@ -13,19 +13,17 @@ const chatInputBoxVariants = cva(
   {
     variants: {
       surface: {
-        professional: [
+        default: [
+          'rounded-(--radius-md)',
+        ],
+        shadow: [
           'rounded-(--radius-2xl)',
           'shadow-(--shadow-border)',
-        ],
-        'neo-brutalist': [
-          'rounded-(--radius-sm)',
-          'border-2 border-(--border-default)',
-          'shadow-(--shadow-neo-brutalist)',
         ],
       },
     },
     defaultVariants: {
-      surface: 'professional',
+      surface: 'shadow',
     },
   }
 );
@@ -46,21 +44,8 @@ function UpArrowIcon() {
   );
 }
 
-function RightArrowIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <path d="M4 8h8M12 8l-4-4M12 8l-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-const SURFACE_ICON: Record<NonNullable<ChatInputBoxProps['surface']>, React.ReactNode> = {
-  professional:    <UpArrowIcon />,
-  'neo-brutalist': <RightArrowIcon />,
-};
-
 export function ChatInputBox({
-  surface = 'professional',
+  surface = 'shadow',
   onSubmit,
   containerClassName,
   className,
@@ -110,12 +95,12 @@ export function ChatInputBox({
         <Button
           variant="primary"
           size="md"
-          surface={surface}
+          surface={surface ?? 'shadow'}
           disabled={disabled}
           onClick={handleSubmit}
         >
           {submitLabel}
-          {SURFACE_ICON[surface ?? 'professional']}
+          <UpArrowIcon />
         </Button>
       </div>
     </div>
