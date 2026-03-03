@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { SidebarToggle } from '@/components/patterns';
 
-export default function SidebarTogglePage() {
+export function SidebarTogglePage() {
   const [isOpen, setIsOpen] = useState(true);
 
   return (

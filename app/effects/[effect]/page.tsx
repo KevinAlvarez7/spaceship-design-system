@@ -7,19 +7,22 @@ import { GridBackgroundPage }   from './GridBackgroundPage';
 import { SpaceshipLogoV2Page }  from './SpaceshipLogoV2Page';
 import { SpaceshipPlanetPage }  from './SpaceshipPlanetPage';
 import { SpaceshipStarPage }    from './SpaceshipStarPage';
+import { SpaceshipLogoScenePage } from './SpaceshipLogoScenePage';
+import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
-const PAGES: Record<string, { title: string; Component: React.ComponentType }> = {
-  'gravity-assist':    { title: 'Gravity Assist',    Component: GravityAssistPage },
-  'spaceship-logo':    { title: 'Spaceship Logo',    Component: SpaceshipLogoPage },
-  'spaceship-dot':     { title: 'Spaceship Dot',     Component: SpaceshipDotPage },
-  'grid-background':   { title: 'Grid Background',   Component: GridBackgroundPage },
-  'spaceship-logo-v2': { title: 'Spaceship Logo V2', Component: SpaceshipLogoV2Page },
-  'spaceship-planet':  { title: 'Spaceship Planet',  Component: SpaceshipPlanetPage },
-  'spaceship-star':    { title: 'Spaceship Star',    Component: SpaceshipStarPage },
+const EFFECTS: Record<string, React.ComponentType> = {
+  'gravity-assist':    GravityAssistPage,
+  'spaceship-logo':    SpaceshipLogoPage,
+  'spaceship-dot':     SpaceshipDotPage,
+  'grid-background':   GridBackgroundPage,
+  'spaceship-logo-v2': SpaceshipLogoV2Page,
+  'spaceship-planet':  SpaceshipPlanetPage,
+  'spaceship-star':         SpaceshipStarPage,
+  'spaceship-logo-scene':   SpaceshipLogoScenePage,
 };
 
 export function generateStaticParams() {
-  return Object.keys(PAGES).map(effect => ({ effect }));
+  return getSlugsForRoute('effects').map(slug => ({ effect: slug }));
 }
 
 export default async function EffectPage({
@@ -28,13 +31,14 @@ export default async function EffectPage({
   params: Promise<{ effect: string }>;
 }) {
   const { effect } = await params;
-  const page = PAGES[effect];
-  if (!page) notFound();
-  const { title, Component } = page;
+  const entry = getEntry('effects', effect);
+  if (!entry) notFound();
+  const Component = EFFECTS[effect];
+  if (!Component) notFound();
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <Topbar title={`Effects / ${title}`} />
+      <Topbar title={buildTopbarTitle(entry)} />
       <main className="flex-1 overflow-y-auto p-8">
         <Component />
       </main>

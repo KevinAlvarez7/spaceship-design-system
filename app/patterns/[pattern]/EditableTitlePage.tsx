@@ -2,7 +2,7 @@
 
 import { EditableTitle } from '@/components/patterns';
 
-export default function EditableTitlePage() {
+export function EditableTitlePage() {
   return (
     <div className="flex flex-col gap-(--spacing-sm) p-(--spacing-sm)">
       <div className="flex items-center gap-(--spacing-sm)">

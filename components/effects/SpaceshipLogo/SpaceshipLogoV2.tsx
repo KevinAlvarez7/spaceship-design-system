@@ -189,12 +189,11 @@ export function SpaceshipLogoV2({
         ref={containerRef}
         className={className}
         style={{ width, height: totalH, position: 'relative' }}
-        onMouseEnter={onMouseEnter}
       >
         <div style={{ position: 'absolute', top: beamTop, left: beamLeft, zIndex: 0 }}>
           {beamSvg}
         </div>
-        <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10 }} onMouseEnter={onMouseEnter}>
           {saucerSvg}
         </div>
       </div>
@@ -206,7 +205,6 @@ export function SpaceshipLogoV2({
       ref={containerRef}
       className={className}
       style={{ x, y, rotate, width, height: totalH, position: 'relative' }}
-      onMouseEnter={onMouseEnter}
     >
       {/* Beam layer — opacity wrapper keeps fade separate from the skew loop */}
       <motion.div
@@ -223,8 +221,8 @@ export function SpaceshipLogoV2({
         </motion.div>
       </motion.div>
 
-      {/* Saucer layer — no CSS rotate; tilt is baked into the V2 paths */}
-      <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
+      {/* Saucer layer — onMouseEnter scoped here so only the saucer body triggers events */}
+      <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 10 }} onMouseEnter={onMouseEnter}>
         {saucerSvg}
       </div>
     </motion.div>

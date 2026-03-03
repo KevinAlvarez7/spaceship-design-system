@@ -9,7 +9,7 @@ import { ChatInputBox } from '@/components/ui';
 type Mode = 'idle' | 'blackHole';
 type Source = { x: number; y: number; mass?: number };
 
-export default function GravityChatPlayground() {
+export function GravityChatPage() {
   const [mode, setMode] = useState<Mode>('idle');
   const modeRef = useRef<Mode>('idle');
 

@@ -4,16 +4,17 @@ import { LogoPage }          from './LogoPage';
 import { IconsPage }         from './IconsPage';
 import { IllustrationsPage } from './IllustrationsPage';
 import { AnimationsPage }    from './AnimationsPage';
+import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
-const PAGES: Record<string, { title: string; Component: React.ComponentType }> = {
-  logo:          { title: 'Logo',          Component: LogoPage },
-  icons:         { title: 'Icons',         Component: IconsPage },
-  illustrations: { title: 'Illustrations', Component: IllustrationsPage },
-  animations:    { title: 'Animations',    Component: AnimationsPage },
+const ASSETS: Record<string, React.ComponentType> = {
+  logo:          LogoPage,
+  icons:         IconsPage,
+  illustrations: IllustrationsPage,
+  animations:    AnimationsPage,
 };
 
 export function generateStaticParams() {
-  return Object.keys(PAGES).map(category => ({ category }));
+  return getSlugsForRoute('assets').map(slug => ({ category: slug }));
 }
 
 export default async function AssetPage({
@@ -22,13 +23,14 @@ export default async function AssetPage({
   params: Promise<{ category: string }>;
 }) {
   const { category } = await params;
-  const page = PAGES[category];
-  if (!page) notFound();
-  const { title, Component } = page;
+  const entry = getEntry('assets', category);
+  if (!entry) notFound();
+  const Component = ASSETS[category];
+  if (!Component) notFound();
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <Topbar title={`Assets / ${title}`} />
+      <Topbar title={buildTopbarTitle(entry)} />
       <main className="flex-1 overflow-y-auto p-8">
         <Component />
       </main>

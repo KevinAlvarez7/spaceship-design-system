@@ -6,18 +6,19 @@ import { SpacingPage }    from './SpacingPage';
 import { RadiusPage }     from './RadiusPage';
 import { ShadowPage }     from './ShadowPage';
 import { MotionPage }     from './MotionPage';
+import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
-const PAGES: Record<string, { title: string; Component: React.ComponentType }> = {
-  colors:     { title: 'Colors',     Component: ColorPage },
-  typography: { title: 'Typography', Component: TypographyPage },
-  spacing:    { title: 'Spacing',    Component: SpacingPage },
-  radius:     { title: 'Radius',     Component: RadiusPage },
-  shadow:     { title: 'Shadow',     Component: ShadowPage },
-  motion:     { title: 'Motion',     Component: MotionPage },
+const TOKENS: Record<string, React.ComponentType> = {
+  colors:     ColorPage,
+  typography: TypographyPage,
+  spacing:    SpacingPage,
+  radius:     RadiusPage,
+  shadow:     ShadowPage,
+  motion:     MotionPage,
 };
 
 export function generateStaticParams() {
-  return Object.keys(PAGES).map(category => ({ category }));
+  return getSlugsForRoute('tokens').map(slug => ({ category: slug }));
 }
 
 export default async function TokenCategoryPage({
@@ -26,13 +27,14 @@ export default async function TokenCategoryPage({
   params: Promise<{ category: string }>;
 }) {
   const { category } = await params;
-  const page = PAGES[category];
-  if (!page) notFound();
-  const { title, Component } = page;
+  const entry = getEntry('tokens', category);
+  if (!entry) notFound();
+  const Component = TOKENS[category];
+  if (!Component) notFound();
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <Topbar title={`Tokens / ${title}`} />
+      <Topbar title={buildTopbarTitle(entry)} />
       <main className="flex-1 overflow-y-auto p-8">
         <Component />
       </main>

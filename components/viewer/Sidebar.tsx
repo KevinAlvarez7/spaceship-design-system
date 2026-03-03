@@ -6,86 +6,9 @@ import { cn } from '@/lib/utils';
 import { ChevronRight, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useState } from 'react';
 import { ExperimentBadge } from '@/components/viewer/ExperimentBadge';
+import { buildNav, type NavItem } from '@/lib/viewer-registry';
 
-type NavItem = {
-  label: string;
-  href?: string;
-  experiment?: true;
-  children?: NavItem[];
-};
-
-const NAV: NavItem[] = [
-  {
-    label: 'Foundations',
-    children: [
-      { label: 'Colors',      href: '/tokens/colors' },
-      { label: 'Typography',  href: '/tokens/typography' },
-      { label: 'Spacing',     href: '/tokens/spacing' },
-      { label: 'Radius',      href: '/tokens/radius' },
-      { label: 'Shadow',      href: '/tokens/shadow' },
-      { label: 'Motion',      href: '/tokens/motion' },
-    ],
-  },
-  {
-    label: 'Assets',
-    children: [
-      { label: 'Logo',          href: '/assets/logo' },
-      { label: 'Icons',         href: '/assets/icons' },
-      { label: 'Illustrations', href: '/assets/illustrations' },
-      { label: 'Animations',    href: '/assets/animations' },
-    ],
-  },
-  {
-    label: 'Typography',
-    children: [
-      { label: 'Specimens', href: '/typography' },
-    ],
-  },
-  {
-    label: 'Components',
-    children: [
-      { label: 'Button', href: '/components/button' },
-      { label: 'Input',  href: '/components/input' },
-      { label: 'Card',   href: '/components/card' },
-      { label: 'Badge',          href: '/components/badge' },
-      { label: 'Chat Input Box', href: '/components/chat-input-box' },
-      { label: 'Chat Bubble',   href: '/components/chat-bubble' },
-      { label: 'Chat Message',  href: '/components/chat-message' },
-      { label: 'Chat Thread',   href: '/components/chat-thread' },
-    ],
-  },
-  {
-    label: 'Effects',
-    children: [
-      { label: 'Gravity Assist',    href: '/effects/gravity-assist',    experiment: true },
-      { label: 'Spaceship Logo',    href: '/effects/spaceship-logo',    experiment: true },
-      { label: 'Spaceship Dot',     href: '/effects/spaceship-dot',     experiment: true },
-      { label: 'Grid Background',   href: '/effects/grid-background',   experiment: true },
-      { label: 'Spaceship Logo V2', href: '/effects/spaceship-logo-v2', experiment: true },
-      { label: 'Spaceship Planet',  href: '/effects/spaceship-planet',  experiment: true },
-      { label: 'Spaceship Star',    href: '/effects/spaceship-star',    experiment: true },
-    ],
-  },
-  {
-    label: 'Patterns',
-    children: [
-      { label: 'Overview',              href: '/patterns' },
-      { label: 'Chat',                  href: '/patterns/chat' },
-      { label: 'Preview Panel',         href: '/patterns/preview-panel' },
-      { label: 'Preview Panel Header',  href: '/patterns/preview-panel-header' },
-      { label: 'Editable Title',        href: '/patterns/editable-title' },
-      { label: 'Shareable Link',        href: '/patterns/shareable-link' },
-      { label: 'Sidebar Toggle',        href: '/patterns/sidebar-toggle' },
-    ],
-  },
-  {
-    label: 'Pages',
-    children: [
-      { label: 'Gravity Chat',        href: '/patterns/gravity-chat',        experiment: true },
-      { label: 'Prototype Workspace', href: '/patterns/prototype-workspace', experiment: true },
-    ],
-  },
-];
+const NAV = buildNav();
 
 interface SidebarProps {
   collapsed?: boolean;

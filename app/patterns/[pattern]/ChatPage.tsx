@@ -3,7 +3,7 @@
 import { ChatThread, ChatBubble, ChatMessage, ChatInputBox } from '@/components/ui';
 import { useChatDemo } from '@/app/patterns/_shared/useChatDemo';
 
-export default function ChatPatternPage() {
+export function ChatPage() {
   const { messages, streamedText, isStreaming, inputValue, setInputValue, handleSubmit } = useChatDemo();
 
   return (

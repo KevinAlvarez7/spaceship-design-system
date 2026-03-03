@@ -8,20 +8,21 @@ import { ChatInputBoxPage } from './ChatInputBoxPage';
 import { ChatBubblePage }  from './ChatBubblePage';
 import { ChatMessagePage } from './ChatMessagePage';
 import { ChatThreadPage }  from './ChatThreadPage';
+import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
-const PAGES: Record<string, { title: string; Component: React.ComponentType }> = {
-  button:           { title: 'Button',         Component: ButtonPage },
-  input:            { title: 'Input',          Component: InputPage },
-  card:             { title: 'Card',           Component: CardPage },
-  badge:            { title: 'Badge',          Component: BadgePage },
-  'chat-input-box': { title: 'Chat Input Box', Component: ChatInputBoxPage },
-  'chat-bubble':    { title: 'Chat Bubble',    Component: ChatBubblePage },
-  'chat-message':   { title: 'Chat Message',   Component: ChatMessagePage },
-  'chat-thread':    { title: 'Chat Thread',    Component: ChatThreadPage },
+const COMPONENTS: Record<string, React.ComponentType> = {
+  button:           ButtonPage,
+  input:            InputPage,
+  card:             CardPage,
+  badge:            BadgePage,
+  'chat-input-box': ChatInputBoxPage,
+  'chat-bubble':    ChatBubblePage,
+  'chat-message':   ChatMessagePage,
+  'chat-thread':    ChatThreadPage,
 };
 
 export function generateStaticParams() {
-  return Object.keys(PAGES).map(component => ({ component }));
+  return getSlugsForRoute('components').map(slug => ({ component: slug }));
 }
 
 export default async function ComponentPage({
@@ -30,13 +31,14 @@ export default async function ComponentPage({
   params: Promise<{ component: string }>;
 }) {
   const { component } = await params;
-  const page = PAGES[component];
-  if (!page) notFound();
-  const { title, Component } = page;
+  const entry = getEntry('components', component);
+  if (!entry) notFound();
+  const Component = COMPONENTS[component];
+  if (!Component) notFound();
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <Topbar title={`Components / ${title}`} />
+      <Topbar title={buildTopbarTitle(entry)} />
       <main className="flex-1 overflow-y-auto p-8">
         <Component />
       </main>

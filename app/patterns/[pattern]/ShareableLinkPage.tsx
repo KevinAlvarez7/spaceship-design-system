@@ -2,7 +2,7 @@
 
 import { ShareableLink } from '@/components/patterns';
 
-export default function ShareableLinkPage() {
+export function ShareableLinkPage() {
   return (
     <div className="flex flex-col gap-(--spacing-sm) p-(--spacing-sm)">
       <div className="flex items-start">

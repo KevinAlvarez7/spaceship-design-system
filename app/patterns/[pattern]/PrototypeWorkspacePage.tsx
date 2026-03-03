@@ -8,7 +8,7 @@ import { useChatDemo } from '@/app/patterns/_shared/useChatDemo';
 
 const DEMO_URL = 'https://spaceship.design';
 
-export default function PrototypeWorkspacePage() {
+export function PrototypeWorkspacePage() {
   const [previewKey, setPreviewKey] = useState(0);
   const { messages, streamedText, isStreaming, inputValue, setInputValue, handleSubmit } = useChatDemo();
 

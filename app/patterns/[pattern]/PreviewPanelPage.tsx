@@ -5,7 +5,7 @@ import { PreviewPanel } from '@/components/patterns';
 
 const DEMO_URL = 'https://spaceship.design';
 
-export default function PreviewPanelPage() {
+export function PreviewPanelPage() {
   const [key, setKey] = useState(0);
 
   return (

@@ -12,3 +12,6 @@ export type { SpaceshipPlanetProps } from './SpaceshipPlanet';
 
 export { SpaceshipStar } from './SpaceshipStar';
 export type { SpaceshipStarProps } from './SpaceshipStar';
+
+export { SpaceshipLogoScene } from './SpaceshipLogoScene';
+export type { SpaceshipLogoSceneProps, SceneDecoration } from './SpaceshipLogoScene';
