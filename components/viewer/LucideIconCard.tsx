@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { type IconEntry } from '@/assets/lucide-icons';
+import { type IconEntry, ICON_SIZES } from '@/assets/lucide-icons';
 
 interface LucideIconCardProps {
   entry: IconEntry;
@@ -33,11 +33,25 @@ export function LucideIconCard({ entry }: LucideIconCardProps) {
         onClick={() => setDark(d => !d)}
         title="Toggle light / dark background"
         className={cn(
-          'relative flex min-h-32 w-full items-center justify-center p-6 transition-colors',
+          'flex w-full items-center justify-around px-4 py-5 transition-colors',
           dark ? 'bg-zinc-900' : 'bg-zinc-50'
         )}
       >
-        <Icon className={cn('h-8 w-8', dark ? 'text-white' : 'text-zinc-800')} />
+        {ICON_SIZES.map(({ label, size, strokeWidth }) => (
+          <div key={label} className="flex flex-col items-center gap-1.5">
+            <Icon
+              style={{ width: size, height: size }}
+              strokeWidth={strokeWidth}
+              className={dark ? 'text-white' : 'text-zinc-800'}
+            />
+            <span className={cn('text-[10px] leading-none', dark ? 'text-zinc-400' : 'text-zinc-400')}>
+              {size}
+            </span>
+            <span className={cn('text-[10px] leading-none', dark ? 'text-zinc-500' : 'text-zinc-400/70')}>
+              sw:{strokeWidth}
+            </span>
+          </div>
+        ))}
       </button>
 
       {/* Footer */}
