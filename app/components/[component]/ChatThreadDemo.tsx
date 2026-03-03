@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChatThread, ChatBubble, ChatMessage } from '@/components/ui';
+import { ChatThread, ChatBubble, ChatMessage, ChatInputBox } from '@/components/ui';
 
 type Message = { role: 'user' | 'assistant'; content: string };
 
@@ -16,12 +16,12 @@ export function ChatThreadDemo() {
   const [messages, setMessages] = useState<Message[]>(SEED);
   const [input, setInput] = useState('');
 
-  function addMessage() {
-    if (!input.trim()) return;
+  function addMessage(value: string) {
+    if (!value.trim()) return;
     setMessages(prev => [
       ...prev,
-      { role: 'user', content: input },
-      { role: 'assistant', content: `Got it — you said: *"${input}"*. I'll work on that now.` },
+      { role: 'user', content: value },
+      { role: 'assistant', content: `Got it — you said: *"${value}"*. I'll work on that now.` },
     ]);
     setInput('');
   }
@@ -35,21 +35,14 @@ export function ChatThreadDemo() {
             : <ChatMessage key={i} content={msg.content} />
         )}
       </ChatThread>
-      <div className="flex gap-2">
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && addMessage()}
-          placeholder="Type a message and press Enter…"
-          className="flex-1 rounded border border-zinc-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-300"
-        />
-        <button
-          onClick={addMessage}
-          className="rounded bg-zinc-900 px-4 py-2 text-sm text-white hover:bg-zinc-700 transition-colors"
-        >
-          Send
-        </button>
-      </div>
+      <ChatInputBox
+        size="sm"
+        submitLabel="Send"
+        placeholder="Type a message and press Enter…"
+        value={input}
+        onChange={e => setInput(e.target.value)}
+        onSubmit={addMessage}
+      />
     </div>
   );
 }
