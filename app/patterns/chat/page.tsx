@@ -34,17 +34,17 @@ export default function ChatPatternPage() {
 
   useEffect(() => {
     if (!isStreaming) return;
-    if (streamIndexRef.current >= STREAMING_RESPONSE.length) {
-      setIsStreaming(false);
-      setMessages(prev => [
-        ...prev,
-        { role: 'assistant', content: STREAMING_RESPONSE },
-      ]);
-      return;
-    }
     const timer = setTimeout(() => {
-      streamIndexRef.current += 4;
-      setStreamedText(STREAMING_RESPONSE.slice(0, streamIndexRef.current));
+      if (streamIndexRef.current >= STREAMING_RESPONSE.length) {
+        setIsStreaming(false);
+        setMessages(prev => [
+          ...prev,
+          { role: 'assistant', content: STREAMING_RESPONSE },
+        ]);
+      } else {
+        streamIndexRef.current += 4;
+        setStreamedText(STREAMING_RESPONSE.slice(0, streamIndexRef.current));
+      }
     }, 20);
     return () => clearTimeout(timer);
   }, [streamedText, isStreaming]);

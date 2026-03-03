@@ -18,12 +18,12 @@ export function ChatMessageStreamingDemo() {
 
   useEffect(() => {
     if (!streaming) return;
-    if (displayed.length >= FULL_TEXT.length) {
-      setStreaming(false);
-      return;
-    }
     const timer = setTimeout(() => {
-      setDisplayed(prev => FULL_TEXT.slice(0, prev.length + 3));
+      if (displayed.length >= FULL_TEXT.length) {
+        setStreaming(false);
+      } else {
+        setDisplayed(prev => FULL_TEXT.slice(0, prev.length + 3));
+      }
     }, 30);
     return () => clearTimeout(timer);
   }, [displayed, streaming]);
