@@ -44,10 +44,10 @@ export function LucideIconCard({ entry }: LucideIconCardProps) {
               strokeWidth={strokeWidth}
               className={dark ? 'text-white' : 'text-zinc-800'}
             />
-            <span className={cn('text-[10px] leading-none', dark ? 'text-zinc-400' : 'text-zinc-400')}>
+            <span className="text-[10px] leading-none text-zinc-400">
               {size}
             </span>
-            <span className={cn('text-[10px] leading-none', dark ? 'text-zinc-500' : 'text-zinc-400/70')}>
+            <span className={cn('text-[10px] leading-none', dark ? 'text-zinc-400/70' : 'text-zinc-500')}>
               sw:{strokeWidth}
             </span>
           </div>
