@@ -10,9 +10,14 @@ export interface ChatThreadProps {
 
 export function ChatThread({ children, className }: ChatThreadProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
+  const hasMountedRef = useRef(false);
   const childCount = Children.count(children);
 
   useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [childCount]);
 
