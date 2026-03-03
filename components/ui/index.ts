@@ -15,3 +15,6 @@ export type { ChatInputBoxProps } from './chat-input-box';
 
 export { ChatBubble, chatBubbleVariants } from './chat-bubble';
 export type { ChatBubbleProps } from './chat-bubble';
+
+export { ChatMessage } from './chat-message';
+export type { ChatMessageProps } from './chat-message';
