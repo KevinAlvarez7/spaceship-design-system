@@ -177,6 +177,7 @@
   /* Font Families */
   --font-family-primary: 'Zilla Slab', Georgia, serif;
   --font-family-secondary: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
   /* Font Sizes */
   --font-size-2xl: 1.5rem; /* 24px */
@@ -239,7 +240,8 @@
   --radius-lg: 8px;
   --radius-xl: 12px;
   --radius-2xl: 16px;
-  --radius-3xl: 24px;
+  --radius-3xl: 20px;
+  --radius-4xl: 24px;
   --radius-full: 9999px;
 
   /* ── Shadow-Border ───────────────────────────────────────────
@@ -253,6 +255,12 @@
     0px 0px 0px 1px rgba(0, 0, 0, 0.08),
     0px 1px 2px -1px rgba(0, 0, 0, 0.08),
     0px 2px 4px 0px rgba(0, 0, 0, 0.06);
+
+  /* ── Effects ─────────────────────────────────────────────────
+     Not in Figma variables — maintained manually.
+     ──────────────────────────────────────────────────────────── */
+  --effect-gravity-dot:  color-mix(in srgb, var(--neutral-400) 32%, transparent);
+  --effect-gravity-grid: color-mix(in srgb, var(--neutral-400) 13%, transparent);
 
   /* ── Motion ──────────────────────────────────────────────────
      Not in Figma variables — maintained manually.
