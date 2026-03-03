@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { Zilla_Slab, Outfit } from 'next/font/google';
+import { Zilla_Slab, Outfit, JetBrains_Mono } from 'next/font/google';
 import { Sidebar } from '@/components/viewer/Sidebar';
 
 const zillaSlab = Zilla_Slab({
@@ -17,6 +17,13 @@ const outfit = Outfit({
   display: 'swap',
 });
 
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '600'],
+  variable: '--font-family-mono',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: 'Spaceship Design System',
   description: 'Living style guide and component explorer',
@@ -25,7 +32,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${zillaSlab.variable} ${outfit.variable} flex h-screen overflow-hidden bg-white`}>
+      <body className={`${zillaSlab.variable} ${outfit.variable} ${jetbrainsMono.variable} flex h-screen overflow-hidden bg-white`}>
         <Sidebar />
         <div className="flex flex-1 flex-col overflow-hidden">
           {children}
