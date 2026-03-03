@@ -9,6 +9,7 @@ export type TypographyToken = {
 export const fontFamilies: TypographyToken[] = [
   { name: 'primary',   cssVar: '--font-family-primary',   value: "Zilla Slab, Georgia, serif" },
   { name: 'secondary', cssVar: '--font-family-secondary', value: "Outfit, system-ui, sans-serif" },
+  { name: 'mono',      cssVar: '--font-family-mono',      value: "JetBrains Mono, ui-monospace, monospace" },
 ];
 
 export const fontSizes: TypographyToken[] = [
@@ -105,5 +106,134 @@ export const typeSpecimens: TypeSpecimen[] = [
     label: 'Caption',
     className: 'font-sans [font-size:var(--font-size-xs)] [font-weight:var(--font-weight-regular)] [line-height:var(--line-height-xs)] [color:var(--text-tertiary)]',
     sample: 'Timestamp · Metadata · Fine print',
+  },
+];
+
+export type TypeSpecimenGroup = {
+  group: string;
+  specimens: TypeSpecimen[];
+};
+
+export const typeSpecimenGroups: TypeSpecimenGroup[] = [
+  {
+    group: 'Displays',
+    specimens: [
+      {
+        name: 'display-1',
+        label: 'Display 1',
+        className: 'font-serif [font-size:var(--font-size-6xl)] [font-weight:var(--font-weight-bold)] [line-height:var(--line-height-6xl)]',
+        sample: 'The quick brown fox',
+      },
+      {
+        name: 'display-2',
+        label: 'Display 2',
+        className: 'font-serif [font-size:var(--font-size-5xl)] [font-weight:var(--font-weight-bold)] [line-height:var(--line-height-5xl)]',
+        sample: 'The quick brown fox',
+      },
+      {
+        name: 'display-3',
+        label: 'Display 3',
+        className: 'font-serif [font-size:var(--font-size-4xl)] [font-weight:var(--font-weight-bold)] [line-height:var(--line-height-4xl)]',
+        sample: 'The quick brown fox',
+      },
+    ],
+  },
+  {
+    group: 'Headings',
+    specimens: [
+      {
+        name: 'h1',
+        label: 'H1',
+        className: 'font-sans [font-size:var(--font-size-3xl)] [font-weight:var(--font-weight-bold)] [line-height:var(--line-height-3xl)]',
+        sample: 'Design systems scale quality',
+      },
+      {
+        name: 'h2',
+        label: 'H2',
+        className: 'font-sans [font-size:var(--font-size-2xl)] [font-weight:var(--font-weight-bold)] [line-height:var(--line-height-2xl)]',
+        sample: 'Design systems scale quality',
+      },
+      {
+        name: 'h3',
+        label: 'H3',
+        className: 'font-sans [font-size:var(--font-size-xl)] [font-weight:var(--font-weight-bold)] [line-height:var(--line-height-xl)]',
+        sample: 'Tokens, Components, Patterns',
+      },
+      {
+        name: 'h4',
+        label: 'H4',
+        className: 'font-sans [font-size:var(--font-size-lg)] [font-weight:var(--font-weight-bold)] [line-height:var(--line-height-lg)]',
+        sample: 'Consistent, scalable UI',
+      },
+      {
+        name: 'h5',
+        label: 'H5',
+        className: 'font-sans [font-size:var(--font-size-base)] [font-weight:var(--font-weight-bold)] [line-height:var(--line-height-base)]',
+        sample: 'Consistent, scalable UI',
+      },
+    ],
+  },
+  {
+    group: 'Body',
+    specimens: [
+      {
+        name: 'body-lg',
+        label: 'Body LG',
+        className: 'font-sans [font-size:var(--font-size-lg)] [font-weight:var(--font-weight-regular)] [line-height:var(--line-height-lg)]',
+        sample: 'The primary reading size. Used for paragraphs, descriptions, and most UI content.',
+      },
+      {
+        name: 'body-base',
+        label: 'Body Base',
+        className: 'font-sans [font-size:var(--font-size-base)] [font-weight:var(--font-weight-regular)] [line-height:var(--line-height-base)]',
+        sample: 'The primary reading size. Used for paragraphs, descriptions, and most UI content.',
+      },
+      {
+        name: 'body-sm',
+        label: 'Body SM',
+        className: 'font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-regular)] [line-height:var(--line-height-sm)]',
+        sample: 'Secondary body text. Form labels, supporting descriptions, sidebar content.',
+      },
+    ],
+  },
+  {
+    group: 'Captions',
+    specimens: [
+      {
+        name: 'caption-1',
+        label: 'Caption 1',
+        className: 'font-sans [font-size:var(--font-size-base)] [font-weight:var(--font-weight-semibold)] [line-height:var(--line-height-sm)]',
+        sample: 'Form label · UI label · Tag',
+      },
+      {
+        name: 'caption-2',
+        label: 'Caption 2',
+        className: 'font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] [line-height:var(--line-height-sm)]',
+        sample: 'Form label · UI label · Tag',
+      },
+      {
+        name: 'caption-3',
+        label: 'Caption 3',
+        className: 'font-sans [font-size:var(--font-size-xs)] [font-weight:var(--font-weight-semibold)] [line-height:var(--line-height-xs)]',
+        sample: 'Timestamp · Metadata · Fine print',
+      },
+    ],
+  },
+  {
+    group: 'Code',
+    specimens: [
+      {
+        name: 'code-1',
+        label: 'Code 1',
+        className: 'font-mono [font-size:var(--font-size-base)] [font-weight:var(--font-weight-regular)] [line-height:var(--line-height-base)]',
+        sample: 'const greeting = "Hello, world!";',
+      },
+      {
+        name: 'code-2',
+        label: 'Code 2',
+        className: 'font-mono [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-regular)] [line-height:var(--line-height-sm)]',
+        sample: 'const greeting = "Hello, world!";',
+      },
+    ],
   },
 ];
