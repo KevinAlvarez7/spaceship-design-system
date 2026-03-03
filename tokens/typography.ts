@@ -58,57 +58,6 @@ export type TypeSpecimen = {
   sample: string;
 };
 
-export const typeSpecimens: TypeSpecimen[] = [
-  {
-    name: 'display',
-    label: 'Display',
-    className: 'font-serif [font-size:var(--font-size-3xl)] [font-weight:var(--font-weight-bold)] [line-height:var(--line-height-3xl)]',
-    sample: 'The quick brown fox',
-  },
-  {
-    name: 'heading-xl',
-    label: 'Heading XL',
-    className: 'font-serif [font-size:var(--font-size-2xl)] [font-weight:var(--font-weight-bold)] [line-height:var(--line-height-2xl)]',
-    sample: 'Design systems scale quality',
-  },
-  {
-    name: 'heading-lg',
-    label: 'Heading LG',
-    className: 'font-serif [font-size:var(--font-size-xl)] [font-weight:var(--font-weight-semibold)] [line-height:var(--line-height-xl)]',
-    sample: 'Tokens, Components, Patterns',
-  },
-  {
-    name: 'heading-md',
-    label: 'Heading MD',
-    className: 'font-serif [font-size:var(--font-size-lg)] [font-weight:var(--font-weight-semibold)] [line-height:var(--line-height-lg)]',
-    sample: 'Consistent, scalable UI',
-  },
-  {
-    name: 'body-base',
-    label: 'Body Base',
-    className: 'font-sans [font-size:var(--font-size-base)] [font-weight:var(--font-weight-regular)] [line-height:var(--line-height-base)]',
-    sample: 'The primary reading size. Used for paragraphs, descriptions, and most UI content.',
-  },
-  {
-    name: 'body-sm',
-    label: 'Body SM',
-    className: 'font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-regular)] [line-height:var(--line-height-sm)]',
-    sample: 'Secondary body text. Form labels, supporting descriptions, sidebar content.',
-  },
-  {
-    name: 'label',
-    label: 'Label',
-    className: 'font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] [line-height:var(--line-height-sm)]',
-    sample: 'Form label · UI label · Tag',
-  },
-  {
-    name: 'caption',
-    label: 'Caption',
-    className: 'font-sans [font-size:var(--font-size-xs)] [font-weight:var(--font-weight-regular)] [line-height:var(--line-height-xs)] [color:var(--text-tertiary)]',
-    sample: 'Timestamp · Metadata · Fine print',
-  },
-];
-
 export type TypeSpecimenGroup = {
   group: string;
   specimens: TypeSpecimen[];
