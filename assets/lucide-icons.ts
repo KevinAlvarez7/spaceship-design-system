@@ -8,6 +8,12 @@ export type IconEntry = {
   tags?: string[];
 };
 
+export const ICON_SIZES = [
+  { label: 'sm', size: 16, strokeWidth: 2    },
+  { label: 'md', size: 20, strokeWidth: 2.25 },
+  { label: 'lg', size: 24, strokeWidth: 2.5  },
+] as const;
+
 export const lucideIcons: IconEntry[] = [
   { name: 'Check',         icon: Check,        importName: 'Check',        tags: ['feedback', 'confirm'] },
   { name: 'Chevron Right', icon: ChevronRight,  importName: 'ChevronRight', tags: ['navigation', 'arrow'] },
