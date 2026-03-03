@@ -18,3 +18,6 @@ export type { ChatBubbleProps } from './chat-bubble';
 
 export { ChatMessage } from './chat-message';
 export type { ChatMessageProps } from './chat-message';
+
+export { ChatThread } from './chat-thread';
+export type { ChatThreadProps } from './chat-thread';
