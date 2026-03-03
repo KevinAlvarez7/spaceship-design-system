@@ -5,6 +5,9 @@ import { InputPage }   from './InputPage';
 import { CardPage }    from './CardPage';
 import { BadgePage }   from './BadgePage';
 import { ChatInputBoxPage } from './ChatInputBoxPage';
+import { ChatBubblePage }  from './ChatBubblePage';
+import { ChatMessagePage } from './ChatMessagePage';
+import { ChatThreadPage }  from './ChatThreadPage';
 
 const PAGES: Record<string, { title: string; Component: React.ComponentType }> = {
   button:           { title: 'Button',         Component: ButtonPage },
@@ -12,6 +15,9 @@ const PAGES: Record<string, { title: string; Component: React.ComponentType }> =
   card:             { title: 'Card',           Component: CardPage },
   badge:            { title: 'Badge',          Component: BadgePage },
   'chat-input-box': { title: 'Chat Input Box', Component: ChatInputBoxPage },
+  'chat-bubble':    { title: 'Chat Bubble',    Component: ChatBubblePage },
+  'chat-message':   { title: 'Chat Message',   Component: ChatMessagePage },
+  'chat-thread':    { title: 'Chat Thread',    Component: ChatThreadPage },
 };
 
 export function generateStaticParams() {

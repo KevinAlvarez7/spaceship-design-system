@@ -49,6 +49,9 @@ const NAV: NavItem[] = [
       { label: 'Card',   href: '/components/card' },
       { label: 'Badge',          href: '/components/badge' },
       { label: 'Chat Input Box', href: '/components/chat-input-box' },
+      { label: 'Chat Bubble',   href: '/components/chat-bubble' },
+      { label: 'Chat Message',  href: '/components/chat-message' },
+      { label: 'Chat Thread',   href: '/components/chat-thread' },
     ],
   },
   {
@@ -56,6 +59,7 @@ const NAV: NavItem[] = [
     children: [
       { label: 'Gravity Assist', href: '/effects/gravity-assist', experiment: true },
       { label: 'Spaceship Logo', href: '/effects/spaceship-logo', experiment: true },
+      { label: 'Spaceship Dot',  href: '/effects/spaceship-dot',  experiment: true },
     ],
   },
   {
