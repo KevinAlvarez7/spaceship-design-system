@@ -25,7 +25,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Spaceship Design System',
+  title: 'Design System',
   description: 'Living style guide and component explorer',
 };
 

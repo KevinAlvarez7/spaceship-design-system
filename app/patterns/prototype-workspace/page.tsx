@@ -6,7 +6,7 @@ import { GridBackground } from '@/components/effects';
 import { PreviewPanel, SidebarToggle, EditableTitle, ShareableLink } from '@/components/patterns';
 import { useChatDemo } from '@/app/patterns/_shared/useChatDemo';
 
-const DEMO_URL = 'https://spaceship.design';
+const DEMO_URL = 'https://example.com';
 
 export default function PrototypeWorkspacePage() {
   const [previewKey, setPreviewKey] = useState(0);
@@ -25,12 +25,12 @@ export default function PrototypeWorkspacePage() {
           {/* Left: sidebar toggle + project name pill */}
           <div className="flex items-center gap-(--spacing-3xs)">
             <SidebarToggle />
-            <EditableTitle title="Spaceship Vibe Prototype" />
+            <EditableTitle title="My Project Prototype" />
           </div>
 
           {/* Right: URL pill + share button */}
           <div className="flex items-center gap-(--spacing-3xs)">
-            <ShareableLink url="spaceship.design/prototype/abc123" />
+            <ShareableLink url="example.com/prototype/abc123" />
           </div>
         </nav>
 

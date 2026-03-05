@@ -58,12 +58,7 @@ const NAV: NavItem[] = [
     label: 'Effects',
     children: [
       { label: 'Gravity Assist',    href: '/effects/gravity-assist',    experiment: true },
-      { label: 'Spaceship Logo',    href: '/effects/spaceship-logo',    experiment: true },
-      { label: 'Spaceship Dot',     href: '/effects/spaceship-dot',     experiment: true },
       { label: 'Grid Background',   href: '/effects/grid-background',   experiment: true },
-      { label: 'Spaceship Logo V2', href: '/effects/spaceship-logo-v2', experiment: true },
-      { label: 'Spaceship Planet',  href: '/effects/spaceship-planet',  experiment: true },
-      { label: 'Spaceship Star',    href: '/effects/spaceship-star',    experiment: true },
     ],
   },
   {
@@ -156,7 +151,7 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
           </button>
         ) : (
           <>
-            <span className="flex-1 text-sm font-semibold text-zinc-900 tracking-tight">Spaceship DS</span>
+            <span className="flex-1 text-sm font-semibold text-zinc-900 tracking-tight">Design System</span>
             <button
               onClick={onToggle}
               className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 transition-colors"
