@@ -302,6 +302,7 @@ export function GravityWell({
       } else if (propSrcs && propSrcs.length > 0) {
         points = propSrcs;
       } else {
+        if (propsRef.current.disableMouse) return { influence: 0, angle: 0 };
         const { x, y, active } = mouseRef.current;
         if (!active) return { influence: 0, angle: 0 };
         points = [{ x, y }];

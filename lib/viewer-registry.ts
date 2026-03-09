@@ -61,6 +61,7 @@ export const PAGE_REGISTRY: PageEntry[] = [
   { slug: 'spaceship-planet',  title: 'Spaceship Planet',  section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
   { slug: 'spaceship-star',         title: 'Spaceship Star',         section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
   { slug: 'spaceship-logo-scene',   title: 'Spaceship Logo Scene',   section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
+  { slug: 'three-body-planets',     title: 'Three Body Planets',     section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
 
   // Patterns (bare layout — no topbar)
   { slug: 'chat',                   title: 'Chat',                  section: 'Patterns', route: 'patterns', layout: 'bare' },

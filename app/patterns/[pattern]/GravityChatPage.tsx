@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState, type MutableRefObject } from 'react';
 import { motion, useAnimation, useMotionValue, useSpring, AnimatePresence } from 'motion/react';
 import { GravityWell } from '@/components/effects';
-import { SpaceshipLogoV2 } from '@/components/effects';
+import { SpaceshipLogoScene } from '@/components/effects';
 import { ChatInputBox } from '@/components/ui';
 
 type Mode = 'idle' | 'blackHole';
@@ -102,7 +102,7 @@ export function GravityChatPage() {
     >
       <GravityWell
         sourcesRef={sourcesRef}
-        radius={150}
+        radius={120}
         softness={50}
         showMass={false}
         colorSensitivity={0.2}
@@ -150,13 +150,18 @@ export function GravityChatPage() {
             ref={triggerRef}
             animate={circleControls}
             initial={{ scale: 1, opacity: 1 }}
-            className="pointer-events-auto"
+            className="pointer-events-auto relative"
           >
-            <SpaceshipLogoV2
+            <SpaceshipLogoScene
               width={110}
               interactive
-              fleeRadius={80}
               maxDisplacement={60}
+              fleeRadius={200}
+            />
+            {/* Saucer-sized hit zone — blackHole triggers only when cursor touches the disc */}
+            <div
+              className="absolute"
+              style={{ top: 19, left: 7, width: 96, height: 44 }}
               onMouseEnter={() => {
                 if (mode === 'idle' && !idleCooldownRef.current) setMode('blackHole');
               }}

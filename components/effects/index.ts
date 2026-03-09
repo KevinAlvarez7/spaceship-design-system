@@ -30,3 +30,6 @@ export type { SpaceshipStarProps } from './SpaceshipLogo';
 
 export { SpaceshipLogoScene } from './SpaceshipLogo';
 export type { SpaceshipLogoSceneProps, SceneDecoration } from './SpaceshipLogo';
+
+export { ThreeBodyPlanets } from './ThreeBodyPlanets';
+export type { ThreeBodyPlanetsProps } from './ThreeBodyPlanets';

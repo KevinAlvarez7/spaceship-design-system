@@ -11,19 +11,20 @@ import { ExperimentBadge } from '@/components/viewer/ExperimentBadge';
 const SCENE_PROPS: PropRow[] = [
   { name: 'width',           type: 'number',              default: '180',   description: 'Width in pixels. Height scales proportionally.' },
   { name: 'interactive',     type: 'boolean',             default: 'true',  description: 'When true, the entire scene flees from the cursor.' },
-  { name: 'fleeRadius',      type: 'number',              default: '300',   description: 'Distance in pixels at which flee begins.' },
+  { name: 'fleeRadius',      type: 'number',              default: 'width × 0.5',   description: 'Distance in pixels at which flee begins.' },
   { name: 'maxDisplacement', type: 'number',              default: '100',   description: 'Maximum pixel offset from origin.' },
-  { name: 'beamDuration',    type: 'number',              default: '3',     description: 'Duration in seconds for one full beam sweep cycle.' },
-  { name: 'beamSkewRange',   type: 'number',              default: '15',    description: 'Degrees of skew applied to each side of the beam sweep.' },
+  { name: 'beamDuration',    type: 'number',              default: '3',     description: 'Duration of one full beam sweep cycle in seconds.' },
+  { name: 'beamSkewRange',   type: 'number',              default: '15',    description: 'Max skewX angle (degrees) for the beam sweep oscillation.' },
   { name: 'disableMotion',   type: 'boolean',             default: 'false', description: 'Renders a static version with no animation or physics.' },
   { name: 'decorations',     type: 'SceneDecoration[]',   default: '—',     description: 'Override the default planet/star decorations.' },
   { name: 'className',       type: 'string',              default: '—',     description: 'Additional class names on the outermost element.' },
 ];
 
 const DECORATION_PROPS: PropRow[] = [
-  { name: 'element',  type: 'React.ReactNode',                                   default: '—',    description: 'The decoration element — typically SpaceshipPlanet or SpaceshipStar.' },
-  { name: 'position', type: '{ top?: number; right?: number; bottom?: number; left?: number }', default: '—', description: 'Absolute position offsets relative to the logo container. Scaled proportionally with width.' },
-  { name: 'behind',   type: 'boolean',                                           default: 'true', description: 'Renders behind the logo when true (z-index 5), in front when false (z-index 15).' },
+  { name: 'element',      type: 'React.ReactNode',                                   default: '—',    description: 'The decoration element — typically SpaceshipPlanet or SpaceshipStar.' },
+  { name: 'position',     type: '{ top?: number; right?: number; bottom?: number; left?: number }', default: '—', description: 'Absolute position offsets relative to the logo container. Scaled proportionally with width.' },
+  { name: 'behind',       type: 'boolean',                                           default: 'true', description: 'Renders behind the logo when true (z-index 5), in front when false (z-index 15).' },
+  { name: 'fleeRotation', type: 'number',                                            default: '180',  description: 'Degrees to spin when cursor enters the flee radius. Use 90 for planets, 180 (default) for stars.' },
 ];
 
 // ── Usage snippet ──────────────────────────────────────────────────────────────
@@ -31,7 +32,7 @@ const DECORATION_PROPS: PropRow[] = [
 const USAGE = `import { SpaceshipLogoScene } from '@/components/effects';
 import type { SceneDecoration } from '@/components/effects';
 
-// Default — interactive flee + sweeping beam + 4 decorations
+// Default — interactive flee + 4 decorations (no beam)
 <SpaceshipLogoScene />
 
 // Larger variant

@@ -10,7 +10,7 @@ const chatInputBoxVariants = cva([
   'w-full flex flex-col gap-3',
   'p-(--spacing-3xs)',
   'bg-(--bg-surface-base)',
-  'rounded-(--radius-3xl)',
+  'rounded-(--radius-xl)',
   'shadow-(--shadow-border)',
   'data-[disabled]:opacity-50',
 ]);

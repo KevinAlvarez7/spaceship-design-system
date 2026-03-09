@@ -8,6 +8,7 @@ import { SpaceshipLogoV2Page }  from './SpaceshipLogoV2Page';
 import { SpaceshipPlanetPage }  from './SpaceshipPlanetPage';
 import { SpaceshipStarPage }    from './SpaceshipStarPage';
 import { SpaceshipLogoScenePage } from './SpaceshipLogoScenePage';
+import { ThreeBodyPlanetsPage }   from './ThreeBodyPlanetsPage';
 import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
 const EFFECTS: Record<string, React.ComponentType> = {
@@ -19,6 +20,7 @@ const EFFECTS: Record<string, React.ComponentType> = {
   'spaceship-planet':  SpaceshipPlanetPage,
   'spaceship-star':         SpaceshipStarPage,
   'spaceship-logo-scene':   SpaceshipLogoScenePage,
+  'three-body-planets':     ThreeBodyPlanetsPage,
 };
 
 export function generateStaticParams() {

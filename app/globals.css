@@ -6,6 +6,8 @@
    Paths are relative to this file (app/globals.css), so ../ reaches the repo root. */
 @source not "../.claude/**";
 @source not "../docs/**";
+@source not "../CLAUDE.md";
+@source not "../.worktrees/**";
 
 @theme {
   /* ── Semantic colors wired into Tailwind utilities ── */

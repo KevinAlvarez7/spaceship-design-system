@@ -47,7 +47,42 @@ node scripts/generate-tokens.mjs   # regenerate tokens from Figma export
 - **`surface` variant** — every component that can appear on different backgrounds must have a `surface` variant (`default` / `shadow-border` at minimum).
 - **`compoundVariants`** — use for multi-axis logic (e.g., `surface × state` or `surface × variant` border/shadow switching).
 - **Motion pattern** — interactive components use `motion/react`; always accept a `disableMotion` prop.
+- **Motion prop spread** — in `motion.*` elements, `{...props}` must come BEFORE explicit motion props (`initial`, `whileHover`, `whileTap`, `transition`) so component values always win.
+- **Spring calibration** — keep damping ratio ζ ≥ 0.7 to avoid visible oscillation. Formula: `ζ = damping / (2 × √(stiffness))`. E.g., `{ stiffness: 400, damping: 30 }` → ζ = 0.75.
+- **GPU layer promotion** — `motion.*` elements with scale animations need `style={{ willChange: 'transform' }}` to prevent text jitter from mid-animation layer promotion.
 - **Icon pattern** — use `leadingIcon` / `trailingIcon` props + `ICON_CLASSES` record + `IconSlot` helper.
+
+---
+
+## Mistakes to Avoid
+
+<!-- Populated from git history and docs/plans/ corrections. Add new entries as they occur. -->
+
+- Do not use Tailwind v3 bracket syntax (`bg-[var(--token)]`) — this project uses Tailwind v4 paren syntax (`bg-(--token)`). Every token reference in a component must use parens, not brackets.
+
+- Do not use `text-[var(--font-size-*)]` for font size — `tailwind-merge` treats `text-*` as a color group and merges it incorrectly. Use the arbitrary property syntax `[font-size:var(--font-size-sm)]` or the v4 paren form `text-(length:--font-size-sm)` instead.
+
+- Do not use `font-[var(--font-family-*)]` or `font-[var(--font-weight-*)]` — `tailwind-merge` collapses them. For font family, use `font-sans` (wired via `@theme`) or `font-(family-name:--font-family-secondary)`. For font weight, use `[font-weight:var(--font-weight-semibold)]`.
+
+- Do not use raw Tailwind spacing utilities (`pl-5`, `w-0.5`, `px-1`, `space-y-1`, etc.) inside DS components — replace with token-based paren syntax (`pl-(--spacing-xs)`, `w-(--spacing-6xs)`, etc.). Arbitrary pixel/rem literals are also forbidden.
+
+- Do not reference primitive tokens directly in components (`shadow-(--shadow-hard)`, `bg-(--orbit-blue-500)`) — always introduce a semantic token in `styles/tokens.css` and reference that instead.
+
+- Do not re-declare a semantic token in the `[data-theme="dark"]` block if it already aliases a primitive via `:root` — the alias chain resolves automatically. Only override tokens whose dark-mode value differs from the light-mode alias.
+
+- Do not use raw HTML `<input>` or `<button>` elements in demos or patterns when a DS component exists (`<ChatInputBox>`, `<Button>`, etc.) — patterns must compose from `@/components/ui` exclusively.
+
+- Do not mark viewer page component functions `async` unless they actually await something — viewer page components are synchronous; the `async` keyword causes a React type mismatch.
+
+- Do not use `style={{ color: 'var(--token)' }}` or any inline `style=` for token values — always use `className` with paren syntax instead.
+
+- Do not render DS token content outside a `<Preview>` wrapper in viewer pages — DS tokens only appear inside `<Preview>` so theme isolation works correctly.
+
+- Do not use the deleted button variants/surfaces (`outline`, `neo-brutalist`, `professional`) — the current canonical set is: variants `primary | secondary | ghost | success | destructive`; surfaces `default | shadow`.
+
+- Do not omit `children?: React.ReactNode` from component interfaces that extend `HTMLMotionProps<'button'>` — React 19 no longer injects `children` implicitly through HTML element types.
+
+- Do not spread `{...props}` AFTER explicit motion props (`whileHover`, `whileTap`, `transition`) in `motion.*` elements — spread props first so parent overrides can't accidentally clobber animation values. Correct order: `{...props}` then explicit motion props.
 
 ---
 
@@ -63,6 +98,7 @@ Run this checklist mentally before submitting any DS component or pattern.
 - [ ] Component has a `surface` variant (`default` / `shadow-border` at minimum)
 - [ ] `compoundVariants` handle border/shadow switching across `surface × state/variant` axes
 - [ ] Interactive components use `motion/react` with a `disableMotion` prop fallback
+- [ ] `motion.*` elements spread `{...props}` before explicit motion props; use `willChange: 'transform'` on scale animations; spring damping ratio ≥ 0.7
 - [ ] Icon props use `leadingIcon` / `trailingIcon` + `ICON_CLASSES` record + `IconSlot` helper
 - [ ] Named export only; variants function also exported; both added to `components/ui/index.ts`
 - [ ] No Tailwind colour utilities anywhere in the file
@@ -199,3 +235,27 @@ spaceship-design-system/
     ├── conventions.md
     └── plans/
 ```
+
+---
+
+## Before Marking Work Done
+
+Run these checks before considering any DS component or pattern task complete:
+
+1. `npm run build` — must pass with zero TypeScript errors
+2. `npm run lint` — must pass with no new warnings
+3. Mental checklist scan — re-read the DS Enforcement Checklist above and verify each item
+4. Token audit — grep the changed files for hardcoded hex values and Tailwind colour utilities:
+   `grep -n "#[0-9a-fA-F]\{3,6\}\|text-zinc\|bg-white\|border-gray\|text-white" [changed-file]`
+5. If a component was added to `components/ui/` — confirm it's exported from `components/ui/index.ts`
+
+---
+
+## Feedback Loop
+
+When a mistake is found (wrong syntax, broken convention, architectural violation):
+1. Fix it
+2. Add an entry to the **Mistakes to Avoid** section above — specific, actionable, Do/Don't format
+3. If the mistake is about a pattern that appears in multiple files, grep for other occurrences before closing
+
+This file is a living document. Every correction makes future sessions better.

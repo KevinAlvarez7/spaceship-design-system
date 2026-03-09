@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 import { motion, type HTMLMotionProps } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import { springs, scales } from '@/tokens';
 
 const buttonVariants = cva(
   [
@@ -44,18 +45,18 @@ const buttonVariants = cva(
       size: {
         sm: [
           'py-(--spacing-4xs) px-(--spacing-3xs) gap-(--spacing-5xs)',
-          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-lg)',
+          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-sm)',
         ],
         md: [
           'py-(--spacing-3xs) px-(--spacing-2xs) gap-(--spacing-4xs)',
-          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-xl)',
+          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-md)',
         ],
-        'icon-sm': 'h-[2.25rem] w-[2.25rem] p-0 rounded-(--radius-lg)',
-        icon:      'h-(--spacing-xl) w-(--spacing-xl) p-0 rounded-(--radius-xl)',
+        'icon-sm': 'h-[2.25rem] w-[2.25rem] p-0 rounded-(--radius-sm)',
+        icon:      'h-(--spacing-xl) w-(--spacing-xl) p-0 rounded-(--radius-md)',
       },
       surface: {
         default: '',
-        shadow:  'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow duration-(--duration-base) ease-(--ease-in-out) rounded-(--radius-xl)',
+        shadow:  'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow duration-(--duration-base) ease-(--ease-in-out)',
       },
     },
     defaultVariants: {
@@ -69,12 +70,12 @@ const buttonVariants = cva(
 type SurfaceKey = NonNullable<VariantProps<typeof buttonVariants>['surface']>;
 type SizeKey = NonNullable<VariantProps<typeof buttonVariants>['size']>;
 
-const SCALE: Record<SurfaceKey, { hover: number; tap: number }> = {
-  default: { hover: 1.03, tap: 0.97 },
-  shadow:  { hover: 1.02, tap: 0.98 },
+const SCALE: Record<SurfaceKey, typeof scales[keyof typeof scales]> = {
+  default: scales.prominent,
+  shadow:  scales.subtle,
 };
 
-const SPRING_TRANSITION = { type: 'spring' as const, stiffness: 400, damping: 17 };
+const SPRING_TRANSITION = springs.interactive;
 
 // Icon sizes auto-scaled per button size.
 // Text buttons: sm=16px, md=20px.
@@ -143,11 +144,13 @@ export function Button({
 
   return (
     <motion.button
+      {...props}
       className={classes}
+      style={{ willChange: 'transform', ...props.style }}
+      initial={{ scale: 1 }}
       whileHover={{ scale: scale.hover }}
       whileTap={{ scale: scale.tap }}
       transition={SPRING_TRANSITION}
-      {...props}
     >
       {content}
     </motion.button>
