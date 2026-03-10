@@ -1,13 +1,15 @@
 import { notFound } from 'next/navigation';
-import { Topbar }                 from '@/components/viewer/Topbar';
-import { ChatPage }               from './ChatPage';
-import { PreviewPanelPage }       from './PreviewPanelPage';
-import { PreviewPanelHeaderPage } from './PreviewPanelHeaderPage';
-import { EditableTitlePage }      from './EditableTitlePage';
-import { ShareableLinkPage }      from './ShareableLinkPage';
-import { SidebarTogglePage }      from './SidebarTogglePage';
-import { GravityChatPage }        from './GravityChatPage';
-import { PrototypeWorkspacePage } from './PrototypeWorkspacePage';
+import { Topbar }                    from '@/components/viewer/Topbar';
+import { ChatPage }                  from './ChatPage';
+import { PreviewPanelPage }          from './PreviewPanelPage';
+import { PreviewPanelHeaderPage }    from './PreviewPanelHeaderPage';
+import { EditableTitlePage }         from './EditableTitlePage';
+import { ShareableLinkPage }         from './ShareableLinkPage';
+import { SidebarTogglePage }         from './SidebarTogglePage';
+import { GravityChatPage }           from './GravityChatPage';
+import { PrototypeWorkspacePage }    from './PrototypeWorkspacePage';
+import { ArtifactNavigationPage }          from './ArtifactNavigationPage';
+import { StructuredClarificationPage }    from './StructuredClarificationPage';
 import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
 const PATTERNS: Record<string, React.ComponentType> = {
@@ -19,6 +21,8 @@ const PATTERNS: Record<string, React.ComponentType> = {
   'sidebar-toggle':         SidebarTogglePage,
   'gravity-chat':           GravityChatPage,
   'prototype-workspace':    PrototypeWorkspacePage,
+  'artifact-navigation':          ArtifactNavigationPage,
+  'structured-clarification':     StructuredClarificationPage,
 };
 
 export function generateStaticParams() {

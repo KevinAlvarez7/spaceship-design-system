@@ -53,14 +53,7 @@ export const PAGE_REGISTRY: PageEntry[] = [
 
   // Effects (all experiments)
   { slug: 'gravity-assist',    title: 'Gravity Assist',    section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
-  { slug: 'spaceship-logo',    title: 'Spaceship Logo',    section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
-  { slug: 'spaceship-dot',     title: 'Spaceship Dot',     section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
   { slug: 'grid-background',   title: 'Grid Background',   section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
-  { slug: 'spaceship-logo-v2', title: 'Spaceship Logo V2', section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
-  { slug: 'spaceship-planet',  title: 'Spaceship Planet',  section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
-  { slug: 'spaceship-star',         title: 'Spaceship Star',         section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
-  { slug: 'spaceship-logo-scene',   title: 'Spaceship Logo Scene',   section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
-  { slug: 'three-body-planets',     title: 'Three Body Planets',     section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
 
   // Patterns
   { slug: 'chat',                   title: 'Chat',                  section: 'Patterns', route: 'patterns', layout: 'standard' },
@@ -71,8 +64,10 @@ export const PAGE_REGISTRY: PageEntry[] = [
   { slug: 'sidebar-toggle',         title: 'Sidebar Toggle',        section: 'Patterns', route: 'patterns', layout: 'standard' },
 
   // Pages (bare layout, experiments)
-  { slug: 'gravity-chat',        title: 'Gravity Chat',        section: 'Pages', route: 'patterns', layout: 'bare', experiment: true },
-  { slug: 'prototype-workspace', title: 'Prototype Workspace', section: 'Pages', route: 'patterns', layout: 'bare', experiment: true },
+  { slug: 'gravity-chat',           title: 'Gravity Chat',           section: 'Pages', route: 'patterns', layout: 'bare', experiment: true },
+  { slug: 'prototype-workspace',       title: 'Prototype Workspace',       section: 'Pages', route: 'patterns', layout: 'bare',     experiment: true },
+  { slug: 'artifact-navigation',       title: 'Artifact Navigation',       section: 'Pages', route: 'patterns', layout: 'bare',     experiment: true },
+  { slug: 'structured-clarification',  title: 'Structured Clarification',  section: 'Pages', route: 'patterns', layout: 'standard', experiment: true },
 ];
 
 export const SECTION_ORDER: SidebarSection[] = [
