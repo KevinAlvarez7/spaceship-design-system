@@ -1,26 +1,12 @@
 import { notFound } from 'next/navigation';
 import { Topbar }            from '@/components/viewer/Topbar';
 import { GravityAssistPage }    from './GravityAssistPage';
-import { SpaceshipLogoPage }    from './SpaceshipLogoPage';
-import { SpaceshipDotPage }     from './SpaceshipDotPage';
 import { GridBackgroundPage }   from './GridBackgroundPage';
-import { SpaceshipLogoV2Page }  from './SpaceshipLogoV2Page';
-import { SpaceshipPlanetPage }  from './SpaceshipPlanetPage';
-import { SpaceshipStarPage }    from './SpaceshipStarPage';
-import { SpaceshipLogoScenePage } from './SpaceshipLogoScenePage';
-import { ThreeBodyPlanetsPage }   from './ThreeBodyPlanetsPage';
 import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
 const EFFECTS: Record<string, React.ComponentType> = {
-  'gravity-assist':    GravityAssistPage,
-  'spaceship-logo':    SpaceshipLogoPage,
-  'spaceship-dot':     SpaceshipDotPage,
-  'grid-background':   GridBackgroundPage,
-  'spaceship-logo-v2': SpaceshipLogoV2Page,
-  'spaceship-planet':  SpaceshipPlanetPage,
-  'spaceship-star':         SpaceshipStarPage,
-  'spaceship-logo-scene':   SpaceshipLogoScenePage,
-  'three-body-planets':     ThreeBodyPlanetsPage,
+  'gravity-assist':  GravityAssistPage,
+  'grid-background': GridBackgroundPage,
 };
 
 export function generateStaticParams() {

@@ -8,9 +8,9 @@ import { Button } from './button'; // direct sibling import — avoids circular 
 
 const chatInputBoxVariants = cva([
   'w-full flex flex-col gap-3',
-  'p-(--spacing-3xs)',
+  'p-3',
   'bg-(--bg-surface-base)',
-  'rounded-(--radius-xl)',
+  'rounded-lg',
   'shadow-(--shadow-border)',
   'data-[disabled]:opacity-50',
 ]);
@@ -56,7 +56,7 @@ export function ChatInputBox({
       data-disabled={disabled || undefined}
       className={cn(chatInputBoxVariants(), containerClassName)}
     >
-      <div className="p-(--spacing-5xs)">
+      <div className="p-1">
         <textarea
           ref={textareaRef}
           value={value}

@@ -152,17 +152,17 @@
   --border-input-default: var(--black);
   --border-input-focus: var(--orbit-blue-600);
   --bg-input-default: var(--secondary-50);
-  --bg-interactive-secondary-default: var(--secondary-100);
-  --bg-interactive-secondary-hover: var(--secondary-200);
-  --bg-interactive-secondary-pressed: var(--secondary-300);
+  --bg-interactive-secondary-default: var(--secondary-50);
+  --bg-interactive-secondary-hover: var(--secondary-100);
+  --bg-interactive-secondary-pressed: var(--secondary-200);
   --bg-interactive-secondary-disabled: #fafafa;
   --bg-interactive-success-default: var(--nova-mint-500);
   --bg-interactive-success-hover: var(--nova-mint-600);
   --bg-interactive-success-pressed: var(--nova-mint-700);
   --bg-interactive-success-disabled: #e5e5e5;
-  --bg-interactive-error-default: var(--solar-coral-300);
-  --bg-interactive-error-hover: var(--solar-coral-400);
-  --bg-interactive-error-pressed: var(--solar-coral-500);
+  --bg-interactive-error-default: var(--solar-coral-500);
+  --bg-interactive-error-hover: var(--solar-coral-600);
+  --bg-interactive-error-pressed: var(--solar-coral-00);
   --bg-interactive-error-disabled: #e5e5e5;
   --bg-surface-brand-primary: var(--primary-50);
   --bg-surface-brand-secondary: var(--primary-100);
@@ -215,34 +215,6 @@
   --font-weight-regular: 400;
   --font-weight-bold: 700;
 
-  /* ── Spacing (custom names) ──────────────────────────────────*/
-  --spacing-0: 0;
-  --spacing-6xs: 0.125rem;
-  --spacing-5xs: 0.25rem;
-  --spacing-4xs: 0.5rem;
-  --spacing-3xs: 0.75rem;
-  --spacing-2xs: 1rem;
-  --spacing-xs: 1.25rem;
-  --spacing-sm: 1.5rem;
-  --spacing-md: 2rem;
-  --spacing-lg: 2.5rem;
-  --spacing-xl: 3rem;
-  --spacing-2xl: 4rem;
-  --spacing-3xl: 5rem;
-  --spacing-4xl: 6rem;
-  --spacing-5xl: 8rem;
-
-  /* ── Radius (custom names) ───────────────────────────────────*/
-  --radius-none: 0;
-  --radius-xs: 2px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
-  --radius-3xl: 20px;
-  --radius-4xl: 24px;
-  --radius-full: 9999px;
 
   /* ── Shadow-Border ───────────────────────────────────────────
      Not in Figma variables — maintained manually.

@@ -8,6 +8,7 @@ const PROPS: PropRow[] = [
   { name: 'variant',       type: '"primary" | "secondary" | "ghost" | "success" | "destructive"', default: '"primary"', description: 'Visual style' },
   { name: 'size',          type: '"sm" | "md" | "icon-sm" | "icon"', default: '"sm"', description: 'Padding scale (sm/md) or square icon-only size (icon-sm/icon). No padding on icon sizes.' },
   { name: 'surface',       type: '"default" | "shadow"', default: '"default"', description: 'Surface treatment: default (flat) or shadow (border shadow ring)' },
+  { name: 'icon',          type: 'ReactNode',            default: '—',         description: 'Icon for icon-only buttons (size="icon" or "icon-sm"). Exclusive with leadingIcon/trailingIcon.' },
   { name: 'leadingIcon',   type: 'ReactNode',            default: '—',         description: 'Icon rendered before children. Auto-sized to match button size.' },
   { name: 'trailingIcon',  type: 'ReactNode',            default: '—',         description: 'Icon rendered after children. Auto-sized to match button size.' },
   { name: 'disabled',      type: 'boolean',              default: 'false',     description: 'Prevents interaction, reduces opacity. Also disables motion.' },
@@ -32,9 +33,9 @@ import { Plus, ArrowRight, Search } from 'lucide-react';
 {/* Leading + trailing */}
 <Button variant="ghost" leadingIcon={<Search />} trailingIcon={<ChevronRight />}>Search</Button>
 
-{/* Icon only — square, no children */}
-<Button size="icon-sm" variant="ghost" aria-label="Settings"><Settings /></Button>
-<Button size="icon" variant="primary" aria-label="Add"><Plus /></Button>
+{/* Icon only — dedicated icon prop, always include aria-label */}
+<Button size="icon-sm" variant="ghost" icon={<Settings />} aria-label="Settings" />
+<Button size="icon" variant="primary" icon={<Plus />} aria-label="Add" />
 
 {/* Opt out of spring animation */}
 <Button variant="primary" disableMotion>Submit</Button>`;
@@ -101,15 +102,15 @@ export function ButtonPage() {
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Icon Only</h2>
         <p className="text-sm text-zinc-500 mb-3">Square sizes with no padding. Always include <code className="text-xs bg-zinc-100 px-1 rounded">aria-label</code> for accessibility.</p>
         <Preview label="icon-sm (36×36) / icon (48×48)">
-          <Button size="icon-sm" variant="ghost" aria-label="Settings"><Settings /></Button>
-          <Button size="icon"    variant="ghost" aria-label="Settings"><Settings /></Button>
+          <Button size="icon-sm" variant="ghost" icon={<Settings />} aria-label="Settings" />
+          <Button size="icon"    variant="ghost" icon={<Settings />} aria-label="Settings" />
         </Preview>
         <Preview label="All variants at size=&quot;icon&quot;">
-          <Button size="icon" variant="primary"     aria-label="Add"><Plus /></Button>
-          <Button size="icon" variant="secondary"   aria-label="Download"><Download /></Button>
-          <Button size="icon" variant="ghost"       aria-label="Search"><Search /></Button>
-          <Button size="icon" variant="success"     aria-label="Confirm"><Check /></Button>
-          <Button size="icon" variant="destructive" aria-label="Delete"><Trash2 /></Button>
+          <Button size="icon" variant="primary"     icon={<Plus />}     aria-label="Add" />
+          <Button size="icon" variant="secondary"   icon={<Download />} aria-label="Download" />
+          <Button size="icon" variant="ghost"       icon={<Search />}   aria-label="Search" />
+          <Button size="icon" variant="success"     icon={<Check />}    aria-label="Confirm" />
+          <Button size="icon" variant="destructive" icon={<Trash2 />}   aria-label="Delete" />
         </Preview>
       </section>
 
@@ -127,8 +128,8 @@ export function ButtonPage() {
         <Preview label='surface="shadow" with icons'>
           <Button variant="primary"   surface="shadow" leadingIcon={<Plus />}>New</Button>
           <Button variant="secondary" surface="shadow" trailingIcon={<ArrowRight />}>Continue</Button>
-          <Button size="icon" variant="primary"   surface="shadow" aria-label="Add"><Plus /></Button>
-          <Button size="icon" variant="secondary" surface="shadow" aria-label="Search"><Search /></Button>
+          <Button size="icon" variant="primary"   surface="shadow" icon={<Plus />}   aria-label="Add" />
+          <Button size="icon" variant="secondary" surface="shadow" icon={<Search />} aria-label="Search" />
         </Preview>
       </section>
 
@@ -136,9 +137,9 @@ export function ButtonPage() {
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Icons Disabled</h2>
         <Preview label="Disabled icon buttons">
           <Button disabled leadingIcon={<Plus />}>Add item</Button>
-          <Button disabled size="icon"    variant="primary"   aria-label="Add"><Plus /></Button>
-          <Button disabled size="icon"    variant="secondary" aria-label="Download"><Download /></Button>
-          <Button disabled size="icon-sm" variant="ghost"     aria-label="Search"><Search /></Button>
+          <Button disabled size="icon"    variant="primary"   icon={<Plus />}     aria-label="Add" />
+          <Button disabled size="icon"    variant="secondary" icon={<Download />}  aria-label="Download" />
+          <Button disabled size="icon-sm" variant="ghost"     icon={<Search />}    aria-label="Search" />
         </Preview>
       </section>
 

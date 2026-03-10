@@ -59,65 +59,66 @@ export function EditableTitle({
 
   return (
     <div className={cn('flex items-center gap-3', className)}>
-      <div className="flex items-center bg-(--bg-surface-primary) px-1.5 py-1.5 gap-4 rounded-lg shadow-(--shadow-border) overflow-hidden">
-        {/* Menu button (optional) — inline at start of field */}
-        {onMenuClick && (
-          <Button
-            variant="secondary"
-            size="icon-sm"
-            className="shrink-0"
-            onClick={onMenuClick}
-            icon={<Menu />}
-            aria-label="Open menu"
-            surface="shadow"
-          />
-        )}
-        {showEditing ? (
-          <>
-            <div className="relative">
-              {/* Sizer: drives container width from real text metrics */}
-              <span
-                aria-hidden
-                className="invisible whitespace-pre font-sans [font-size:var(--font-size-base)] [line-height:var(--line-height-base)] [font-weight:var(--font-weight-semibold)]"
-              >
-                {editValue.length >= title.length ? editValue : title}
-              </span>
-              <input
-                ref={inputRef}
-                value={editValue}
-                onChange={e => setEditValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className={cn(
-                  'absolute inset-0 w-full p-0',
-                  'bg-transparent outline-none border-none',
-                  'font-sans [font-size:var(--font-size-base)] [line-height:var(--line-height-base)] [font-weight:var(--font-weight-semibold)] text-(--text-primary)',
-                )}
-                aria-label="Edit title"
+      <div className="bg-(--bg-surface-base) rounded-lg shadow-(--shadow-border)">
+        <div className="flex items-center w-fit gap-4 px-1.5 py-1.5">
+          {/* Menu button (optional) — inline at start of field */}
+          {onMenuClick && (
+            <Button
+              variant="secondary"
+              size="icon-sm"
+              className="shrink-0"
+              onClick={onMenuClick}
+              icon={<Menu />}
+              aria-label="Open menu"
+              surface="shadow"
+            />
+          )}
+          {showEditing ? (
+            <>
+              <div className="relative">
+                <span
+                  aria-hidden
+                  className="invisible whitespace-pre font-sans [font-size:var(--font-size-base)] [line-height:var(--line-height-base)] [font-weight:var(--font-weight-semibold)]"
+                >
+                  {editValue.length >= title.length ? editValue : title}
+                </span>
+                <input
+                  ref={inputRef}
+                  value={editValue}
+                  onChange={e => setEditValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className={cn(
+                    'absolute inset-0 w-full p-0',
+                    'bg-transparent outline-none border-none',
+                    'font-sans [font-size:var(--font-size-base)] [line-height:var(--line-height-base)] [font-weight:var(--font-weight-regular)] text-(--text-primary)',
+                  )}
+                  aria-label="Edit title"
+                />
+              </div>
+              <Button
+                variant="success"
+                size="icon-sm"
+                icon={<Check />}
+                disabled={!!error}
+                onClick={handleDone}
+                aria-label="Save title"
               />
-            </div>
-            <Button
-              variant="success"
-              size="icon-sm"
-              icon={<Check />}
-              disabled={!!error}
-              onClick={handleDone}
-              aria-label="Save title"
-            />
-          </>
-        ) : (
-          <>
-            <span className="font-sans [font-size:var(--font-size-base)] [line-height:var(--line-height-base)] [font-weight:var(--font-weight-semibold)] text-(--text-primary)">
-              {title}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={handlePencilClick}
-              aria-label="Edit title"
-              icon={<PenLine className="text-(--primary-500)" />}
-            />
-          </>
-        )}
+            </>
+          ) : (
+            <>
+              <span className="font-sans [font-size:var(--font-size-base)] [line-height:var(--line-height-base)] [font-weight:var(--font-weight-semibold)] text-(--text-primary)">
+                {title}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={handlePencilClick}
+                aria-label="Edit title"
+                icon={<PenLine className="text-(--primary-500)" />}
+              />
+            </>
+          )}
+        </div>
       </div>
 
       {/* Error message (to the right) */}

@@ -24,9 +24,9 @@ export function ChatThread({ children, className }: ChatThreadProps) {
   return (
     <div
       className={cn(
-        'flex flex-col gap-(--spacing-3xs)',
+        'flex flex-col gap-3',
         'overflow-y-auto',
-        'px-(--spacing-2xs) pb-(--spacing-3xs) pt-(--spacing-xs)',
+        'px-4 pb-3 pt-5',
         className
       )}
     >

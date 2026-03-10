@@ -33,7 +33,7 @@ const buttonVariants = cva(
           'hover:bg-(--bg-interactive-secondary-default)',
         ],
         success: [
-          'bg-(--bg-interactive-success-default) text-(--text-inverse)',
+          'bg-(--bg-interactive-success-default) text-(--text-primary)',
           'hover:bg-(--bg-interactive-success-hover)',
           'active:bg-(--bg-interactive-success-pressed)',
         ],
@@ -44,15 +44,15 @@ const buttonVariants = cva(
       },
       size: {
         sm: [
-          'py-(--spacing-4xs) px-(--spacing-3xs) gap-(--spacing-5xs)',
-          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-sm)',
+          'py-2 px-3 gap-1',
+          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-sm',
         ],
         md: [
-          'py-(--spacing-3xs) px-(--spacing-2xs) gap-(--spacing-4xs)',
-          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-(--radius-md)',
+          'py-3 px-4 gap-2',
+          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-md',
         ],
-        'icon-sm': 'h-[2.25rem] w-[2.25rem] p-0 rounded-(--radius-sm)',
-        icon:      'h-(--spacing-xl) w-(--spacing-xl) p-0 rounded-(--radius-md)',
+        'icon-sm': 'h-[2.25rem] w-[2.25rem] p-0 rounded-sm',
+        icon:      'h-12 w-12 p-0 rounded-md',
       },
       surface: {
         default: '',
@@ -81,10 +81,10 @@ const SPRING_TRANSITION = springs.interactive;
 // Text buttons: sm=16px, md=20px.
 // Icon-only buttons: sm=20px, md=24px.
 const ICON_CLASSES: Record<SizeKey, string> = {
-  sm:        '[&>svg]:h-(--spacing-2xs) [&>svg]:w-(--spacing-2xs)',
-  md:        '[&>svg]:h-(--spacing-xs)  [&>svg]:w-(--spacing-xs)',
-  'icon-sm': '[&>svg]:h-(--spacing-xs)  [&>svg]:w-(--spacing-xs)',
-  icon:      '[&>svg]:h-(--spacing-sm)  [&>svg]:w-(--spacing-sm)',
+  sm:        '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:[stroke-width:2.75]',
+  md:        '[&>svg]:h-5 [&>svg]:w-5 [&>svg]:[stroke-width:3]',
+  'icon-sm': '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:[stroke-width:2.75]',
+  icon:      '[&>svg]:h-5 [&>svg]:w-5 [&>svg]:[stroke-width:3]',
 };
 
 function IconSlot({ icon, sizeKey }: { icon: ReactNode; sizeKey: SizeKey }) {
@@ -102,6 +102,7 @@ export interface ButtonProps
   disableMotion?: boolean;
   leadingIcon?: ReactNode;
   trailingIcon?: ReactNode;
+  icon?: ReactNode;
 }
 
 export function Button({
@@ -113,13 +114,16 @@ export function Button({
   disabled,
   leadingIcon,
   trailingIcon,
+  icon,
   children,
   ...props
 }: ButtonProps) {
   const sizeKey: SizeKey = size ?? 'sm';
   const classes = cn(buttonVariants({ variant, size, surface }), className);
 
-  const content = (
+  const content = icon ? (
+    <IconSlot icon={icon} sizeKey={sizeKey} />
+  ) : (
     <>
       <IconSlot icon={leadingIcon} sizeKey={sizeKey} />
       {children}

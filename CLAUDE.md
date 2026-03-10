@@ -64,8 +64,6 @@ node scripts/generate-tokens.mjs   # regenerate tokens from Figma export
 
 - Do not use `font-[var(--font-family-*)]` or `font-[var(--font-weight-*)]` — `tailwind-merge` collapses them. For font family, use `font-sans` (wired via `@theme`) or `font-(family-name:--font-family-secondary)`. For font weight, use `[font-weight:var(--font-weight-semibold)]`.
 
-- Do not use raw Tailwind spacing utilities (`pl-5`, `w-0.5`, `px-1`, `space-y-1`, etc.) inside DS components — replace with token-based paren syntax (`pl-(--spacing-xs)`, `w-(--spacing-6xs)`, etc.). Arbitrary pixel/rem literals are also forbidden.
-
 - Do not reference primitive tokens directly in components (`shadow-(--shadow-hard)`, `bg-(--orbit-blue-500)`) — always introduce a semantic token in `styles/tokens.css` and reference that instead.
 
 - Do not re-declare a semantic token in the `[data-theme="dark"]` block if it already aliases a primitive via `:root` — the alias chain resolves automatically. Only override tokens whose dark-mode value differs from the light-mode alias.
@@ -132,6 +130,10 @@ Primitive  →  Semantic  →  Component
 - **Rule:** components use semantic tokens only — never reference primitives directly.
 
 TypeScript mirrors in `tokens/*.ts` (colors, spacing, typography, radius, shadow, motion) for viewer iteration and page generation.
+
+**Spacing:** No custom `--spacing-*` CSS variables — use Tailwind's built-in spacing scale directly (`px-4`, `gap-3`, `w-0.5`, etc.). The `tokens/spacing.ts` file documents the scale for the viewer page but carries no CSS variable dependencies.
+
+**Radius:** No custom `--radius-*` CSS variables — use Tailwind's built-in border-radius scale directly (`rounded-sm`, `rounded-xl`, `rounded-full`, etc.). The `tokens/radius.ts` file documents the scale for the viewer page but carries no CSS variable dependencies. Note: Tailwind's `rounded-3xl` = 24px (what was formerly `--radius-4xl`).
 
 **Dark mode:** `[data-theme="dark"]` on `<html>` — only semantic tokens are overridden (not primitives).
 

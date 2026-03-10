@@ -18,10 +18,10 @@ function useIsClient() {
 const modalVariants = cva(
   [
     'flex flex-col bg-(--bg-surface-primary)',
-    'rounded-(--radius-lg) overflow-hidden',
+    'rounded-lg overflow-hidden',
     'w-full max-w-lg',
-    'p-(--spacing-3xs)',
-    'gap-(--spacing-md)',
+    'p-3',
+    'gap-8',
   ],
   {
     variants: {
@@ -48,7 +48,7 @@ export interface ModalProps extends VariantProps<typeof modalVariants> {
 
 export function ModalHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('flex flex-col gap-(--spacing-4xs) p-(--spacing-5xs)', className)} {...props} />
+    <div className={cn('flex flex-col gap-2 p-1', className)} {...props} />
   );
 }
 
@@ -81,7 +81,7 @@ export function ModalDescription({ className, ...props }: React.HTMLAttributes<H
 export function ModalFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('flex items-center justify-end gap-(--spacing-3xs)', className)}
+      className={cn('flex items-center justify-end gap-3', className)}
       {...props}
     />
   );
@@ -132,7 +132,7 @@ export function Modal({
       {open && (
         <motion.div
           key="modal-backdrop"
-          className="fixed inset-0 z-50 flex items-center justify-center px-(--spacing-3xs)"
+          className="fixed inset-0 z-50 flex items-center justify-center px-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

@@ -22,9 +22,9 @@ export function PrototypeWorkspacePage() {
       <div className="relative z-10 flex flex-1 flex-col size-full">
 
         {/* Project Navbar */}
-        <nav className="flex shrink-0 items-center justify-between px-(--spacing-2xs) py-(--spacing-3xs) gap-(--spacing-3xs)">
+        <nav className="flex shrink-0 items-center justify-between px-4 py-3 gap-3">
           {/* Left: project name pill with integrated menu */}
-          <div className="flex items-center gap-(--spacing-3xs)">
+          <div className="flex items-center gap-3">
             <EditableTitle
               title={projectTitle}
               onTitleChange={setProjectTitle}
@@ -33,13 +33,13 @@ export function PrototypeWorkspacePage() {
           </div>
 
           {/* Right: URL pill + share button */}
-          <div className="flex items-center gap-(--spacing-3xs)">
+          <div className="flex items-center gap-3">
             <ShareableLink url="spaceship.design/prototype/abc123" />
           </div>
         </nav>
 
         {/* Side-by-side panels */}
-        <main className="flex flex-1 min-h-0 gap-(--spacing-sm) px-(--spacing-2xs) pb-(--spacing-2xs)">
+        <main className="flex flex-1 min-h-0 gap-6 px-4 pb-4">
 
           {/* Chat Panel */}
           <div className="flex flex-col flex-1 min-w-0">
@@ -53,7 +53,7 @@ export function PrototypeWorkspacePage() {
                 <ChatMessage content={streamedText} isStreaming />
               )}
             </ChatThread>
-            <div className="px-(--spacing-2xs) pb-(--spacing-3xs) shrink-0">
+            <div className="px-4 pb-3 shrink-0">
               <ChatInputBox
                 size="sm"
                 submitLabel="Send"

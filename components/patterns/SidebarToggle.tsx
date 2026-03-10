@@ -10,8 +10,6 @@ interface SidebarToggleProps {
 
 export function SidebarToggle({ onToggle }: SidebarToggleProps) {
   return (
-    <Button variant="secondary" surface="shadow" size="icon-sm" onClick={onToggle}>
-      <PanelLeft />
-    </Button>
+    <Button variant="secondary" surface="shadow" size="icon-sm" icon={<PanelLeft />} onClick={onToggle} />
   );
 }

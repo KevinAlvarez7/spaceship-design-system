@@ -5,8 +5,8 @@ import { cn } from '@/lib/utils';
 type SizeKey = 'sm' | 'md';
 
 const ICON_CLASSES: Record<SizeKey, string> = {
-  sm: '[&>svg]:h-(--spacing-2xs) [&>svg]:w-(--spacing-2xs)',
-  md: '[&>svg]:h-(--spacing-2xs) [&>svg]:w-(--spacing-2xs)',
+  sm: '[&>svg]:h-4 [&>svg]:w-4',
+  md: '[&>svg]:h-4 [&>svg]:w-4',
 };
 
 function IconSlot({ icon, sizeKey }: { icon: ReactNode; sizeKey: SizeKey }) {
@@ -20,8 +20,8 @@ function IconSlot({ icon, sizeKey }: { icon: ReactNode; sizeKey: SizeKey }) {
 
 export const tagVariants = cva(
   [
-    'inline-flex items-center gap-(--spacing-5xs)',
-    'rounded-(--radius-full)',
+    'inline-flex items-center gap-1',
+    'rounded-full',
     'font-(family-name:--font-family-secondary)',
     '[font-weight:var(--font-weight-semibold)]',
     'leading-none',
@@ -36,8 +36,8 @@ export const tagVariants = cva(
         info:    'bg-(--bg-status-info)    text-(--text-primary)',
       },
       size: {
-        sm: 'px-(--spacing-4xs) py-(--spacing-5xs) [font-size:var(--font-size-xs)]',
-        md: 'px-(--spacing-3xs) py-(--spacing-5xs) [font-size:var(--font-size-sm)]',
+        sm: 'px-2 py-1 [font-size:var(--font-size-xs)]',
+        md: 'px-3 py-1 [font-size:var(--font-size-sm)]',
       },
       surface: {
         default:         '',

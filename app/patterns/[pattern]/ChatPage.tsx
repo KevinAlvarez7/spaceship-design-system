@@ -28,7 +28,7 @@ export function ChatPage() {
               )}
             </ChatThread>
 
-            <div className="px-(--spacing-2xs) pb-(--spacing-3xs) shrink-0">
+            <div className="px-4 pb-3 shrink-0">
               <ChatInputBox
                 size="sm"
                 submitLabel="Send"

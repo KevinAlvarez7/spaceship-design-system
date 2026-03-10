@@ -13,12 +13,6 @@ export type { GridBackgroundProps } from './GravityWell';
 export { useGravityRect } from './GravityWell';
 export type { UseGravityRectOptions } from './GravityWell';
 
-export { SpaceshipLogo } from './SpaceshipLogo';
-export type { SpaceshipLogoProps } from './SpaceshipLogo';
-
-export { SpaceshipDot } from './SpaceshipLogo';
-export type { SpaceshipDotProps } from './SpaceshipLogo';
-
 export { SpaceshipLogoV2 } from './SpaceshipLogo';
 export type { SpaceshipLogoV2Props } from './SpaceshipLogo';
 

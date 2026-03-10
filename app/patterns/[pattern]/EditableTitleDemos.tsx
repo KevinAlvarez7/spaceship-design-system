@@ -8,9 +8,9 @@ export function EditableTitleDemos() {
   const [titleWithMenu, setTitleWithMenu] = useState('Spaceship Vibe Prototype');
 
   return (
-    <div className="flex flex-col gap-(--spacing-lg)">
+    <div className="flex flex-col gap-10">
       {/* Default — editable, no menu */}
-      <div className="flex flex-col gap-(--spacing-3xs)">
+      <div className="flex flex-col gap-3">
         <p className="[font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-secondary)">
           Default
         </p>
@@ -18,7 +18,7 @@ export function EditableTitleDemos() {
       </div>
 
       {/* With menu button */}
-      <div className="flex flex-col gap-(--spacing-3xs)">
+      <div className="flex flex-col gap-3">
         <p className="[font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-secondary)">
           With menu button
         </p>
@@ -30,7 +30,7 @@ export function EditableTitleDemos() {
       </div>
 
       {/* Error state */}
-      <div className="flex flex-col gap-(--spacing-3xs)">
+      <div className="flex flex-col gap-3">
         <p className="[font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-secondary)">
           Error state
         </p>

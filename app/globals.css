@@ -55,16 +55,6 @@
   --shadow-border:       var(--shadow-border);
   --shadow-border-hover: var(--shadow-border-hover);
 
-  /* ── Radius ── */
-  --radius-xs:   var(--radius-xs);
-  --radius-sm:   var(--radius-sm);
-  --radius-md:   var(--radius-md);
-  --radius-lg:   var(--radius-lg);
-  --radius-xl:   var(--radius-xl);
-  --radius-2xl:  var(--radius-2xl);
-  --radius-3xl:  var(--radius-3xl);
-  --radius-4xl:  var(--radius-4xl);
-  --radius-full: var(--radius-full);
 }
 
 @layer base {
