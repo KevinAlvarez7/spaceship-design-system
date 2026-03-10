@@ -69,6 +69,9 @@ export const PAGE_REGISTRY: PageEntry[] = [
   { slug: 'artifact-navigation',       title: 'Artifact Navigation',       section: 'Pages', route: 'patterns', layout: 'bare',     experiment: true },
   { slug: 'structured-clarification',  title: 'Structured Clarification',  section: 'Pages', route: 'patterns', layout: 'standard', experiment: true },
   { slug: 'clarification-chat', title: 'Clarification Chat', section: 'Pages', route: 'patterns', layout: 'bare', experiment: true },
+
+  // Patterns (components)
+  { slug: 'clarification-card', title: 'Clarification Card', section: 'Patterns', route: 'patterns', layout: 'standard' },
 ];
 
 export const SECTION_ORDER: SidebarSection[] = [

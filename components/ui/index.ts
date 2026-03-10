@@ -19,3 +19,6 @@ export type { ModalProps } from './modal';
 
 export { Tag, tagVariants } from './tag';
 export type { TagProps } from './tag';
+
+export { ClarificationCard, clarificationCardVariants } from './clarification-card';
+export type { ClarificationCardProps, ClarificationQuestion, ClarificationAnswers } from './clarification-card';
