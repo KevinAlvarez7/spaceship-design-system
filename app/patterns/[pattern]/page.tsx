@@ -10,6 +10,7 @@ import { GravityChatPage }           from './GravityChatPage';
 import { PrototypeWorkspacePage }    from './PrototypeWorkspacePage';
 import { ArtifactNavigationPage }          from './ArtifactNavigationPage';
 import { StructuredClarificationPage }    from './StructuredClarificationPage';
+import { ClarificationChatPage } from './ClarificationChatPage';
 import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
 const PATTERNS: Record<string, React.ComponentType> = {
@@ -23,6 +24,7 @@ const PATTERNS: Record<string, React.ComponentType> = {
   'prototype-workspace':    PrototypeWorkspacePage,
   'artifact-navigation':          ArtifactNavigationPage,
   'structured-clarification':     StructuredClarificationPage,
+  'clarification-chat': ClarificationChatPage,
 };
 
 export function generateStaticParams() {

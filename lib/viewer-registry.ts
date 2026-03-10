@@ -68,6 +68,7 @@ export const PAGE_REGISTRY: PageEntry[] = [
   { slug: 'prototype-workspace',       title: 'Prototype Workspace',       section: 'Pages', route: 'patterns', layout: 'bare',     experiment: true },
   { slug: 'artifact-navigation',       title: 'Artifact Navigation',       section: 'Pages', route: 'patterns', layout: 'bare',     experiment: true },
   { slug: 'structured-clarification',  title: 'Structured Clarification',  section: 'Pages', route: 'patterns', layout: 'standard', experiment: true },
+  { slug: 'clarification-chat', title: 'Clarification Chat', section: 'Pages', route: 'patterns', layout: 'bare', experiment: true },
 ];
 
 export const SECTION_ORDER: SidebarSection[] = [
