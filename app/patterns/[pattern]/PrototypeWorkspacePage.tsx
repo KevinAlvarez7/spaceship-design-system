@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import { ChatThread, ChatBubble, ChatMessage, ChatInputBox } from '@/components/ui';
 import { GridBackground } from '@/components/effects';
-import { PreviewPanel, SidebarToggle, EditableTitle, ShareableLink } from '@/components/patterns';
+import { PreviewPanel, EditableTitle, ShareableLink } from '@/components/patterns';
 import { useChatDemo } from '@/app/patterns/_shared/useChatDemo';
 
 const DEMO_URL = 'https://spaceship.design';
 
 export function PrototypeWorkspacePage() {
   const [previewKey, setPreviewKey] = useState(0);
+  const [projectTitle, setProjectTitle] = useState('Spaceship Vibe Prototype');
   const { messages, streamedText, isStreaming, inputValue, setInputValue, handleSubmit } = useChatDemo();
 
   return (
@@ -22,10 +23,13 @@ export function PrototypeWorkspacePage() {
 
         {/* Project Navbar */}
         <nav className="flex shrink-0 items-center justify-between px-(--spacing-2xs) py-(--spacing-3xs) gap-(--spacing-3xs)">
-          {/* Left: sidebar toggle + project name pill */}
+          {/* Left: project name pill with integrated menu */}
           <div className="flex items-center gap-(--spacing-3xs)">
-            <SidebarToggle />
-            <EditableTitle title="Spaceship Vibe Prototype" />
+            <EditableTitle
+              title={projectTitle}
+              onTitleChange={setProjectTitle}
+              onMenuClick={() => {}}
+            />
           </div>
 
           {/* Right: URL pill + share button */}

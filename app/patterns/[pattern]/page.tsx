@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { Topbar }                 from '@/components/viewer/Topbar';
 import { ChatPage }               from './ChatPage';
 import { PreviewPanelPage }       from './PreviewPanelPage';
 import { PreviewPanelHeaderPage } from './PreviewPanelHeaderPage';
@@ -7,7 +8,7 @@ import { ShareableLinkPage }      from './ShareableLinkPage';
 import { SidebarTogglePage }      from './SidebarTogglePage';
 import { GravityChatPage }        from './GravityChatPage';
 import { PrototypeWorkspacePage } from './PrototypeWorkspacePage';
-import { getEntry, getSlugsForRoute } from '@/lib/viewer-registry';
+import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
 const PATTERNS: Record<string, React.ComponentType> = {
   'chat':                   ChatPage,
@@ -35,6 +36,16 @@ export default async function PatternPage({
   const Component = PATTERNS[pattern];
   if (!Component) notFound();
 
-  // All patterns use bare layout — rendered directly without Topbar
-  return <Component />;
+  if (entry.layout === 'bare') {
+    return <Component />;
+  }
+
+  return (
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <Topbar title={buildTopbarTitle(entry)} />
+      <main className="flex-1 overflow-y-auto p-8">
+        <Component />
+      </main>
+    </div>
+  );
 }

@@ -1,14 +1,6 @@
 export { Button, buttonVariants } from './button';
 export type { ButtonProps } from './button';
 
-export { Input, inputVariants } from './input';
-export type { InputProps } from './input';
-
-export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, cardVariants } from './card';
-export type { CardProps } from './card';
-
-export { Badge, badgeVariants } from './badge';
-export type { BadgeProps } from './badge';
 
 export { ChatInputBox, chatInputBoxVariants } from './chat-input-box';
 export type { ChatInputBoxProps } from './chat-input-box';
@@ -21,3 +13,9 @@ export type { ChatMessageProps } from './chat-message';
 
 export { ChatThread } from './chat-thread';
 export type { ChatThreadProps } from './chat-thread';
+
+export { Modal, ModalHeader, ModalTitle, ModalDescription, ModalFooter, modalVariants } from './modal';
+export type { ModalProps } from './modal';
+
+export { Tag, tagVariants } from './tag';
+export type { TagProps } from './tag';

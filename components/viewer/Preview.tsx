@@ -1,56 +1,60 @@
 'use client';
 
 import { useState } from 'react';
+import { RotateCw, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-type Surface = 'white' | 'subtle' | 'dark';
-
-const surfaces: Record<Surface, { label: string; className: string }> = {
-  white:  { label: 'White',  className: 'bg-white' },
-  subtle: { label: 'Subtle', className: 'bg-zinc-50' },
-  dark:   { label: 'Dark',   className: 'bg-zinc-900' },
-};
 
 interface PreviewProps {
   children: React.ReactNode;
   className?: string;
   label?: string;
+  onOpenInNewTab?: () => void;
 }
 
-export function Preview({ children, className, label }: PreviewProps) {
-  const [surface, setSurface] = useState<Surface>('white');
+const buttonClass =
+  'inline-flex items-center gap-1.5 rounded-md border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 text-xs text-zinc-600 hover:bg-zinc-100 transition-colors shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_1px_2px_-1px_rgba(0,0,0,0.06),0px_2px_4px_0px_rgba(0,0,0,0.04)]';
+
+export function Preview({ children, className, label, onOpenInNewTab }: PreviewProps) {
+  const [remountKey, setRemountKey] = useState(0);
 
   return (
     <div className="rounded-lg border border-zinc-200 overflow-hidden">
-      <div className="flex items-center justify-between border-b border-zinc-200 bg-zinc-50 px-4 py-2">
-        <span className="text-xs text-zinc-400">{label ?? 'Preview'}</span>
-        <div className="flex items-center gap-1">
-          {(Object.keys(surfaces) as Surface[]).map(s => (
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-zinc-200 bg-zinc-50 px-3 py-3">
+        <span className="text-lg font-bold text-zinc-900">{label ?? 'Preview'}</span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setRemountKey(k => k + 1)}
+            className={buttonClass}
+            aria-label="Refresh preview"
+          >
+            <RotateCw className="h-4 w-4" />
+            Refresh
+          </button>
+          {onOpenInNewTab && (
             <button
-              key={s}
-              onClick={() => setSurface(s)}
-              className={cn(
-                'rounded px-2 py-1 text-xs transition-colors',
-                surface === s
-                  ? 'bg-white text-zinc-900 shadow-sm border border-zinc-200 font-medium'
-                  : 'text-zinc-500 hover:text-zinc-700'
-              )}
+              onClick={onOpenInNewTab}
+              className={buttonClass}
+              aria-label="Open in new tab"
             >
-              {surfaces[s].label}
+              <ExternalLink className="h-4 w-4" />
+              Open in new tab
             </button>
-          ))}
+          )}
         </div>
       </div>
+
+      {/* Content */}
       <div
+        key={remountKey}
         className={cn(
-          'relative min-h-32 p-8',
-          surfaces[surface].className,
+          'relative min-h-32 p-8 bg-white',
           '[background-image:radial-gradient(circle,_#d4d4d8_1px,_transparent_1px)]',
           '[background-size:20px_20px]',
           className
         )}
       >
-        <div className="flex flex-wrap items-center justify-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-4 h-full">
           {children}
         </div>
       </div>

@@ -44,13 +44,12 @@ export const PAGE_REGISTRY: PageEntry[] = [
 
   // Components
   { slug: 'button',           title: 'Button',         section: 'Components', route: 'components', layout: 'standard' },
-  { slug: 'input',            title: 'Input',          section: 'Components', route: 'components', layout: 'standard' },
-  { slug: 'card',             title: 'Card',           section: 'Components', route: 'components', layout: 'standard' },
-  { slug: 'badge',            title: 'Badge',          section: 'Components', route: 'components', layout: 'standard' },
   { slug: 'chat-input-box',   title: 'Chat Input Box', section: 'Components', route: 'components', layout: 'standard' },
   { slug: 'chat-bubble',      title: 'Chat Bubble',    section: 'Components', route: 'components', layout: 'standard' },
   { slug: 'chat-message',     title: 'Chat Message',   section: 'Components', route: 'components', layout: 'standard' },
   { slug: 'chat-thread',      title: 'Chat Thread',    section: 'Components', route: 'components', layout: 'standard' },
+  { slug: 'modal',            title: 'Modal',          section: 'Components', route: 'components', layout: 'standard' },
+  { slug: 'tag',              title: 'Tag',            section: 'Components', route: 'components', layout: 'standard' },
 
   // Effects (all experiments)
   { slug: 'gravity-assist',    title: 'Gravity Assist',    section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
@@ -63,13 +62,13 @@ export const PAGE_REGISTRY: PageEntry[] = [
   { slug: 'spaceship-logo-scene',   title: 'Spaceship Logo Scene',   section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
   { slug: 'three-body-planets',     title: 'Three Body Planets',     section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
 
-  // Patterns (bare layout — no topbar)
-  { slug: 'chat',                   title: 'Chat',                  section: 'Patterns', route: 'patterns', layout: 'bare' },
-  { slug: 'preview-panel',          title: 'Preview Panel',         section: 'Patterns', route: 'patterns', layout: 'bare' },
-  { slug: 'preview-panel-header',   title: 'Preview Panel Header',  section: 'Patterns', route: 'patterns', layout: 'bare' },
-  { slug: 'editable-title',         title: 'Editable Title',        section: 'Patterns', route: 'patterns', layout: 'bare' },
-  { slug: 'shareable-link',         title: 'Shareable Link',        section: 'Patterns', route: 'patterns', layout: 'bare' },
-  { slug: 'sidebar-toggle',         title: 'Sidebar Toggle',        section: 'Patterns', route: 'patterns', layout: 'bare' },
+  // Patterns
+  { slug: 'chat',                   title: 'Chat',                  section: 'Patterns', route: 'patterns', layout: 'standard' },
+  { slug: 'preview-panel',          title: 'Preview Panel',         section: 'Patterns', route: 'patterns', layout: 'standard' },
+  { slug: 'preview-panel-header',   title: 'Preview Panel Header',  section: 'Patterns', route: 'patterns', layout: 'standard' },
+  { slug: 'editable-title',         title: 'Editable Title',        section: 'Patterns', route: 'patterns', layout: 'standard' },
+  { slug: 'shareable-link',         title: 'Shareable Link',        section: 'Patterns', route: 'patterns', layout: 'standard' },
+  { slug: 'sidebar-toggle',         title: 'Sidebar Toggle',        section: 'Patterns', route: 'patterns', layout: 'standard' },
 
   // Pages (bare layout, experiments)
   { slug: 'gravity-chat',        title: 'Gravity Chat',        section: 'Pages', route: 'patterns', layout: 'bare', experiment: true },

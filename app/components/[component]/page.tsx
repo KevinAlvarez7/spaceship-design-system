@@ -1,24 +1,22 @@
 import { notFound } from 'next/navigation';
 import { Topbar }      from '@/components/viewer/Topbar';
 import { ButtonPage }  from './ButtonPage';
-import { InputPage }   from './InputPage';
-import { CardPage }    from './CardPage';
-import { BadgePage }   from './BadgePage';
 import { ChatInputBoxPage } from './ChatInputBoxPage';
 import { ChatBubblePage }  from './ChatBubblePage';
 import { ChatMessagePage } from './ChatMessagePage';
 import { ChatThreadPage }  from './ChatThreadPage';
+import { ModalPage }       from './ModalPage';
+import { TagPage }         from './TagPage';
 import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
 const COMPONENTS: Record<string, React.ComponentType> = {
   button:           ButtonPage,
-  input:            InputPage,
-  card:             CardPage,
-  badge:            BadgePage,
   'chat-input-box': ChatInputBoxPage,
   'chat-bubble':    ChatBubblePage,
   'chat-message':   ChatMessagePage,
   'chat-thread':    ChatThreadPage,
+  modal:            ModalPage,
+  tag:              TagPage,
 };
 
 export function generateStaticParams() {
