@@ -127,7 +127,9 @@ Primitive  →  Semantic  →  Component
 
 - **Primitive tokens:** `--[scale]-[step]` (e.g., `--orbit-blue-500`, `--neutral-200`)
 - **Semantic tokens:** `--[category]-[role]-[modifier]` (e.g., `--text-interactive-disabled`, `--bg-status-success`)
+- **Spacing tokens:** `--spacing-[px]` where `[px]` is the pixel value (e.g., `--spacing-24` = 24px / 1.5rem). Add a new token if the value doesn't exist — never use `h-[2.25rem]` or `p-[16px]`.
 - **Rule:** components use semantic tokens only — never reference primitives directly.
+- **No hardcoded rem/px values** — add a spacing token to `styles/tokens.css` and `tokens/spacing.ts` if one doesn't exist.
 
 TypeScript mirrors in `tokens/*.ts` (colors, spacing, typography, radius, shadow, motion) for viewer iteration and page generation.
 

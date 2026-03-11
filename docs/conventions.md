@@ -134,6 +134,21 @@ Pattern: `--[scale]-[step]`
 --lumen-yellow-700
 ```
 
+### Spacing tokens (CSS variables)
+
+Pattern: `--spacing-[px]` where `[px]` is the pixel value.
+
+```css
+--spacing-4    /* 4px  / 0.25rem */
+--spacing-8    /* 8px  / 0.5rem  */
+--spacing-16   /* 16px / 1rem    */
+--spacing-24   /* 24px / 1.5rem  */
+--spacing-36   /* 36px / 2.25rem */
+--spacing-48   /* 48px / 3rem    */
+```
+
+Using the pixel value as the index makes every token self-documenting and allows inserting new values at any position without renaming collisions.
+
 ### Rule
 
 **Never reference primitive tokens directly in components.** Components must use semantic tokens only. Primitives exist to back semantic tokens in `styles/tokens.css`.
@@ -150,6 +165,7 @@ Rules for authoring new files in `components/ui/` and `components/patterns/`. Th
 - All colours, spacing, radius, shadow must use semantic tokens — no hardcoded hex, no Tailwind colour utilities (`text-white`, `bg-zinc-900`, `border-gray-200`, etc.)
 - Use Tailwind v4 **paren syntax**: `bg-(--bg-interactive-primary-default)` — NOT `bg-[var(--token)]`
 - Only semantic tokens; never primitive tokens (`--orbit-blue-500`, `--neutral-200`) in component files
+- **No hardcoded rem/px in Tailwind arbitrary values** — if a dimension doesn't have a spacing token, add one to `styles/tokens.css` and `tokens/spacing.ts` before using it. Never use `h-[2.25rem]` or `p-[16px]` — always `h-(--spacing-36)` or `p-(--spacing-16)`.
 
 **CVA structure**
 - Pass an **array** to `cva()` base — not a concatenated string
@@ -179,7 +195,7 @@ Rules for authoring new files in `components/ui/` and `components/patterns/`. Th
 Patterns compose DS components — they are **not** DS components themselves.
 
 - **Compose from DS components only** — import from `@/components/ui`; never recreate a component inline with raw HTML when a DS component exists
-- **Tokens for layout** — gap, padding, and structural spacing may reference tokens via paren syntax: `gap-(--spacing-md)`
+- **Tokens for layout** — gap, padding, and structural spacing may reference tokens via paren syntax: `gap-(--spacing-24)`
 - **No hardcoded values** — no inline `style={{ color: '#...' }}` or `style={{ padding: '16px' }}`
 - **No Tailwind colour utilities** — `text-zinc-*`, `bg-white`, `border-gray-*`, etc. are forbidden; use DS tokens instead
 
