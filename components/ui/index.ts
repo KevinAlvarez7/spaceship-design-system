@@ -22,3 +22,18 @@ export type { TagProps } from './tag';
 
 export { ClarificationCard, clarificationCardVariants } from './clarification-card';
 export type { ClarificationCardProps, ClarificationQuestion, ClarificationAnswers } from './clarification-card';
+
+export { TaskList, taskListVariants } from './task-list';
+export type { TaskListProps } from './task-list';
+
+export { RadioGroup, RadioItem, radioGroupVariants } from './radio-group';
+export type { RadioGroupProps, RadioItemProps } from './radio-group';
+
+export { CheckboxGroup, CheckboxItem, checkboxGroupVariants } from './checkbox-group';
+export type { CheckboxGroupProps, CheckboxItemProps } from './checkbox-group';
+
+export { SortableList, SortableItem, sortableListVariants } from './sortable-list';
+export type { SortableListProps, SortableItemProps } from './sortable-list';
+
+export { TabBar, TabBarItem, tabBarVariants } from './tab-bar';
+export type { TabBarProps, TabBarItemProps } from './tab-bar';

@@ -2,11 +2,12 @@
 
 import { motion, AnimatePresence } from 'motion/react';
 import { RefreshCw, ExternalLink, FileText, Search, GitBranch, Code2, Eye } from 'lucide-react';
-import { Button, Tag } from '@/components/ui';
+import { Button, Tag, TabBar, TabBarItem } from '@/components/ui';
 import { ArtifactContentRenderer } from './ArtifactContentRenderer';
 import {
   type ArtifactNavigationProps,
   type ArtifactType,
+  type ArtifactStatus,
   ARTIFACT_TYPE_LABEL,
   ARTIFACT_STATUS_VARIANT,
   ARTIFACT_STATUS_LABEL,
@@ -21,6 +22,13 @@ const TYPE_ICON: Record<ArtifactType, React.ReactNode> = {
   preview:        <Eye className="size-4" />,
 };
 
+function StatusDot({ status }: { status: ArtifactStatus }) {
+  if (status === 'draft') return null;
+  return (
+    <span className={status === 'complete' ? 'size-1.5 rounded-full shrink-0 bg-(--bg-interactive-success-default)' : 'size-1.5 rounded-full shrink-0 bg-(--bg-interactive-warning-default)'} />
+  );
+}
+
 export function ArtifactSegmentedControl({
   artifacts,
   activeId,
@@ -31,41 +39,21 @@ export function ArtifactSegmentedControl({
   const activeArtifact = artifacts.find(a => a.id === activeId) ?? artifacts[0];
 
   return (
-    <div className="flex flex-1 min-h-0 flex-col rounded-3xl shadow-(--shadow-border) bg-(--bg-surface-base) overflow-clip">
-      {/* Header with segmented control */}
+    <div className="flex flex-1 min-h-0 flex-col rounded-xl shadow-(--shadow-border) bg-(--bg-surface-base) overflow-clip">
+      {/* Header with tab bar */}
       <div className="bg-(--bg-surface-primary) border-b-2 border-(--bg-surface-secondary) flex shrink-0 items-center justify-between px-4 py-3 gap-4">
-        {/* Pill track */}
-        <div className="relative flex items-center rounded-2xl bg-(--bg-surface-secondary) p-1 gap-0.5">
-          {artifacts.map(artifact => {
-            const isActive = artifact.id === activeId;
-            return (
-              <div key={artifact.id} className="relative">
-                {isActive && (
-                  <motion.div
-                    layoutId="segment-active-pill"
-                    className="absolute inset-0 rounded-xl bg-(--bg-surface-base) shadow-(--shadow-border)"
-                    transition={springs.interactive}
-                    style={{ willChange: 'transform' }}
-                  />
-                )}
-                <button
-                  onClick={() => onSelect(artifact.id)}
-                  className="relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-xl cursor-pointer"
-                >
-                  <span className={isActive ? 'text-(--text-interactive-primary)' : 'text-(--text-tertiary)'}>
-                    {TYPE_ICON[artifact.type]}
-                  </span>
-                  <span className={`font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] whitespace-nowrap ${isActive ? 'text-(--text-primary)' : 'text-(--text-tertiary)'}`}>
-                    {ARTIFACT_TYPE_LABEL[artifact.type]}
-                  </span>
-                  {artifact.status !== 'draft' && (
-                    <span className={`size-1.5 rounded-full shrink-0 ${artifact.status === 'complete' ? 'bg-(--bg-interactive-success-default)' : 'bg-(--bg-interactive-warning-default)'}`} />
-                  )}
-                </button>
-              </div>
-            );
-          })}
-        </div>
+        <TabBar value={activeId} onChange={onSelect} layoutId="artifact-segment-pill">
+          {artifacts.map(artifact => (
+            <TabBarItem
+              key={artifact.id}
+              value={artifact.id}
+              leadingIcon={TYPE_ICON[artifact.type]}
+              badge={<StatusDot status={artifact.status} />}
+            >
+              {ARTIFACT_TYPE_LABEL[artifact.type]}
+            </TabBarItem>
+          ))}
+        </TabBar>
 
         {/* Actions */}
         <div className="flex items-center gap-2 shrink-0">

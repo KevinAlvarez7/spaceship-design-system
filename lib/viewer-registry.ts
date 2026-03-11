@@ -50,6 +50,7 @@ export const PAGE_REGISTRY: PageEntry[] = [
   { slug: 'chat-thread',      title: 'Chat Thread',    section: 'Components', route: 'components', layout: 'standard' },
   { slug: 'modal',            title: 'Modal',          section: 'Components', route: 'components', layout: 'standard' },
   { slug: 'tag',              title: 'Tag',            section: 'Components', route: 'components', layout: 'standard' },
+  { slug: 'tab-bar',          title: 'Tab Bar',        section: 'Components', route: 'components', layout: 'standard' },
 
   // Effects (all experiments)
   { slug: 'gravity-assist',    title: 'Gravity Assist',    section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
@@ -61,17 +62,16 @@ export const PAGE_REGISTRY: PageEntry[] = [
   { slug: 'preview-panel-header',   title: 'Preview Panel Header',  section: 'Patterns', route: 'patterns', layout: 'standard' },
   { slug: 'editable-title',         title: 'Editable Title',        section: 'Patterns', route: 'patterns', layout: 'standard' },
   { slug: 'shareable-link',         title: 'Shareable Link',        section: 'Patterns', route: 'patterns', layout: 'standard' },
-  { slug: 'sidebar-toggle',         title: 'Sidebar Toggle',        section: 'Patterns', route: 'patterns', layout: 'standard' },
 
   // Pages (bare layout, experiments)
   { slug: 'gravity-chat',           title: 'Gravity Chat',           section: 'Pages', route: 'patterns', layout: 'bare', experiment: true },
   { slug: 'prototype-workspace',       title: 'Prototype Workspace',       section: 'Pages', route: 'patterns', layout: 'bare',     experiment: true },
   { slug: 'artifact-navigation',       title: 'Artifact Navigation',       section: 'Pages', route: 'patterns', layout: 'bare',     experiment: true },
-  { slug: 'structured-clarification',  title: 'Structured Clarification',  section: 'Pages', route: 'patterns', layout: 'standard', experiment: true },
-  { slug: 'clarification-chat', title: 'Clarification Chat', section: 'Pages', route: 'patterns', layout: 'bare', experiment: true },
+  { slug: 'clarification-chat',        title: 'Clarification Chat',        section: 'Pages', route: 'patterns', layout: 'bare',     experiment: true },
 
   // Patterns (components)
-  { slug: 'clarification-card', title: 'Clarification Card', section: 'Patterns', route: 'patterns', layout: 'standard' },
+  { slug: 'clarification-card',         title: 'Clarification Card', section: 'Patterns', route: 'patterns', layout: 'standard' },
+  { slug: 'artifact-segmented-control', title: 'Artifact Panel',     section: 'Patterns', route: 'patterns', layout: 'standard' },
 ];
 
 export const SECTION_ORDER: SidebarSection[] = [

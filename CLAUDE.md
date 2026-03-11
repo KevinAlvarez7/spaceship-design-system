@@ -177,15 +177,17 @@ Up to 3 levels: `"Background / Interactive / Primary"`.
 
 ---
 
-## Skills Reference
+## Skills Reference (auto-load)
 
-Located in `.claude/skills/`:
+Located in `.claude/skills/`. **Read the relevant skill file BEFORE starting work** when a task matches its trigger.
 
-| Skill | Use for |
-|-------|---------|
-| `design-system-implementer/` | Building tokens and CVA components |
-| `design-system-explorer/` | Auditing and documenting the design system |
-| `figma-to-code/` | Translating Figma designs to code via MCP |
+| Skill file | Trigger — read this skill when… |
+|---|---|
+| `.claude/skills/design-system-implementer/design-system-implementer.md` | Creating or modifying DS components, adding CVA variants, wiring tokens, refactoring styles into tokens, adding dark mode, or any task that turns design decisions into working code |
+| `.claude/skills/design-system-explorer/design-system-explorer.md` | Auditing the design system, documenting tokens, planning component structure, writing a style guide, or exploring naming conventions |
+| `.claude/skills/figma-to-code/figma-to-code.md` | A Figma URL appears, or the user says "build from Figma", "implement this design", "sync Figma", or mentions Figma variables/styles |
+
+**How to auto-load:** Use the `Read` tool on the skill file path before proceeding with the task. Do not use the `Skill` tool — these are project-local files, not plugin skills.
 
 ---
 

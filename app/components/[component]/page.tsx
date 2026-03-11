@@ -7,6 +7,7 @@ import { ChatMessagePage } from './ChatMessagePage';
 import { ChatThreadPage }  from './ChatThreadPage';
 import { ModalPage }       from './ModalPage';
 import { TagPage }         from './TagPage';
+import { TabBarPage }     from './TabBarPage';
 import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
 const COMPONENTS: Record<string, React.ComponentType> = {
@@ -17,6 +18,7 @@ const COMPONENTS: Record<string, React.ComponentType> = {
   'chat-thread':    ChatThreadPage,
   modal:            ModalPage,
   tag:              TagPage,
+  'tab-bar':        TabBarPage,
 };
 
 export function generateStaticParams() {

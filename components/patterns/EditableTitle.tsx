@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 interface EditableTitleProps {
   title: string;
   onTitleChange?: (newTitle: string) => void;
-  onMenuClick?: () => void;
+  onMenuClick: () => void;
   error?: string;
   className?: string;
 }
@@ -61,18 +61,16 @@ export function EditableTitle({
     <div className={cn('flex items-center gap-3', className)}>
       <div className="bg-(--bg-surface-base) rounded-lg shadow-(--shadow-border)">
         <div className="flex items-center w-fit gap-4 px-1.5 py-1.5">
-          {/* Menu button (optional) — inline at start of field */}
-          {onMenuClick && (
-            <Button
-              variant="secondary"
-              size="icon-sm"
-              className="shrink-0"
-              onClick={onMenuClick}
-              icon={<Menu />}
-              aria-label="Open menu"
-              surface="shadow"
-            />
-          )}
+          {/* Menu button — inline at start of field */}
+          <Button
+            variant="secondary"
+            size="icon-sm"
+            className="shrink-0"
+            onClick={onMenuClick}
+            icon={<Menu />}
+            aria-label="Open menu"
+            surface="shadow"
+          />
           {showEditing ? (
             <>
               <div className="relative">

@@ -5,28 +5,26 @@ import { PreviewPanelPage }          from './PreviewPanelPage';
 import { PreviewPanelHeaderPage }    from './PreviewPanelHeaderPage';
 import { EditableTitlePage }         from './EditableTitlePage';
 import { ShareableLinkPage }         from './ShareableLinkPage';
-import { SidebarTogglePage }         from './SidebarTogglePage';
 import { GravityChatPage }           from './GravityChatPage';
 import { PrototypeWorkspacePage }    from './PrototypeWorkspacePage';
 import { ArtifactNavigationPage }          from './ArtifactNavigationPage';
-import { StructuredClarificationPage }    from './StructuredClarificationPage';
-import { ClarificationChatPage } from './ClarificationChatPage';
 import { ClarificationCardPage } from './ClarificationCardPage';
+import { ClarificationChatDemoPage } from './ClarificationChatDemoPage';
+import { ArtifactSegmentedControlPage } from './ArtifactSegmentedControlPage';
 import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
 const PATTERNS: Record<string, React.ComponentType> = {
-  'chat':                   ChatPage,
-  'preview-panel':          PreviewPanelPage,
-  'preview-panel-header':   PreviewPanelHeaderPage,
-  'editable-title':         EditableTitlePage,
-  'shareable-link':         ShareableLinkPage,
-  'sidebar-toggle':         SidebarTogglePage,
-  'gravity-chat':           GravityChatPage,
-  'prototype-workspace':    PrototypeWorkspacePage,
+  'chat':                         ChatPage,
+  'preview-panel':                PreviewPanelPage,
+  'preview-panel-header':         PreviewPanelHeaderPage,
+  'editable-title':               EditableTitlePage,
+  'shareable-link':               ShareableLinkPage,
+  'gravity-chat':                 GravityChatPage,
+  'prototype-workspace':          PrototypeWorkspacePage,
   'artifact-navigation':          ArtifactNavigationPage,
-  'structured-clarification':     StructuredClarificationPage,
-  'clarification-chat': ClarificationChatPage,
-  'clarification-card': ClarificationCardPage,
+  'clarification-card':           ClarificationCardPage,
+  'clarification-chat':           ClarificationChatDemoPage,
+  'artifact-segmented-control':   ArtifactSegmentedControlPage,
 };
 
 export function generateStaticParams() {

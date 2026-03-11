@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${zillaSlab.variable} ${outfit.variable} ${jetbrainsMono.variable} flex h-screen overflow-hidden bg-white`}>
+      <body suppressHydrationWarning className={`${zillaSlab.variable} ${outfit.variable} ${jetbrainsMono.variable} flex h-screen overflow-hidden bg-white`}>
         <ViewerShell>{children}</ViewerShell>
       </body>
     </html>

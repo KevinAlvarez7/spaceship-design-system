@@ -1,21 +1,87 @@
 'use client';
 
+import { useRef } from 'react';
+import { motion } from 'motion/react';
 import { Globe, Link } from 'lucide-react';
+import useMeasure from 'react-use-measure';
 import { Button } from '@/components/ui';
+import { cn } from '@/lib/utils';
+
+const SPRING = { type: 'spring', stiffness: 200, damping: 30 } as const;
 
 interface ShareableLinkProps {
-  url: string;
+  value: string;
+  onChange: (value: string) => void;
+  suffix?: string;
+  placeholder?: string;
   onShare?: () => void;
   shareLabel?: string;
+  className?: string;
 }
 
-export function ShareableLink({ url, onShare, shareLabel = 'Create Shareable Link' }: ShareableLinkProps) {
+const FONT_CLASSES = 'font-sans [font-size:var(--font-size-base)] [line-height:var(--line-height-base)]';
+
+export function ShareableLink({
+  value,
+  onChange,
+  suffix = '.on.spaceship.gov.sg',
+  placeholder = 'Enter your domain name',
+  onShare,
+  shareLabel = 'Create shareable link',
+  className,
+}: ShareableLinkProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [sizerRef, { width: sizerWidth }] = useMeasure();
+
   return (
-    <div className="flex items-center gap-2 rounded-2xl shadow-(--shadow-border) bg-(--bg-surface-primary) px-2 py-1">
-      <Globe className="size-4 text-(--text-secondary) shrink-0 mx-2" />
-      <span className="font-sans [font-size:var(--font-size-sm)] [line-height:var(--line-height-sm)] text-(--text-secondary) whitespace-nowrap">
-        {url}
-      </span>
+    <div
+      className={cn(
+        'flex items-center gap-2 rounded-lg shadow-(--shadow-border) bg-(--bg-surface-base) px-1.5 py-1.5',
+        className,
+      )}
+    >
+      {/* Input group: Globe + text (separate from button) */}
+      <div className="flex items-center gap-2 px-2">
+        <Globe className="size-5 text-(--text-secondary) shrink-0" />
+
+        {/* Text group: animated sizer + suffix, baseline-aligned, no gap */}
+        <div className="flex items-baseline relative">
+          {/* Sizer div — block element so ResizeObserver fires on text change */}
+          <div
+            ref={sizerRef}
+            aria-hidden
+            className={cn('absolute invisible whitespace-pre pointer-events-none', FONT_CLASSES)}
+          >
+            {value || placeholder}
+          </div>
+          <motion.div
+            className="cursor-text overflow-hidden"
+            animate={{ width: sizerWidth || undefined }}
+            initial={false}
+            transition={SPRING}
+            onClick={() => inputRef.current?.focus()}
+          >
+            <input
+              ref={inputRef}
+              value={value}
+              onChange={e => onChange(e.target.value)}
+              placeholder={placeholder}
+              className={cn(
+                'w-full bg-transparent outline-none px-0',
+                'text-(--text-primary) placeholder:text-(--text-placeholder)',
+                FONT_CLASSES,
+              )}
+            />
+          </motion.div>
+
+          {/* Suffix — no gap, visually touches input text */}
+          <span className={cn('text-(--text-tertiary) whitespace-nowrap shrink-0', FONT_CLASSES)}>
+            {suffix}
+          </span>
+        </div>
+      </div>
+
+      {/* Share button */}
       <Button variant="success" size="sm" trailingIcon={<Link />} onClick={onShare}>
         {shareLabel}
       </Button>

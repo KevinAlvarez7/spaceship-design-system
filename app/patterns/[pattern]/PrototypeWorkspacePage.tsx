@@ -11,6 +11,7 @@ const DEMO_URL = 'https://spaceship.design';
 export function PrototypeWorkspacePage() {
   const [previewKey, setPreviewKey] = useState(0);
   const [projectTitle, setProjectTitle] = useState('Spaceship Vibe Prototype');
+  const [domain, setDomain] = useState('');
   const { messages, streamedText, isStreaming, inputValue, setInputValue, handleSubmit } = useChatDemo();
 
   return (
@@ -34,7 +35,7 @@ export function PrototypeWorkspacePage() {
 
           {/* Right: URL pill + share button */}
           <div className="flex items-center gap-3">
-            <ShareableLink url="spaceship.design/prototype/abc123" />
+            <ShareableLink value={domain} onChange={setDomain} />
           </div>
         </nav>
 

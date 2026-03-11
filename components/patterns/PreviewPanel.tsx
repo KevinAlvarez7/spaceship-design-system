@@ -17,7 +17,7 @@ export function PreviewPanel({
   children,
 }: PreviewPanelProps) {
   return (
-    <div className="flex flex-col overflow-clip rounded-3xl shadow-(--shadow-border) bg-(--bg-surface-base) size-full">
+    <div className="flex flex-col overflow-clip rounded-xl shadow-(--shadow-border) bg-(--bg-surface-base) size-full">
       <PreviewPanelHeader
         title={title}
         onRefresh={onRefresh}
