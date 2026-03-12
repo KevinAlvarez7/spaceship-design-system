@@ -75,3 +75,88 @@
     line-height: var(--line-height-base);
   }
 }
+
+.thinking-text-animated {
+  --_g1-x: 0%;   --_g1-y: 50%;
+  --_g2-x: 50%;  --_g2-y: 50%;
+  --_g3-x: 100%; --_g3-y: 50%;
+
+  background:
+    radial-gradient(
+      ellipse 140% 300% at var(--_g1-x) var(--_g1-y),
+      var(--effect-thinking-1) 0%,
+      color-mix(in srgb, var(--effect-thinking-1) 40%, transparent) 30%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 140% 300% at var(--_g2-x) var(--_g2-y),
+      var(--effect-thinking-3) 0%,
+      color-mix(in srgb, var(--effect-thinking-3) 40%, transparent) 30%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 140% 300% at var(--_g3-x) var(--_g3-y),
+      var(--effect-thinking-5) 0%,
+      color-mix(in srgb, var(--effect-thinking-5) 40%, transparent) 30%,
+      transparent 60%
+    ),
+    linear-gradient(90deg, var(--effect-thinking-2) 0%, var(--effect-thinking-4) 100%);
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes thinking-dot-bounce {
+  0%, 70%, 100% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-0.2em);
+  }
+}
+
+@keyframes thinking-dots-sweep {
+  from { background-position-x: 0%; }
+  to   { background-position-x: 300%; }
+}
+
+.thinking-dot-bounce {
+  display: inline-block;
+  background: linear-gradient(90deg,
+    var(--effect-thinking-1),
+    var(--effect-thinking-3),
+    var(--effect-thinking-5),
+    var(--effect-thinking-1)
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Each dot is staggered by 1/3 of the 4s sweep cycle so colors flow left → right across the trio */
+.thinking-dot-1 { animation: thinking-dot-bounce 1.4s ease-in-out 0s infinite, thinking-dots-sweep 4s linear 0s infinite; }
+.thinking-dot-2 { animation: thinking-dot-bounce 1.4s ease-in-out 0.15s infinite, thinking-dots-sweep 4s linear -1.33s infinite; }
+.thinking-dot-3 { animation: thinking-dot-bounce 1.4s ease-in-out 0.3s infinite, thinking-dots-sweep 4s linear -2.67s infinite; }
+
+@keyframes shimmer-text-sweep {
+  from { background-position-x: 0%; }
+  to   { background-position-x: 400%; }
+}
+
+.shimmer-text-linear {
+  background: linear-gradient(90deg,
+    var(--effect-thinking-1),
+    var(--effect-thinking-2),
+    var(--effect-thinking-3),
+    var(--effect-thinking-4),
+    var(--effect-thinking-5),
+    var(--effect-thinking-1)
+  );
+  background-size: 400% 100%;
+  animation: shimmer-text-sweep 6s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
