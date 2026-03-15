@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ds:fork": "node scripts/ds-fork.mjs",
+    "ds:promote": "node scripts/ds-promote.mjs",
+    "ds:clean": "node scripts/ds-clean.mjs",
+    "ds:versions": "node scripts/ds-versions.mjs"
   },
   "dependencies": {
     "@radix-ui/react-scroll-area": "^1.2.10",
