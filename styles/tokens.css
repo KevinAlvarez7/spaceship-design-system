@@ -48,16 +48,16 @@
   --lumen-yellow-900: #4a3400;
 
   /* Nova Mint */
-  --nova-mint-50: #effff9;
-  --nova-mint-100: #cffaef;
-  --nova-mint-200: #a4f5e1;
-  --nova-mint-300: #7bf0d3;
-  --nova-mint-400: #4febc4;
-  --nova-mint-500: #26e6b5;
-  --nova-mint-600: #1ac299;
-  --nova-mint-700: #139b7a;
-  --nova-mint-800: #0d7460;
-  --nova-mint-900: #06483d;
+  --nova-mint-50: #ecfdf6;
+  --nova-mint-100: #d1fae5;
+  --nova-mint-200: #a7f3d0;
+  --nova-mint-300: #6ee7b7;
+  --nova-mint-400: #34d399;
+  --nova-mint-500: #05a57c;
+  --nova-mint-600: #048a68;
+  --nova-mint-700: #047054;
+  --nova-mint-800: #035640;
+  --nova-mint-900: #023c2d;
 
   /* Solar Coral */
   --solar-coral-50: #fff4f1;
@@ -152,9 +152,9 @@
   --border-input-default: var(--black);
   --border-input-focus: var(--orbit-blue-600);
   --bg-input-default: var(--secondary-50);
-  --bg-interactive-secondary-default: var(--secondary-50);
-  --bg-interactive-secondary-hover: var(--secondary-100);
-  --bg-interactive-secondary-pressed: var(--secondary-200);
+  --bg-interactive-secondary-default: var(--secondary-100);
+  --bg-interactive-secondary-hover: var(--secondary-200);
+  --bg-interactive-secondary-pressed: var(--secondary-300);
   --bg-interactive-secondary-disabled: #fafafa;
   --bg-interactive-success-default: var(--nova-mint-500);
   --bg-interactive-success-hover: var(--nova-mint-600);
@@ -162,23 +162,30 @@
   --bg-interactive-success-disabled: #e5e5e5;
   --bg-interactive-error-default: var(--solar-coral-500);
   --bg-interactive-error-hover: var(--solar-coral-600);
-  --bg-interactive-error-pressed: var(--solar-coral-00);
+  --bg-interactive-error-pressed: var(--solar-coral-700);
   --bg-interactive-error-disabled: #e5e5e5;
   --bg-surface-brand-primary: var(--primary-50);
   --bg-surface-brand-secondary: var(--primary-100);
   --bg-surface-brand-tertiary: var(--primary-200);
   --bg-surface-brand-base: var(--primary-300);
+  --bg-surface-success-primary: var(--nova-mint-50);
+  --bg-surface-success-secondary: var(--nova-mint-100);
+  --bg-surface-success-tertiary: var(--nova-mint-200);
+  --bg-surface-success-base: var(--nova-mint-300);
+  --bg-surface-error-primary: var(--solar-coral-50);
+  --bg-surface-error-secondary: var(--solar-coral-100);
+  --bg-surface-error-tertiary: var(--solar-coral-200);
+  --bg-surface-error-base: var(--solar-coral-300);
+  --bg-surface-warning-primary: var(--lumen-yellow-50);
+  --bg-surface-warning-secondary: var(--lumen-yellow-100);
+  --bg-surface-warning-tertiary: var(--lumen-yellow-200);
+  --bg-surface-warning-base: var(--lumen-yellow-300);
   --bg-interactive-warning-default: var(--lumen-yellow-300);
   --bg-interactive-warning-hover: var(--lumen-yellow-400);
   --bg-interactive-warning-pressed: var(--lumen-yellow-500);
   --bg-interactive-warning-disabled: #e5e5e5;
 
   /* ── Typography ──────────────────────────────────────────────*/
-  /* Font Families */
-  --font-family-primary: 'Zilla Slab', Georgia, serif;
-  --font-family-secondary: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-
   /* Font Sizes */
   --font-size-2xl: 1.5rem; /* 24px */
   --font-size-3xl: 1.875rem; /* 30px */
@@ -260,6 +267,14 @@
   --ease-out:      cubic-bezier(0, 0, 0.2, 1);
   --ease-in-out:   cubic-bezier(0.4, 0, 0.2, 1);
   --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Sizing ─────────────────────────────────────────────────
+     Not in Figma variables — maintained manually.
+     Width constraints for chat-related components.
+     ──────────────────────────────────────────────────────────── */
+  --sizing-chat-min:     20rem;    /* 320px */
+  --sizing-chat-default: 26.75rem; /* 428px */
+  --sizing-chat-max:     48rem;    /* 768px */
 }
 
 /* ── Dark Mode ────────────────────────────────────────────────────

@@ -229,6 +229,33 @@ export const colorSemantic: SemanticColorGroup[] = [
     ],
   },
   {
+    group: 'Background / Success Surface',
+    tokens: [
+    { name: 'bg-surface-success-primary', cssVar: '--bg-surface-success-primary', description: 'bg / surface-success / primary' },
+    { name: 'bg-surface-success-secondary', cssVar: '--bg-surface-success-secondary', description: 'bg / surface-success / secondary' },
+    { name: 'bg-surface-success-tertiary', cssVar: '--bg-surface-success-tertiary', description: 'bg / surface-success / tertiary' },
+    { name: 'bg-surface-success-base', cssVar: '--bg-surface-success-base', description: 'bg / surface-success / base' },
+    ],
+  },
+  {
+    group: 'Background / Error Surface',
+    tokens: [
+    { name: 'bg-surface-error-primary', cssVar: '--bg-surface-error-primary', description: 'bg / surface-error / primary' },
+    { name: 'bg-surface-error-secondary', cssVar: '--bg-surface-error-secondary', description: 'bg / surface-error / secondary' },
+    { name: 'bg-surface-error-tertiary', cssVar: '--bg-surface-error-tertiary', description: 'bg / surface-error / tertiary' },
+    { name: 'bg-surface-error-base', cssVar: '--bg-surface-error-base', description: 'bg / surface-error / base' },
+    ],
+  },
+  {
+    group: 'Background / Warning Surface',
+    tokens: [
+    { name: 'bg-surface-warning-primary', cssVar: '--bg-surface-warning-primary', description: 'bg / surface-warning / primary' },
+    { name: 'bg-surface-warning-secondary', cssVar: '--bg-surface-warning-secondary', description: 'bg / surface-warning / secondary' },
+    { name: 'bg-surface-warning-tertiary', cssVar: '--bg-surface-warning-tertiary', description: 'bg / surface-warning / tertiary' },
+    { name: 'bg-surface-warning-base', cssVar: '--bg-surface-warning-base', description: 'bg / surface-warning / base' },
+    ],
+  },
+  {
     group: 'Background / Interactive / Warning',
     tokens: [
     { name: 'bg-interactive-warning-default', cssVar: '--bg-interactive-warning-default', description: 'bg / interactive / warning / default' },

@@ -50,15 +50,15 @@ export const springs = {
  * Named scale presets — import directly into DS components.
  */
 export const scales = {
-  prominent: { hover: 1.00, tap: 0.95 },
-  subtle:    { hover: 1.00, tap: 0.96 },
+  prominent: { hover: 0.98, tap: 0.94 },
+  subtle:    { hover: 0.98, tap: 0.94 },
 } satisfies Record<string, ScalePreset>;
 
 /* Viewer display arrays */
 
 export type FramerMotionToken = {
   name: string;
-  value: string;
+  value: string;  
   usedBy: string;
 };
 
@@ -68,6 +68,6 @@ export const springPresetTokens: FramerMotionToken[] = [
 ];
 
 export const scalePresetTokens: FramerMotionToken[] = [
-  { name: 'prominent', value: 'hover: 1.00, tap: 0.95', usedBy: 'Button (default surface)' },
-  { name: 'subtle',    value: 'hover: 1.00, tap: 0.96', usedBy: 'Button (shadow surface)' },
+  { name: 'prominent', value: 'hover: 0.99, tap: 0.95', usedBy: 'Button (default surface)' },
+  { name: 'subtle',    value: 'hover: 0.99, tap: 0.95', usedBy: 'Button (shadow surface)' },
 ];
