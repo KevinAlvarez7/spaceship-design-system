@@ -10,7 +10,7 @@ import { springs } from '@/tokens';
 // ─── CVA ──────────────────────────────────────────────────────────────────────
 
 export const taskListVariants = cva(
-  ['flex flex-col', 'rounded overflow-hidden'],
+  ['font-sans', 'flex flex-col', 'rounded overflow-hidden'],
   {
     variants: {
       surface: {
@@ -69,7 +69,7 @@ export function TaskList({
       >
         {/* Progress fill — absolute, behind content */}
         <span
-          className="absolute inset-y-0 left-0 bg-(--bg-interactive-success-default) transition-[width] duration-500 ease-out overflow-hidden"
+          className="absolute inset-y-0 left-0 bg-(--bg-surface-success-base) transition-[width] duration-500 ease-out overflow-hidden"
           style={{ width: `${progressPct}%` }}
           aria-hidden
         >
@@ -140,7 +140,7 @@ export function TaskList({
 
                 return (
                   <li key={task} className="flex items-center gap-3">
-                    <span className="[font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-tertiary) w-4 shrink-0 text-right tabular-nums">
+                    <span className="font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-tertiary) w-4 shrink-0 text-right tabular-nums">
                       {i + 1}
                     </span>
                     <span className={cn('flex-1 font-sans [font-size:var(--font-size-sm)] [line-height:var(--line-height-sm)]', textClass)}>

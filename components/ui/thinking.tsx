@@ -84,7 +84,7 @@ function useTextScramble(target: string, active: boolean): ScrambleChar[] {
 // ─── Variants ─────────────────────────────────────────────────────────────────
 
 export const thinkingVariants = cva(
-  ['inline-flex items-center', '[font-weight:var(--font-weight-semibold)]'],
+  ['inline-flex items-center', '[font-weight:var(--font-weight-semibold)]', 'font-(family-name:--font-family-secondary)'],
   {
     variants: {
       size: {
