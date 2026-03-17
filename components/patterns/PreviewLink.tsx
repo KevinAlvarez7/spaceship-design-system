@@ -26,7 +26,7 @@ export function PreviewLink({
         <div className="flex items-center gap-3">
           <Button
             variant="secondary"
-            surface="shadow"
+            surface="default"
             size="sm"
             trailingIcon={<RefreshCw />}
             onClick={onRefresh}
@@ -35,7 +35,7 @@ export function PreviewLink({
           </Button>
           <Button
             variant="secondary"
-            surface="shadow"
+            surface="default"
             size="sm"
             trailingIcon={<ExternalLink />}
             onClick={onOpenInNewTab}

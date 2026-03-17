@@ -3,29 +3,33 @@
 import { useRef } from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Square } from 'lucide-react';
 import { Button } from './button'; // direct sibling import — avoids circular dep with barrel
 
 const chatInputBoxVariants = cva([
   'w-full flex flex-col gap-3',
+  'min-w-(--sizing-chat-min)',
+  'max-w-(--sizing-chat-max)',
   'p-3',
   'bg-(--bg-surface-base)',
   'rounded-lg',
   'shadow-(--shadow-border)',
-  'data-[disabled]:opacity-50',
 ]);
 
 export interface ChatInputBoxProps
   extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onSubmit'> {
   onSubmit?: (value: string) => void;
+  onStop?: () => void;
   containerClassName?: string;
   submitLabel?: string;
+  stopLabel?: string;
   size?: 'md' | 'sm';
 }
 
 
 export function ChatInputBox({
   onSubmit,
+  onStop,
   containerClassName,
   className,
   value,
@@ -33,6 +37,7 @@ export function ChatInputBox({
   placeholder = 'Explore any problems, prototype any ideas...',
   disabled,
   submitLabel = 'Explore',
+  stopLabel = 'Stop',
   size = 'md',
   ...props
 }: ChatInputBoxProps) {
@@ -52,10 +57,7 @@ export function ChatInputBox({
   }
 
   return (
-    <div
-      data-disabled={disabled || undefined}
-      className={cn(chatInputBoxVariants(), containerClassName)}
-    >
+    <div className={cn(chatInputBoxVariants(), containerClassName)}>
       <div className="p-1">
         <textarea
           ref={textareaRef}
@@ -77,15 +79,26 @@ export function ChatInputBox({
         />
       </div>
       <div className="flex justify-end">
-        <Button
-          variant="primary"
-          surface="default"
-          trailingIcon={<ArrowUp />}
-          disabled={disabled}
-          onClick={handleSubmit}
-        >
-          {submitLabel}
-        </Button>
+        {onStop ? (
+          <Button
+            variant="destructive"
+            surface="default"
+            trailingIcon={<Square />}
+            onClick={onStop}
+          >
+            {stopLabel}
+          </Button>
+        ) : (
+          <Button
+            variant="primary"
+            surface="default"
+            trailingIcon={<ArrowUp />}
+            disabled={disabled}
+            onClick={handleSubmit}
+          >
+            {submitLabel}
+          </Button>
+        )}
       </div>
     </div>
   );

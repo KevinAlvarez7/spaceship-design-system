@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { PenLine, Check, Menu } from 'lucide-react';
 import { Button } from '@/components/ui';
+import { springs } from '@/tokens';
 import { cn } from '@/lib/utils';
 
 interface EditableTitleProps {
@@ -21,8 +23,11 @@ export function EditableTitle({
   className,
 }: EditableTitleProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isFullWidth, setIsFullWidth] = useState(false);
   const [editValue, setEditValue] = useState(title);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Set to true while expanding so onAnimationComplete knows to swap content
+  const pendingEditRef = useRef(false);
 
   const showEditing = isEditing || !!error;
 
@@ -36,17 +41,27 @@ export function EditableTitle({
 
   function handlePencilClick() {
     setEditValue(title);
-    setIsEditing(true);
+    pendingEditRef.current = true;
+    setIsFullWidth(true); // Step 1: expand pill
+  }
+
+  function handleAnimationComplete() {
+    if (pendingEditRef.current) {
+      pendingEditRef.current = false;
+      setIsEditing(true); // Step 2: swap content after expansion
+    }
   }
 
   function handleDone() {
     if (error) return;
     onTitleChange?.(editValue);
     setIsEditing(false);
+    setIsFullWidth(false);
   }
 
   function handleCancel() {
     setIsEditing(false);
+    setIsFullWidth(false);
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -59,56 +74,48 @@ export function EditableTitle({
 
   return (
     <div className={cn('flex items-center gap-3', className)}>
-      <div className="bg-(--bg-surface-base) rounded-lg shadow-(--shadow-border)">
-        <div className="flex items-center w-fit gap-4 px-1.5 py-1.5">
-          {/* Menu button — inline at start of field */}
-          <Button
-            variant="secondary"
-            size="icon-sm"
-            className="shrink-0"
-            onClick={onMenuClick}
-            icon={<Menu />}
-            aria-label="Open menu"
-            surface="shadow"
-          />
+      {/* Menu button — outside the pill */}
+      <Button
+        variant="secondary"
+        size="icon-lg"
+        className="shrink-0"
+        onClick={onMenuClick}
+        icon={<Menu />}
+        aria-label="Toggle sidebar"
+        surface="shadow"
+      />
+      <motion.div
+        initial={false}
+        animate={{ flexGrow: isFullWidth || showEditing ? 1 : 0 }}
+        transition={springs.interactive}
+        onAnimationComplete={handleAnimationComplete}
+        className={cn(
+          showEditing ? 'bg-(--bg-surface-base)' : 'bg-(--bg-surface-primary)',
+          'flex items-center overflow-hidden rounded-lg shadow-(--shadow-border)',
+        )}
+      >
+        {/* Text section */}
+        <div className="flex items-center gap-1.5 flex-1 p-2">
           {showEditing ? (
-            <>
-              <div className="relative">
-                <span
-                  aria-hidden
-                  className="invisible whitespace-pre font-sans [font-size:var(--font-size-base)] [line-height:var(--line-height-base)] [font-weight:var(--font-weight-semibold)]"
-                >
-                  {editValue.length >= title.length ? editValue : title}
-                </span>
-                <input
-                  ref={inputRef}
-                  value={editValue}
-                  onChange={e => setEditValue(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  className={cn(
-                    'absolute inset-0 w-full p-0',
-                    'bg-transparent outline-none border-none',
-                    'font-sans [font-size:var(--font-size-base)] [line-height:var(--line-height-base)] [font-weight:var(--font-weight-regular)] text-(--text-primary)',
-                  )}
-                  aria-label="Edit title"
-                />
-              </div>
-              <Button
-                variant="success"
-                size="icon-sm"
-                icon={<Check />}
-                disabled={!!error}
-                onClick={handleDone}
-                aria-label="Save title"
-              />
-            </>
+            <input
+              ref={inputRef}
+              value={editValue}
+              onChange={e => setEditValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className={cn(
+                'flex-1 p-0 min-w-0',
+                'bg-transparent outline-none border-none',
+                'font-sans [font-size:var(--font-size-base)] [line-height:var(--line-height-base)] [font-weight:var(--font-weight-regular)] text-(--text-primary)',
+              )}
+              aria-label="Edit title"
+            />
           ) : (
             <>
               <span className="font-sans [font-size:var(--font-size-base)] [line-height:var(--line-height-base)] [font-weight:var(--font-weight-semibold)] text-(--text-primary)">
                 {title}
               </span>
               <Button
-                variant="ghost"
+                variant="secondary"
                 size="icon-sm"
                 onClick={handlePencilClick}
                 aria-label="Edit title"
@@ -117,7 +124,28 @@ export function EditableTitle({
             </>
           )}
         </div>
-      </div>
+
+        {/* Actions section — edit mode only */}
+        {showEditing && (
+          <span className="flex items-center shrink-0 p-2">
+            <motion.span
+              initial={{ scale: 0.4, width: 0 }}
+              animate={{ scale: 1, width: 'auto' }}
+              transition={springs.interactive}
+              style={{ willChange: 'transform' }}
+            >
+              <Button
+                variant="success"
+                size="sm"
+                trailingIcon={<Check />}
+                disabled={!!error}
+                onClick={handleDone}
+                aria-label="Save title"
+              >Done</Button>
+            </motion.span>
+          </span>
+        )}
+      </motion.div>
 
       {/* Error message (to the right) */}
       {error && (

@@ -14,3 +14,14 @@ export function ChatInputBoxDemo({ size }: { size?: 'md' | 'sm' }) {
     />
   );
 }
+
+export function ChatInputBoxStopDemo() {
+  const [value, setValue] = useState('');
+  return (
+    <ChatInputBox
+      value={value}
+      onChange={e => setValue(e.target.value)}
+      onStop={() => console.log('stop')}
+    />
+  );
+}

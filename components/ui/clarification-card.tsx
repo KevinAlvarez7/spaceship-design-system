@@ -30,7 +30,7 @@ export type ClarificationAnswers = Record<number, string | string[]>;
 // ─── CVA ──────────────────────────────────────────────────────────────────────
 
 export const clarificationCardVariants = cva(
-  ['flex flex-col', 'bg-(--bg-surface-base)', 'rounded-xl overflow-hidden'],
+  ['flex flex-col', 'w-full', 'min-w-(--sizing-chat-min)', 'max-w-(--sizing-chat-max)', 'font-sans', 'bg-(--bg-surface-base)', 'rounded-xl overflow-hidden'],
   {
     variants: {
       surface: {
@@ -291,7 +291,7 @@ export function ClarificationCard({
                 />
                 <Button
                   variant="ghost"
-                  size="icon-sm"
+                  size="icon-md"
                   icon={<ArrowRight strokeWidth={2.5} />}
                   onClick={() => {
                     if (freeTextValue.trim()) {
@@ -383,7 +383,7 @@ export function ClarificationCard({
         <div className="flex items-center gap-1 shrink-0">
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon-md"
             icon={<ChevronLeft strokeWidth={2.5} />}
             onClick={handlePrev}
             disabled={currentIndex === 0}
@@ -397,7 +397,7 @@ export function ClarificationCard({
 
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon-md"
             icon={<ChevronRight strokeWidth={2.5} />}
             onClick={handleNext}
             disabled={currentIndex >= maxVisited}
@@ -410,10 +410,10 @@ export function ClarificationCard({
         {onClose && (
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon-md"
             icon={<X strokeWidth={2.5} />}
             onClick={onClose}
-            disableMotion={disableMotion}
+            disableMotion={disableMotion} 
             className="w-6 h-6"
           />
         )}
@@ -464,7 +464,7 @@ export function ClarificationCard({
           />
           <Button
             variant={freeTextValue.trim() ? 'primary' : 'secondary'}
-            size="icon-sm"
+            size="icon-md"
             icon={<ArrowRight strokeWidth={2.5} />}
             onClick={() => {
               if (freeTextValue.trim()) {
@@ -480,7 +480,7 @@ export function ClarificationCard({
           <div className="flex-1" />
           <Button
             variant="ghost"
-            size="sm"
+            size="md"
             onClick={handleSkip}
             disableMotion={disableMotion}
           >
@@ -488,7 +488,7 @@ export function ClarificationCard({
           </Button>
           <Button
             variant={answered ? 'primary' : 'secondary'}
-            size="icon-sm"
+            size="icon-md"
             icon={<ArrowRight strokeWidth={2.5} />}
             onClick={handleSubmit}
             disableMotion={disableMotion}

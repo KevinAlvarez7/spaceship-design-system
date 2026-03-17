@@ -14,13 +14,14 @@ export interface ArtifactNavigationProps {
   artifacts: Artifact[];
   activeId: string;
   onSelect: (id: string) => void;
+  changedIds?: Set<string>;
   onRefresh?: () => void;
   onOpenInNewTab?: () => void;
 }
 
 export const ARTIFACT_TYPE_LABEL: Record<ArtifactType, string> = {
   prd:            'PRD',
-  research:       'Research',
+  research:       'User Research',
   implementation: 'Impl. Plan',
   code:           'Code',
   preview:        'Preview',
@@ -44,9 +45,9 @@ export const ARTIFACT_STATUS_LABEL: Record<ArtifactStatus, string> = {
 
 export const MOCK_ARTIFACTS: Artifact[] = [
   {
-    id: 'prd',
-    type: 'prd',
-    title: 'Product Requirements',
+    id: 'brief',
+    type: 'brief',
+    title: 'Project Brief',
     status: 'complete',
     updatedAt: '2 min ago',
     content: `## Overview
@@ -72,169 +73,127 @@ Build an AI-powered vibe-coding tool that generates full-stack web applications 
 - Iteration cycle time: < 30 seconds per change`,
   },
   {
-    id: 'research',
-    type: 'research',
-    title: 'User Research Plan',
+    id: 'security',
+    type: 'security',
+    title: 'Security Review',
     status: 'in-progress',
     updatedAt: '5 min ago',
-    content: `## Research Objectives
+    content: `## Security Review
 
-Understand how founders and designers currently prototype ideas and where they experience the most friction.
+### Threat Model
 
-## Methods
+Identify and mitigate key attack vectors for an AI-powered code generation platform.
 
-### Interviews (Week 1–2)
-- 12 semi-structured interviews with target users
-- Focus on current workflow, pain points, and workarounds
+### Key Risks
 
-### Usability Testing (Week 3)
-- 6 participants, think-aloud protocol
-- Tasks: create app, iterate on UI, export code
+#### Code Injection
+- Generated code may contain malicious patterns
+- Mitigation: static analysis pass before execution; sandboxed preview iframe
 
-### Survey (Ongoing)
-- 200 respondents from target segment
-- Quantify frequency and severity of key pain points
+#### Prompt Injection
+- Malicious user input could hijack the AI pipeline
+- Mitigation: input sanitisation layer; system prompt hardening
 
-## Key Questions
+#### Data Exfiltration
+- Generated apps could leak session tokens or user data
+- Mitigation: Content Security Policy on preview iframe; no external network in sandbox
 
-1. What tools do you currently use for rapid prototyping?
-2. Where do you spend the most time during ideation?
-3. What would make you switch to a new tool immediately?
+### Authentication & Authorisation
 
-## Timeline
+- JWT-based session tokens with 1h expiry
+- Row-level security on all user artifacts in Postgres
+- API rate limiting: 60 req/min per user
 
-| Phase | Duration | Deliverable |
-|-------|----------|-------------|
-| Recruitment | 1 week | 18 participants |
-| Interviews | 2 weeks | Interview notes |
-| Usability | 1 week | Session recordings |
-| Analysis | 1 week | Research report |`,
+### Compliance
+
+- GDPR: user data deletion within 30 days of request
+- SOC 2 Type II audit scheduled for Q3`,
   },
   {
-    id: 'implementation',
-    type: 'implementation',
-    title: 'Implementation Plan',
+    id: 'prototype',
+    type: 'prototype',
+    title: 'Prototype',
     status: 'in-progress',
     updatedAt: '8 min ago',
-    content: `## Architecture
+    content: `## Prototype Plan
 
-### Frontend
-- Next.js 15 App Router with TypeScript
-- Tailwind CSS v4 for styling
-- Framer Motion for animations
-- Monaco Editor for code display
+### Goals
 
-### Backend
-- Node.js with tRPC for type-safe APIs
-- Streaming responses via Server-Sent Events
-- Redis for session state
+Validate core interaction model before full build — specifically the chat-driven iteration loop and multi-artifact panel layout.
 
-### AI Pipeline
-- Claude claude-sonnet-4-6 as primary generation model
-- Multi-step chain: PRD → Research → Plan → Code
-- Artifact streaming with incremental updates
+### Scope
 
-## Milestones
+**In scope**
+- Chat input → streaming artifact updates
+- Tab switcher between artifact types
+- Basic live preview iframe
 
-1. **Sprint 1** — Core chat interface + basic code generation
-2. **Sprint 2** — Multi-artifact panel layout + live preview
-3. **Sprint 3** — Iteration engine + diff highlighting
-4. **Sprint 4** — Export, sharing, and collaboration
+**Out of scope**
+- Authentication, persistence, sharing
+- Code export / download
 
-## Risks
+### Tools
 
-- Token limits for large codebases → chunked context strategy
-- Preview iframe security → sandboxed execution environment
-- Latency perception → streaming with skeleton states`,
+- Next.js App Router (scaffold only)
+- Tailwind CSS v4 + Spaceship DS
+- Claude claude-sonnet-4-6 via direct API (no tRPC yet)
+
+### Timeline
+
+| Day | Milestone |
+|-----|-----------|
+| 1   | Chat UI + streaming text response |
+| 2   | Multi-artifact panel + tab switcher |
+| 3   | Live preview iframe (sandboxed) |
+| 4   | Internal review + iteration |
+
+### Success Criteria
+
+- Can generate a simple to-do app end-to-end in < 2 min
+- Tab switching feels immediate and stable
+- Preview renders without security warnings`,
   },
   {
-    id: 'code',
-    type: 'code',
-    title: 'Generated Code',
+    id: 'research',
+    type: 'research',
+    title: 'User Research',
     status: 'draft',
     updatedAt: '12 min ago',
-    content: `import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+    content: `## User Research
 
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-}
+### Research Questions
 
-export function ChatInterface() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+1. How do non-technical founders currently prototype app ideas?
+2. What are the biggest friction points in early-stage product development?
+3. How much do users trust AI-generated code without review?
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+### Methodology
 
-    const userMsg: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: input,
-    };
+**Interviews (n=12)**
+- Founders with no engineering background
+- 30-minute semi-structured sessions
+- Screened for: have tried to build a product in the last 12 months
 
-    setMessages(prev => [...prev, userMsg]);
-    setInput('');
-    setIsLoading(true);
+**Usability Sessions (n=8)**
+- Think-aloud protocol on prototype build
+- Tasks: describe an app idea, iterate via chat, share with a collaborator
 
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        body: JSON.stringify({ messages: [...messages, userMsg] }),
-      });
+### Key Findings
 
-      const data = await response.json();
-      setMessages(prev => [...prev, {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: data.content,
-      }]);
-    } finally {
-      setIsLoading(false);
-    }
-  }
+#### Pain Points
+- Current tools require either code knowledge or rigid templates
+- Iteration cycles with contractors take days — users want instant feedback
+- Fear of "black box" output: users want to understand what was generated
 
-  return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        <AnimatePresence>
-          {messages.map(msg => (
-            <motion.div
-              key={msg.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={msg.role === 'user' ? 'text-right' : 'text-left'}
-            >
-              {msg.content}
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-      <form onSubmit={handleSubmit} className="p-4 border-t">
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          placeholder="Describe what you want to build..."
-          disabled={isLoading}
-        />
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Generating...' : 'Send'}
-        </button>
-      </form>
-    </div>
-  );
-}`,
-  },
-  {
-    id: 'preview',
-    type: 'preview',
-    title: 'Live Preview',
-    status: 'draft',
-    updatedAt: '12 min ago',
-    content: '',
+#### Opportunities
+- Show confidence scores or explanations alongside generated artifacts
+- Allow partial overrides — users want control without full ownership
+- Slack/email sharing as a first-class action to get stakeholder buy-in fast
+
+### Recommendations
+
+1. Add an "explain this" action on every artifact type
+2. Surface a one-click share flow on prototype and code tabs
+3. Design onboarding around a "describe your idea" prompt, not blank canvas`,
   },
 ];

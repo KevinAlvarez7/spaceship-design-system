@@ -1,5 +1,5 @@
 import { Preview } from '@/components/viewer/Preview';
-import { ArtifactSegmentedControlDemos } from './ArtifactSegmentedControlDemos';
+import { ArtifactSegmentedControlDemos, ArtifactSegmentedControlWithEditsDemos } from './ArtifactSegmentedControlDemos';
 
 export function ArtifactSegmentedControlPage() {
   return (
@@ -17,6 +17,13 @@ export function ArtifactSegmentedControlPage() {
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Interactive Demo</h2>
         <Preview label="Artifact panel with tab navigation">
           <ArtifactSegmentedControlDemos />
+        </Preview>
+      </section>
+
+      <section>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">With edit indicators</h2>
+        <Preview label="Edit dots on Security and Research tabs — clicking clears the indicator">
+          <ArtifactSegmentedControlWithEditsDemos />
         </Preview>
       </section>
     </div>

@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { RefreshCw, ExternalLink, FileText, Search, GitBranch, Code2, Eye, BookOpen, FileCheck, ShieldCheck, Smartphone } from 'lucide-react';
+import { motion } from 'motion/react';
+import { RefreshCw, Copy, Share2, FileText, Search, GitBranch, Code2, Eye, BookOpen, FileCheck, ShieldCheck, Smartphone } from 'lucide-react';
 import { Button, FolderTabs, FolderTab } from '@/components/ui';
 import { ArtifactContentRenderer } from './ArtifactContentRenderer';
 import {
@@ -10,7 +10,6 @@ import {
   type ArtifactType,
   ARTIFACT_TYPE_LABEL,
 } from '@/app/patterns/_shared/artifactData';
-import { springs } from '@/tokens';
 
 const TYPE_ICON: Record<ArtifactType, React.ReactNode> = {
   prd:            <FileText className="size-4" />,
@@ -28,6 +27,7 @@ export function ArtifactSegmentedControl({
   artifacts,
   activeId,
   onSelect,
+  changedIds,
   onRefresh,
   onOpenInNewTab,
 }: ArtifactNavigationProps) {
@@ -61,6 +61,15 @@ export function ArtifactSegmentedControl({
     }
   }, [shimmerKey]);
 
+  const activeActions = activeArtifact?.type === 'prototype' ? (
+    <>
+      <Button variant="secondary" surface="default" size="icon-sm" leadingIcon={<RefreshCw />} onClick={onRefresh} />
+      <Button variant="success" surface="default" size="sm" trailingIcon={<Share2 />} onClick={onOpenInNewTab}>Share</Button>
+    </>
+  ) : (
+    <Button variant="secondary" surface="default" size="icon-sm" leadingIcon={<Copy />} />
+  );
+
   return (
     <div className="flex flex-1 min-h-0 flex-col rounded-xl shadow-(--shadow-border) bg-(--bg-surface-base) overflow-clip">
       {/* Folder tab bar — active tab merges with content surface */}
@@ -68,28 +77,17 @@ export function ArtifactSegmentedControl({
         value={activeId}
         onChange={onSelect}
         layoutId="artifact-folder-tabs"
-        activeActions={
-          <>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              leadingIcon={<RefreshCw />}
-              onClick={onRefresh}
-            />
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              leadingIcon={<ExternalLink />}
-              onClick={onOpenInNewTab}
-            />
-          </>
-        }
+        activeActions={activeActions}
       >
         {artifacts.map(artifact => (
           <FolderTab
             key={artifact.id}
             value={artifact.id}
-            leadingIcon={TYPE_ICON[artifact.type]}
+            leadingIcon={
+              changedIds?.has(artifact.id)
+                ? <span className="size-1.5 rounded-full bg-(--bg-interactive-error-default) blink-dot" />
+                : TYPE_ICON[artifact.type]
+            }
           >
             {ARTIFACT_TYPE_LABEL[artifact.type]}
           </FolderTab>
@@ -98,19 +96,12 @@ export function ArtifactSegmentedControl({
 
       {/* Content */}
       <div className="relative flex flex-1 min-h-0">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeArtifact.id}
-            ref={contentRef}
-            className="flex flex-1 min-h-0 overflow-auto"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ ...springs.interactive, duration: 0.15 }}
-          >
-            <ArtifactContentRenderer artifact={activeArtifact} />
-          </motion.div>
-        </AnimatePresence>
+        <div
+          ref={contentRef}
+          className="flex flex-1 min-h-0 overflow-auto"
+        >
+          <ArtifactContentRenderer artifact={activeArtifact} />
+        </div>
 
         {/* Shimmer sweep — remounts on every shimmerKey change, replaying entrance animation */}
         {shimmerKey > 0 && (

@@ -48,6 +48,15 @@ export function useChatDemo() {
     return () => clearTimeout(timer);
   }, [streamedText, isStreaming]);
 
+  function handleStop() {
+    setIsStreaming(false);
+    const partial = STREAMING_RESPONSE.slice(0, streamIndexRef.current);
+    if (partial) {
+      setMessages(prev => [...prev, { role: 'assistant', content: partial }]);
+    }
+    setStreamedText('');
+  }
+
   function handleSubmit(value: string) {
     if (!value.trim()) return;
     setMessages(prev => [...prev, { role: 'user', content: value }]);
@@ -60,5 +69,5 @@ export function useChatDemo() {
     }, 800);
   }
 
-  return { messages, streamedText, isStreaming, inputValue, setInputValue, handleSubmit };
+  return { messages, streamedText, isStreaming, inputValue, setInputValue, handleSubmit, handleStop };
 }

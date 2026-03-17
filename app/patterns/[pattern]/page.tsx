@@ -5,13 +5,9 @@ import { PreviewPanelPage }          from './PreviewPanelPage';
 import { PreviewPanelHeaderPage }    from './PreviewPanelHeaderPage';
 import { EditableTitlePage }         from './EditableTitlePage';
 import { ShareableLinkPage }         from './ShareableLinkPage';
-import { GravityChatPage }           from './GravityChatPage';
-import { PrototypeWorkspacePage }    from './PrototypeWorkspacePage';
-import { ArtifactNavigationPage }          from './ArtifactNavigationPage';
-import { ClarificationCardPage } from './ClarificationCardPage';
-import { ClarificationChatDemoPage } from './ClarificationChatDemoPage';
+import { ClarificationCardPage }     from './ClarificationCardPage';
 import { ArtifactSegmentedControlPage } from './ArtifactSegmentedControlPage';
-import { ChatPanelPage } from './ChatPanelPage';
+import { ChatPanelPage }             from './ChatPanelPage';
 import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
 const PATTERNS: Record<string, React.ComponentType> = {
@@ -20,11 +16,7 @@ const PATTERNS: Record<string, React.ComponentType> = {
   'preview-panel-header':         PreviewPanelHeaderPage,
   'editable-title':               EditableTitlePage,
   'shareable-link':               ShareableLinkPage,
-  'gravity-chat':                 GravityChatPage,
-  'prototype-workspace':          PrototypeWorkspacePage,
-  'artifact-navigation':          ArtifactNavigationPage,
   'clarification-card':           ClarificationCardPage,
-  'clarification-chat':           ClarificationChatDemoPage,
   'artifact-segmented-control':   ArtifactSegmentedControlPage,
   'chat-panel':                   ChatPanelPage,
 };

@@ -65,7 +65,7 @@ function DestructiveDemo() {
           </ModalDescription>
         </ModalHeader>
         <ModalFooter>
-          <Button variant="secondary"   onClick={() => setOpen(false)}>Keep account</Button>
+          <Button variant="secondary" onClick={() => setOpen(false)}>Keep account</Button>
           <Button variant="destructive" onClick={() => setOpen(false)}>Delete</Button>
         </ModalFooter>
       </Modal>
@@ -77,7 +77,7 @@ function NoMotionDemo() {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <Button variant="ghost" onClick={() => setOpen(true)}>No animation</Button>
+      <Button variant="secondary" onClick={() => setOpen(true)}>No animation</Button>
       <Modal open={open} onClose={() => setOpen(false)} disableMotion
         aria-labelledby="no-motion-title"
       >

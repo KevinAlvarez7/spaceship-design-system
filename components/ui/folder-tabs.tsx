@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, type ReactNode } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { motion } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
@@ -27,7 +27,7 @@ function useFolderTabsContext() {
 // ─── CVA ──────────────────────────────────────────────────────────────────────
 
 export const folderTabsVariants = cva(
-  ['flex items-center w-full'],
+  ['flex items-center w-full', 'font-sans'],
   {
     variants: {
       surface: {
@@ -65,7 +65,7 @@ export interface FolderTabProps {
 function IconSlot({ icon }: { icon?: ReactNode }) {
   if (!icon) return null;
   return (
-    <span className="inline-flex shrink-0 items-center justify-center [&>svg]:size-4">
+    <span className="inline-flex shrink-0 items-center justify-center [&>svg]:h-4 [&>svg]:w-4 [&>svg]:[stroke-width:2.75]">
       {icon}
     </span>
   );
@@ -119,12 +119,12 @@ export function FolderTab({
   const wrapperClasses = cn(
     'self-stretch shrink-0 overflow-hidden border-r border-(--bg-surface-tertiary) last:border-r-0 flex items-stretch',
     isActive
-      ? 'bg-(--bg-surface-base) border-b border-transparent'
+      ? 'bg-(--bg-surface-base) border-b border-(--bg-surface-tertiary)'
       : 'bg-(--bg-surface-secondary) border-b border-(--bg-surface-tertiary)',
   );
 
   const buttonClasses = cn(
-    'relative z-10 flex items-center gap-1.5 flex-1 h-full pl-4 pr-2 py-2',
+    'relative z-10 flex items-center gap-2 flex-1 h-full p-2',
     'font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] whitespace-nowrap',
     'transition-colors duration-(--duration-fast) ease-(--ease-in-out)',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--border-input-focus)',
@@ -136,30 +136,34 @@ export function FolderTab({
     className,
   );
 
+  const actionItems = React.Children.toArray(
+    React.isValidElement(activeActions) && activeActions.type === React.Fragment
+      ? (activeActions.props as { children: ReactNode }).children
+      : activeActions
+  );
+
   const actionsContent = disableMotion ? (
     isActive && activeActions ? (
       <span className="flex items-center gap-2 shrink-0 p-2">
-        {activeActions}
+        {actionItems}
       </span>
     ) : null
   ) : (
-    <AnimatePresence>
-      {isActive && activeActions && (
-        <span className="flex items-center gap-2 shrink-0 p-2">
-          {React.Children.toArray(activeActions).map((child, index) => (
-            <motion.span
-              key={index}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1, transition: { ...SPRING, delay: 0.06 + index * 0.04 } }}
-              exit={{ scale: 0, opacity: 0, transition: { duration: 0 } }}
-              style={{ willChange: 'transform' }}
-            >
-              {child}
-            </motion.span>
-          ))}
-        </span>
-      )}
-    </AnimatePresence>
+    isActive && activeActions ? (
+      <span className="flex items-center gap-2 shrink-0 p-2">
+        {actionItems.map((child, index) => (
+          <motion.span
+            key={index}
+            initial={{ scale: 0.4, width: 0 }}
+            animate={{ scale: 1, width: 'auto' }}
+            transition={{ ...SPRING, delay: index * 0.04 }}
+            style={{ willChange: 'transform' }}
+          >
+            {child}
+          </motion.span>
+        ))}
+      </span>
+    ) : null
   );
 
   const content = (
@@ -172,7 +176,7 @@ export function FolderTab({
         onClick={() => !disabled && onChange(value)}
         className={buttonClasses}
       >
-        <span className="flex items-center gap-1.5 pr-2">
+        <span className="flex items-center gap-1.5 px-2">
           <IconSlot icon={leadingIcon} />
           {children}
         </span>

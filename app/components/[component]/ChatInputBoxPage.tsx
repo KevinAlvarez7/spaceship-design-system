@@ -2,7 +2,7 @@ import { ChatInputBox } from '@/components/ui';
 import { Preview }    from '@/components/viewer/Preview';
 import { PropsTable, type PropRow } from '@/components/viewer/PropsTable';
 import { CodeBlock }  from '@/components/viewer/CodeBlock';
-import { ChatInputBoxDemo } from './ChatInputBoxDemo';
+import { ChatInputBoxDemo, ChatInputBoxStopDemo } from './ChatInputBoxDemo';
 
 const PROPS: PropRow[] = [
   { name: 'size',         type: '"md" | "sm"', default: '"md"',        description: 'md shows 3 lines before overflow; sm shows 1 line' },
@@ -14,6 +14,8 @@ const PROPS: PropRow[] = [
   { name: 'onSubmit',     type: '(value: string) => void', default: '—', description: 'Called on button click or Cmd/Ctrl+Enter' },
   { name: 'disabled',     type: 'boolean',  default: 'false',      description: 'Disables textarea and button; dims the entire container' },
   { name: 'containerClassName', type: 'string', default: '—',      description: 'Extra classes on the container div' },
+  { name: 'onStop',       type: '() => void', default: '—',        description: 'When set, replaces the submit button with a destructive Stop button' },
+  { name: 'stopLabel',    type: 'string',   default: '"Stop"',     description: 'Text label on the stop button' },
 ];
 
 const USAGE = `import { ChatInputBox } from '@/components/ui';
@@ -30,6 +32,13 @@ const USAGE = `import { ChatInputBox } from '@/components/ui';
   value={value}
   onChange={e => setValue(e.target.value)}
   onSubmit={val => console.log(val)}
+/>
+
+// Stop / streaming state
+<ChatInputBox
+  onStop={() => cancelStream()}
+  value={value}
+  onChange={e => setValue(e.target.value)}
 />`;
 
 export function ChatInputBoxPage() {
@@ -60,6 +69,13 @@ export function ChatInputBoxPage() {
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Disabled</h2>
         <Preview label="disabled">
           <ChatInputBox disabled placeholder="Disabled state" />
+        </Preview>
+      </section>
+
+      <section>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">Stop (streaming)</h2>
+        <Preview label="onStop">
+          <ChatInputBoxStopDemo />
         </Preview>
       </section>
 

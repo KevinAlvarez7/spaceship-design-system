@@ -7,14 +7,13 @@ import {
   ChatThread,
   ChatBubble,
   ChatMessage,
-  ChatInputBox,
-  ClarificationCard,
   TaskList,
   Thinking,
 } from '@/components/ui';
 import type { ClarificationAnswers, ClarificationQuestion } from '@/components/ui';
+import { cn } from '@/lib/utils';
 import { GridBackground } from '@/components/effects';
-import { ArtifactSegmentedControl } from '@/components/patterns';
+import { ArtifactSegmentedControl, ChatPanel } from '@/components/patterns';
 import { springs } from '@/tokens';
 import {
   USER_MESSAGE,
@@ -252,48 +251,40 @@ export function ClarificationChatDemoPage() {
     timeouts.current.push(t1);
   }
 
-  // ── Footer ────────────────────────────────────────────────────────────────
+  // ── Render ────────────────────────────────────────────────────────────────
 
-  function renderFooter() {
-    if (phase === 'step1') {
-      return (
-        <ClarificationCard
-          key="step1"
-          questions={STEP_1_QUESTIONS}
-          onSubmit={handleStep1Submit}
-          surface="shadow-border"
-        />
-      );
-    }
-    if (phase === 'step2') {
-      return (
-        <ClarificationCard
-          key="step2"
-          questions={STEP_2_QUESTIONS}
-          onSubmit={handleStep2Submit}
-          surface="shadow-border"
-        />
-      );
-    }
-    if (phase === 'step3') {
-      return (
-        <ClarificationCard
-          key="step3"
-          questions={STEP_3_QUESTIONS}
-          onSubmit={handleStep3Submit}
-          surface="shadow-border"
-        />
-      );
-    }
-    if (phase === 'building' || phase === 'done') {
-      return (
-        <div className="flex flex-col">
-          <AnimatePresence>
-            {phase === 'building' && (
+  return (
+    <div className="relative flex flex-1 overflow-hidden size-full">
+      <GridBackground />
+
+      <div className="relative z-10 flex flex-1 flex-col size-full">
+        {/* Main split */}
+        <main className="flex flex-1 min-h-0 gap-6 p-4">
+          {/* Chat side */}
+          <div className={cn('flex flex-col min-h-0', artifacts.length > 0 ? 'w-(--sizing-chat-default) shrink-0' : 'flex-1')}>
+          <ChatPanel
+            title="New conversation"
+            onTitleChange={() => {}}
+            input={{
+              size: 'sm',
+              submitLabel: 'Send',
+              placeholder: 'What would you like to change?',
+              value: inputValue,
+              onChange: e => setInputValue(e.target.value),
+              onSubmit: () => {},
+              disabled: phase !== 'done',
+              containerClassName: phase === 'building' ? 'rounded-t-none' : undefined,
+            }}
+            clarification={
+              phase === 'step1' ? { questions: STEP_1_QUESTIONS, onSubmit: handleStep1Submit, surface: 'shadow-border' } :
+              phase === 'step2' ? { questions: STEP_2_QUESTIONS, onSubmit: handleStep2Submit, surface: 'shadow-border' } :
+              phase === 'step3' ? { questions: STEP_3_QUESTIONS, onSubmit: handleStep3Submit, surface: 'shadow-border' } :
+              undefined
+            }
+            footerAddon={phase === 'building' ? (
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
                 transition={springs.interactive}
               >
                 <TaskList
@@ -305,35 +296,8 @@ export function ClarificationChatDemoPage() {
                   className="rounded-b-none"
                 />
               </motion.div>
-            )}
-          </AnimatePresence>
-          <ChatInputBox
-            size="sm"
-            submitLabel="Send"
-            placeholder="What would you like to change?"
-            value={inputValue}
-            onChange={e => setInputValue(e.target.value)}
-            onSubmit={() => {}}
-            disabled={phase === 'building'}
-            containerClassName={phase === 'building' ? 'rounded-t-none' : undefined}
-          />
-        </div>
-      );
-    }
-    return null;
-  }
-
-  // ── Render ────────────────────────────────────────────────────────────────
-
-  return (
-    <div className="relative flex flex-1 overflow-hidden size-full">
-      <GridBackground />
-
-      <div className="relative z-10 flex flex-1 flex-col size-full">
-        {/* Main split */}
-        <main className="flex flex-1 min-h-0 gap-6 px-4 pb-4">
-          {/* Chat side */}
-          <div className="flex flex-col flex-1 min-w-0 min-h-0 max-w-2xl mx-auto">
+            ) : undefined}
+          >
             <ChatThread className="flex-1 min-h-0">
               {items.map(item => {
                 if (item.kind === 'assistant-text') {
@@ -386,10 +350,7 @@ export function ClarificationChatDemoPage() {
                 return null;
               })}
             </ChatThread>
-
-            <div className="px-4 pb-4 pt-2 shrink-0">
-              {renderFooter()}
-            </div>
+          </ChatPanel>
           </div>
 
           {/* Artifact side — slides in when first artifact is generated */}

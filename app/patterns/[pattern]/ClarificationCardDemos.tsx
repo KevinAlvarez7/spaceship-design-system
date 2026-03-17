@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ClarificationCard, type ClarificationQuestion, type ClarificationAnswers } from '@/components/ui';
+import { Button, ClarificationCard, type ClarificationQuestion, type ClarificationAnswers } from '@/components/ui';
 
 const QUESTIONS: ClarificationQuestion[] = [
   {
@@ -53,17 +53,13 @@ export function ClarificationCardDemos() {
 
       {result && (
         <div className="flex flex-col gap-2 w-full max-w-sm">
-          <p className="text-sm text-zinc-500">Submitted answers:</p>
-          <pre className="text-xs text-zinc-700 bg-zinc-50 rounded-lg p-3 overflow-auto">
+          <p className="[font-size:var(--font-size-sm)] text-(--text-tertiary)">Submitted answers:</p>
+          <pre className="[font-size:var(--font-size-xs)] text-(--text-primary) bg-(--bg-surface-primary) rounded-lg p-3 overflow-auto">
             {JSON.stringify(result, null, 2)}
           </pre>
-          <button
-            type="button"
-            onClick={handleReset}
-            className="text-sm text-zinc-500 hover:text-zinc-700 underline cursor-pointer self-start"
-          >
+          <Button variant="ghost" size="sm" onClick={handleReset} className="self-start">
             Reset
-          </button>
+          </Button>
         </div>
       )}
     </div>
