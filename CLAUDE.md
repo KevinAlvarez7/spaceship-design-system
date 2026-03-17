@@ -27,11 +27,13 @@ node scripts/generate-tokens.mjs   # regenerate tokens from Figma export
 | `components/viewer/` | Viewer chrome | Plain Tailwind zinc palette ONLY |
 | `components/shadcn/` | Shadcn UI primitives | Viewer infrastructure — never referenced by DS components |
 | `components/patterns/` | Pattern examples | Lives inside viewer; uses DS components |
+| `components/playground/` | Playground components | CVA + tokens encouraged; relaxed DS enforcement |
 
 **Hard rules:**
 - DS tokens (`var(--color-*)`, `var(--space-*)`, etc.) only appear inside `<Preview>` wrappers or DS component internals.
 - Viewer chrome (Sidebar, Topbar, layout) never uses DS tokens.
 - DS components never import from `components/viewer/` or `components/shadcn/`.
+- Playground items (`app/playground/`, `components/playground/`) use `route: 'playground'` and a `Playground *` section in the viewer registry. Confirmed items use their own routes.
 
 ---
 
@@ -81,6 +83,8 @@ node scripts/generate-tokens.mjs   # regenerate tokens from Figma export
 - Do not omit `children?: React.ReactNode` from component interfaces that extend `HTMLMotionProps<'button'>` — React 19 no longer injects `children` implicitly through HTML element types.
 
 - Do not spread `{...props}` AFTER explicit motion props (`whileHover`, `whileTap`, `transition`) in `motion.*` elements — spread props first so parent overrides can't accidentally clobber animation values. Correct order: `{...props}` then explicit motion props.
+
+- Do not remove or mutate playground registry entries during graduation — graduation is a copy + promote operation. The playground entry (`pg-button`) and its versions must remain accessible after a version is graduated to `components/ui/`. Keep the playground entry intact and add a new confirmed entry alongside it.
 
 ---
 
@@ -188,6 +192,7 @@ Located in `.claude/skills/`. **Read the relevant skill file BEFORE starting wor
 | `.claude/skills/design-system-implementer/design-system-implementer.md` | Creating or modifying DS components, adding CVA variants, wiring tokens, refactoring styles into tokens, adding dark mode, or any task that turns design decisions into working code |
 | `.claude/skills/design-system-explorer/design-system-explorer.md` | Auditing the design system, documenting tokens, planning component structure, writing a style guide, or exploring naming conventions |
 | `.claude/skills/figma-to-code/figma-to-code.md` | A Figma URL appears, or the user says "build from Figma", "implement this design", "sync Figma", or mentions Figma variables/styles |
+| `.claude/skills/graduate-component/graduate-component.md` | User says `/graduate`, "graduate component", "confirm as component", or wants to promote a playground version to `components/ui/` |
 
 **How to auto-load:** Use the `Read` tool on the skill file path before proceeding with the task. Do not use the `Skill` tool — these are project-local files, not plugin skills.
 

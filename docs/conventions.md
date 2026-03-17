@@ -246,6 +246,67 @@ Run the dev server and open the Colors token page. Confirm the new group appears
 
 ---
 
+---
+
+## Playground Rules
+
+Playground (`app/playground/`, `components/playground/`) is a **relaxed** space for exploration. The goal is speed of iteration, not handoff quality.
+
+### What's relaxed
+
+- `surface` variant is optional — components don't need to handle multiple backgrounds
+- `compoundVariants` not required — skip if the logic doesn't demand it
+- `disableMotion` prop not required — motion can be hardwired
+- Tailwind colour utilities (`text-zinc-*`, `bg-white`) are allowed in playground page files
+- Layout may use inline `style={}` for one-off values that don't warrant new tokens
+
+### What still applies
+
+- No hardcoded hex values inside `components/playground/` barrel components (use tokens or Tailwind)
+- `@/` absolute imports for DS components, effects, shared utilities — no relative `../../` leaks
+- Named exports only — no default exports
+- Every new playground entry must be registered in `lib/viewer-registry.ts` with `route: 'playground'` and the appropriate `Playground *` section
+
+### File locations
+
+| Concern | Location |
+|---------|---------|
+| Full-page playground demos | `app/playground/[slug]/` |
+| Reusable playground components | `components/playground/` |
+| Shared mock data and utilities | `app/patterns/_shared/` (shared with confirmed patterns) |
+
+---
+
+## Graduation Checklist
+
+When a playground item is ready to become confirmed (handoff-ready), work through this list before moving it:
+
+**Registry**
+- [ ] Change `route` from `'playground'` to the target route (`'components'` or `'patterns'`)
+- [ ] Change `section` from `'Playground *'` to `'Components'` or `'Patterns'`
+- [ ] Remove `status: 'playground'` from the entry
+
+**File migration**
+- [ ] Move page file from `app/playground/[slug]/` to the appropriate route directory
+- [ ] Move component file from `components/playground/` to `components/ui/`
+- [ ] Export from `components/ui/index.ts`
+
+**DS enforcement (components only)**
+- [ ] All colours use semantic tokens — no Tailwind colour utilities, no hardcoded hex
+- [ ] `surface` variant present (`default` / `shadow-border` at minimum)
+- [ ] `compoundVariants` added for any multi-axis border/shadow logic
+- [ ] `disableMotion` prop added to interactive components
+- [ ] Motion prop spread order: `{...props}` before explicit motion props
+- [ ] CVA base uses array syntax
+- [ ] `willChange: 'transform'` on scale-animated elements
+
+**Verification**
+- [ ] `npm run build` passes with zero TypeScript errors
+- [ ] `npm run lint` passes with no new warnings
+- [ ] Token audit: no hardcoded hex or Tailwind colour utilities in changed files
+
+---
+
 ## What This File Is Not
 
 This file documents **how to follow the conventions** going forward. It is not a changelog. For the history of *why* these conventions were introduced, see:
