@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import ReactMarkdown from 'react-markdown';
 import {
   ChatThread,
   ChatBubble,
@@ -9,10 +10,11 @@ import {
   ChatInputBox,
   ClarificationCard,
   TaskList,
+  Thinking,
 } from '@/components/ui';
 import type { ClarificationAnswers, ClarificationQuestion } from '@/components/ui';
 import { GridBackground } from '@/components/effects';
-import { EditableTitle, ShareableLink, ArtifactSegmentedControl } from '@/components/patterns';
+import { ArtifactSegmentedControl } from '@/components/patterns';
 import { springs } from '@/tokens';
 import {
   USER_MESSAGE,
@@ -23,9 +25,11 @@ import {
   STEP_1_QUESTIONS,
   STEP_2_QUESTIONS,
   STEP_3_QUESTIONS,
-  PRD_ARTIFACT,
-  IMPLEMENTATION_PLAN_ARTIFACT,
-  PREVIEW_ARTIFACT,
+  BRIEF_ARTIFACT,
+  BRIEF_CONTENT_V2,
+  BRIEF_CONTENT_V3,
+  SECURITY_ARTIFACT,
+  PROTOTYPE_ARTIFACT,
   IMPLEMENTATION_TASKS,
 } from '@/app/patterns/_shared/clarification-chat.mock';
 import type { Artifact, ArtifactStatus } from '@/app/patterns/_shared/artifactData';
@@ -47,54 +51,54 @@ const INITIAL_ITEMS: ThreadItem[] = [
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function buildAnswerText(questions: ClarificationQuestion[], answers: ClarificationAnswers): string {
-  if (questions.length === 1) {
-    const answer = answers[0];
-    if (!answer) return '';
-    return Array.isArray(answer) ? answer.join(' · ') : answer;
-  }
-  const lines: string[] = [];
+function buildAnswerMarkdown(questions: ClarificationQuestion[], answers: ClarificationAnswers): string {
+  const parts: string[] = [];
   questions.forEach((q, i) => {
     const answer = answers[i];
     if (!answer || (Array.isArray(answer) && answer.length === 0)) return;
-    const label = q.label.replace(/\?$/, '').trim();
-    if (Array.isArray(answer)) {
-      lines.push(`${label}: ${answer.join(' · ')}`);
-    } else {
-      lines.push(`${label}: ${answer}`);
-    }
+    const a = Array.isArray(answer) ? answer.join(' · ') : answer;
+    parts.push(`**Q:** ${q.label}\n\n**A:** ${a}`);
   });
-  return lines.join('\n');
+  return parts.join('\n\n');
 }
 
-// ─── TypingIndicator ──────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function TypingIndicator() {
-  return (
-    <div className="flex items-center gap-1 px-1 py-2">
-      {[0, 1, 2].map(i => (
-        <motion.span
-          key={i}
-          className="w-1.5 h-1.5 rounded-full bg-(--text-tertiary)"
-          animate={{ opacity: [0.3, 1, 0.3] }}
-          transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
-        />
-      ))}
-    </div>
-  );
+function randomThinkMs() {
+  return (7 + Math.floor(Math.random() * 6)) * 1000; // 7 000–12 000 ms
+}
+
+// ─── StreamingChatMessage ─────────────────────────────────────────────────────
+
+function StreamingChatMessage({ content, onComplete }: {
+  content: string;
+  onComplete?: () => void;
+}) {
+  const [len, setLen] = useState(0);
+
+  useEffect(() => {
+    if (len >= content.length) {
+      onComplete?.();
+      return;
+    }
+    const t = setTimeout(() => setLen(l => Math.min(l + 4, content.length)), 20);
+    return () => clearTimeout(t);
+  }, [len, content.length, onComplete]);
+
+  return <ChatMessage content={content.slice(0, len)} />;
 }
 
 // ─── ClarificationChatDemoPage ────────────────────────────────────────────────
 
 export function ClarificationChatDemoPage() {
-  const [projectTitle, setProjectTitle]   = useState('HDB Price Explorer');
-  const [domain, setDomain]               = useState('');
   const [items, setItems]                 = useState<ThreadItem[]>(INITIAL_ITEMS);
   const [phase, setPhase]                 = useState<Phase>('preamble');
   const [artifacts, setArtifacts]         = useState<Artifact[]>([]);
   const [activeArtifactId, setActiveArtifactId] = useState('');
   const [taskProgress, setTaskProgress]   = useState(0);
   const [inputValue, setInputValue]       = useState('');
+  const [streamingId, setStreamingId]     = useState<string | null>(null);
+  const clearStreamingId = useCallback(() => setStreamingId(null), []);
   const timeouts  = useRef<NodeJS.Timeout[]>([]);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -105,6 +109,10 @@ export function ClarificationChatDemoPage() {
 
   function updateArtifactStatus(id: string, status: ArtifactStatus) {
     setArtifacts(prev => prev.map(a => a.id === id ? { ...a, status } : a));
+  }
+
+  function updateArtifactContent(id: string, content: string) {
+    setArtifacts(prev => prev.map(a => a.id === id ? { ...a, content } : a));
   }
 
   // Preamble sequence: user bubble is visible immediately; assistant message
@@ -119,16 +127,18 @@ export function ClarificationChatDemoPage() {
       setItems(prev => [...prev, { kind: 'typing', id: 'preamble-typing' }]);
     }, 0);
 
+    const thinkDelay = randomThinkMs();
     schedule(() => {
       setItems(prev => [
         ...prev.filter(i => i.id !== 'preamble-typing'),
         { kind: 'assistant-text', id: 'preamble-intro', content: ASSISTANT_INTRO },
       ]);
-    }, 800);
+      setStreamingId('preamble-intro');
+    }, thinkDelay);
 
     schedule(() => {
       setPhase('step1');
-    }, 1400);
+    }, thinkDelay + 600);
 
     return () => {
       timeouts.current.forEach(clearTimeout);
@@ -143,7 +153,7 @@ export function ClarificationChatDemoPage() {
   // ── Step submit handlers ──────────────────────────────────────────────────
 
   function handleStep1Submit(answers: ClarificationAnswers) {
-    const summary = buildAnswerText(STEP_1_QUESTIONS, answers);
+    const summary = buildAnswerMarkdown(STEP_1_QUESTIONS, answers);
     setPhase('transition');
     setItems(prev => [
       ...prev,
@@ -156,16 +166,17 @@ export function ClarificationChatDemoPage() {
         ...prev.filter(i => i.id !== 'typing-1'),
         { kind: 'assistant-text', id: 'msg-after-1', content: ASSISTANT_AFTER_STEP_1 },
       ]);
-      addArtifact(PRD_ARTIFACT);
+      setStreamingId('msg-after-1');
+      addArtifact(BRIEF_ARTIFACT);
 
       const t2 = setTimeout(() => setPhase('step2'), 600);
       timeouts.current.push(t2);
-    }, 800);
+    }, randomThinkMs());
     timeouts.current.push(t1);
   }
 
   function handleStep2Submit(answers: ClarificationAnswers) {
-    const summary = buildAnswerText(STEP_2_QUESTIONS, answers);
+    const summary = buildAnswerMarkdown(STEP_2_QUESTIONS, answers);
     setPhase('transition');
     setItems(prev => [
       ...prev,
@@ -178,17 +189,17 @@ export function ClarificationChatDemoPage() {
         ...prev.filter(i => i.id !== 'typing-2'),
         { kind: 'assistant-text', id: 'msg-after-2', content: ASSISTANT_AFTER_STEP_2 },
       ]);
-      updateArtifactStatus(PRD_ARTIFACT.id, 'complete');
-      addArtifact(IMPLEMENTATION_PLAN_ARTIFACT);
+      setStreamingId('msg-after-2');
+      updateArtifactContent(BRIEF_ARTIFACT.id, BRIEF_CONTENT_V2);
 
       const t2 = setTimeout(() => setPhase('step3'), 600);
       timeouts.current.push(t2);
-    }, 800);
+    }, randomThinkMs());
     timeouts.current.push(t1);
   }
 
   function handleStep3Submit(answers: ClarificationAnswers) {
-    const summary = buildAnswerText(STEP_3_QUESTIONS, answers);
+    const summary = buildAnswerMarkdown(STEP_3_QUESTIONS, answers);
     setPhase('transition');
     setItems(prev => [
       ...prev,
@@ -201,34 +212,43 @@ export function ClarificationChatDemoPage() {
         ...prev.filter(i => i.id !== 'typing-3'),
         { kind: 'assistant-text', id: 'msg-after-3', content: ASSISTANT_AFTER_STEP_3 },
       ]);
+      setStreamingId('msg-after-3');
+      updateArtifactContent(BRIEF_ARTIFACT.id, BRIEF_CONTENT_V3);
+      updateArtifactStatus(BRIEF_ARTIFACT.id, 'complete');
 
+      // Stagger: Security Review appears 1.5s after Brief V3 update, then build starts
       const t2 = setTimeout(() => {
-        setPhase('building');
-        let progress = 0;
+        addArtifact(SECURITY_ARTIFACT);
 
-        intervalRef.current = setInterval(() => {
-          progress += 1;
-          setTaskProgress(progress);
+        const t3 = setTimeout(() => {
+          setPhase('building');
+          let progress = 0;
 
-          if (progress >= IMPLEMENTATION_TASKS.length) {
-            clearInterval(intervalRef.current!);
-            intervalRef.current = null;
-            setItems(prev => [
-              ...prev,
-              { kind: 'assistant-text', id: 'done-msg', content: 'All done! Your project is ready — all tasks completed successfully.' },
-            ]);
-            updateArtifactStatus(IMPLEMENTATION_PLAN_ARTIFACT.id, 'complete');
-            // Delay phase flip so user sees all tasks checked before TaskList fades out
-            const t3 = setTimeout(() => {
-              setPhase('done');
-              addArtifact(PREVIEW_ARTIFACT);
-            }, 1000);
-            timeouts.current.push(t3);
-          }
-        }, 1500);
-      }, 600);
+          intervalRef.current = setInterval(() => {
+            progress += 1;
+            setTaskProgress(progress);
+
+            if (progress >= IMPLEMENTATION_TASKS.length) {
+              clearInterval(intervalRef.current!);
+              intervalRef.current = null;
+              setItems(prev => [
+                ...prev,
+                { kind: 'assistant-text', id: 'done-msg', content: 'Your prototype is ready for user testing. Share the link with your test participants when you\'re ready to run your sessions.' },
+              ]);
+              updateArtifactStatus(SECURITY_ARTIFACT.id, 'complete');
+              // Delay phase flip so user sees all tasks checked before TaskList fades out
+              const t4 = setTimeout(() => {
+                setPhase('done');
+                addArtifact(PROTOTYPE_ARTIFACT);
+              }, 1000);
+              timeouts.current.push(t4);
+            }
+          }, 1500);
+        }, 600);
+        timeouts.current.push(t3);
+      }, 1500);
       timeouts.current.push(t2);
-    }, 800);
+    }, randomThinkMs());
     timeouts.current.push(t1);
   }
 
@@ -267,7 +287,7 @@ export function ClarificationChatDemoPage() {
     }
     if (phase === 'building' || phase === 'done') {
       return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col">
           <AnimatePresence>
             {phase === 'building' && (
               <motion.div
@@ -279,7 +299,10 @@ export function ClarificationChatDemoPage() {
                 <TaskList
                   items={IMPLEMENTATION_TASKS}
                   completedCount={taskProgress}
+                  isActive
+                  updatedAt="Updated 2m ago"
                   surface="shadow-border"
+                  className="rounded-b-none"
                 />
               </motion.div>
             )}
@@ -292,6 +315,7 @@ export function ClarificationChatDemoPage() {
             onChange={e => setInputValue(e.target.value)}
             onSubmit={() => {}}
             disabled={phase === 'building'}
+            containerClassName={phase === 'building' ? 'rounded-t-none' : undefined}
           />
         </div>
       );
@@ -306,20 +330,10 @@ export function ClarificationChatDemoPage() {
       <GridBackground />
 
       <div className="relative z-10 flex flex-1 flex-col size-full">
-        {/* Nav */}
-        <nav className="flex shrink-0 items-center justify-between px-4 py-3 gap-3">
-          <EditableTitle
-            title={projectTitle}
-            onTitleChange={setProjectTitle}
-            onMenuClick={() => {}}
-          />
-          <ShareableLink value={domain} onChange={setDomain} />
-        </nav>
-
         {/* Main split */}
         <main className="flex flex-1 min-h-0 gap-6 px-4 pb-4">
           {/* Chat side */}
-          <div className="flex flex-col flex-1 min-w-0 min-h-0">
+          <div className="flex flex-col flex-1 min-w-0 min-h-0 max-w-2xl mx-auto">
             <ChatThread className="flex-1 min-h-0">
               {items.map(item => {
                 if (item.kind === 'assistant-text') {
@@ -330,7 +344,14 @@ export function ClarificationChatDemoPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={springs.interactive}
                     >
-                      <ChatMessage content={item.content} />
+                      {item.id === streamingId ? (
+                        <StreamingChatMessage
+                          content={item.content}
+                          onComplete={clearStreamingId}
+                        />
+                      ) : (
+                        <ChatMessage content={item.content} />
+                      )}
                     </motion.div>
                   );
                 }
@@ -343,7 +364,9 @@ export function ClarificationChatDemoPage() {
                       transition={springs.interactive}
                     >
                       <ChatBubble>
-                        <span className="whitespace-pre-wrap">{item.content}</span>
+                        <div className="[&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:[font-weight:var(--font-weight-semibold)]">
+                          <ReactMarkdown>{item.content}</ReactMarkdown>
+                        </div>
                       </ChatBubble>
                     </motion.div>
                   );
@@ -356,7 +379,7 @@ export function ClarificationChatDemoPage() {
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <TypingIndicator />
+                      <Thinking textScramble size="caption-1" />
                     </motion.div>
                   );
                 }

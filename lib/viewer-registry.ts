@@ -51,6 +51,10 @@ export const PAGE_REGISTRY: PageEntry[] = [
   { slug: 'modal',            title: 'Modal',          section: 'Components', route: 'components', layout: 'standard' },
   { slug: 'tag',              title: 'Tag',            section: 'Components', route: 'components', layout: 'standard' },
   { slug: 'tab-bar',          title: 'Tab Bar',        section: 'Components', route: 'components', layout: 'standard' },
+  { slug: 'task-list',        title: 'Task List',      section: 'Components', route: 'components', layout: 'standard' },
+  { slug: 'folder-tabs',      title: 'Folder Tabs',    section: 'Components', route: 'components', layout: 'standard' },
+  { slug: 'thinking-dots',    title: 'Thinking Dots',  section: 'Components', route: 'components', layout: 'standard' },
+  { slug: 'thinking',         title: 'Thinking',       section: 'Components', route: 'components', layout: 'standard' },
 
   // Effects (all experiments)
   { slug: 'gravity-assist',    title: 'Gravity Assist',    section: 'Effects', route: 'effects', layout: 'standard', experiment: true },
@@ -72,6 +76,7 @@ export const PAGE_REGISTRY: PageEntry[] = [
   // Patterns (components)
   { slug: 'clarification-card',         title: 'Clarification Card', section: 'Patterns', route: 'patterns', layout: 'standard' },
   { slug: 'artifact-segmented-control', title: 'Artifact Panel',     section: 'Patterns', route: 'patterns', layout: 'standard' },
+  { slug: 'chat-panel',                 title: 'Chat Panel',         section: 'Patterns', route: 'patterns', layout: 'standard' },
 ];
 
 export const SECTION_ORDER: SidebarSection[] = [

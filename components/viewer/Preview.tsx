@@ -9,12 +9,13 @@ interface PreviewProps {
   className?: string;
   label?: string;
   onOpenInNewTab?: () => void;
+  justify?: 'start' | 'center';
 }
 
 const buttonClass =
   'inline-flex items-center gap-1.5 rounded-md border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 text-xs text-zinc-600 hover:bg-zinc-100 transition-colors shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_1px_2px_-1px_rgba(0,0,0,0.06),0px_2px_4px_0px_rgba(0,0,0,0.04)]';
 
-export function Preview({ children, className, label, onOpenInNewTab }: PreviewProps) {
+export function Preview({ children, className, label, onOpenInNewTab, justify = 'center' }: PreviewProps) {
   const [remountKey, setRemountKey] = useState(0);
 
   return (
@@ -54,7 +55,7 @@ export function Preview({ children, className, label, onOpenInNewTab }: PreviewP
           className
         )}
       >
-        <div className="flex flex-wrap items-center justify-center gap-4 h-full">
+        <div className={cn('flex flex-wrap items-center gap-4 h-full', justify === 'start' ? 'justify-start' : 'justify-center')}>
           {children}
         </div>
       </div>

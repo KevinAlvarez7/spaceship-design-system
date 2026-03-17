@@ -43,6 +43,7 @@ export type ScalePreset = {
  */
 export const springs = {
   interactive: { type: 'spring' as const, stiffness: 400, damping: 30 },
+  gentle:      { type: 'spring' as const, stiffness: 160, damping: 24 },  // ζ ≈ 0.95 — slow, no overshoot
 } satisfies Record<string, SpringPreset>;
 
 /**
@@ -50,7 +51,7 @@ export const springs = {
  */
 export const scales = {
   prominent: { hover: 1.00, tap: 0.95 },
-  subtle:    { hover: 1.05, tap: 0.96 },
+  subtle:    { hover: 1.00, tap: 0.96 },
 } satisfies Record<string, ScalePreset>;
 
 /* Viewer display arrays */
@@ -63,9 +64,10 @@ export type FramerMotionToken = {
 
 export const springPresetTokens: FramerMotionToken[] = [
   { name: 'interactive', value: 'stiffness: 400, damping: 30 (ζ ≈ 0.75)', usedBy: 'Button' },
+  { name: 'gentle',      value: 'stiffness: 160, damping: 24 (ζ ≈ 0.95)', usedBy: 'ThinkingDots' },
 ];
 
 export const scalePresetTokens: FramerMotionToken[] = [
   { name: 'prominent', value: 'hover: 1.00, tap: 0.95', usedBy: 'Button (default surface)' },
-  { name: 'subtle',    value: 'hover: 1.05, tap: 0.96', usedBy: 'Button (shadow surface)' },
+  { name: 'subtle',    value: 'hover: 1.00, tap: 0.96', usedBy: 'Button (shadow surface)' },
 ];

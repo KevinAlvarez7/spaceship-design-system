@@ -208,6 +208,7 @@
   --line-height-sm: 1.25rem; /* 20px */
   --line-height-xl: 1.75rem; /* 28px */
   --line-height-xs: 1rem; /* 16px */
+  --line-height-2xs: 0.875rem; /* 14px */
 
   /* Font Weights */
   --font-weight-thin: 100;
@@ -233,6 +234,17 @@
      ──────────────────────────────────────────────────────────── */
   --effect-gravity-dot:  color-mix(in srgb, var(--neutral-400) 32%, transparent);
   --effect-gravity-grid: color-mix(in srgb, var(--neutral-400) 13%, transparent);
+
+  --effect-thinking-dot:  color-mix(in srgb, var(--neutral-400) 50%, transparent);
+  --effect-thinking-line: color-mix(in srgb, var(--neutral-400) 48%, transparent);
+
+  --effect-thinking-1: var(--solar-coral-500);
+  --effect-thinking-2: var(--lumen-yellow-500);
+  --effect-thinking-3: var(--nova-mint-500);
+  --effect-thinking-4: var(--orbit-blue-500);
+  --effect-thinking-5: var(--cosmic-lilac-500);
+
+  --effect-shimmer-highlight: var(--white);
 
   /* ── Motion ──────────────────────────────────────────────────
      Not in Figma variables — maintained manually.
@@ -287,4 +299,14 @@
     0px 0px 0px 1px rgba(255, 255, 255, 0.10),
     0px 1px 2px -1px rgba(0, 0, 0, 0.5),
     0px 2px 4px 0px rgba(0, 0, 0, 0.4);
+
+  /* Effects — dark */
+  --effect-thinking-dot:  color-mix(in srgb, var(--neutral-500) 50%, transparent);
+  --effect-thinking-line: color-mix(in srgb, var(--neutral-500) 48%, transparent);
+
+  --effect-thinking-1: var(--solar-coral-400);
+  --effect-thinking-2: var(--lumen-yellow-400);
+  --effect-thinking-3: var(--nova-mint-400);
+  --effect-thinking-4: var(--orbit-blue-400);
+  --effect-thinking-5: var(--cosmic-lilac-400);
 }

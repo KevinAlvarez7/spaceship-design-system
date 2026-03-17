@@ -374,7 +374,7 @@ export function ClarificationCard({
     <div className={cn(clarificationCardVariants({ surface }), className)}>
 
       {/* Header */}
-      <div className="flex items-center gap-2 px-4 py-3">
+      <div className="flex items-center gap-2 p-3">
         <span className="flex-1 font-sans text-(length:--font-size-base) [font-weight:var(--font-weight-bold)] leading-(--line-height-base) text-(--text-primary)">
           {question.label}
         </span>
@@ -419,9 +419,6 @@ export function ClarificationCard({
         )}
       </div>
 
-      {/* Header divider */}
-      <div className="h-px bg-(--bg-surface-tertiary)" />
-
       {/* Question content — animated */}
       <div className="relative overflow-hidden p-2">
         {disableMotion ? (
@@ -442,9 +439,6 @@ export function ClarificationCard({
           </AnimatePresence>
         )}
       </div>
-
-      {/* Footer divider — only for single-select (multi/rank include their own footer) */}
-      {question.type === 'single' && <div className="h-px bg-(--bg-surface-tertiary)" />}
 
       {/* Footer */}
       {question.type === 'single' && question.freeText ? (

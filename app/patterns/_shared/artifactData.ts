@@ -1,4 +1,4 @@
-export type ArtifactType = 'prd' | 'research' | 'implementation' | 'code' | 'preview';
+export type ArtifactType = 'prd' | 'research' | 'implementation' | 'code' | 'preview' | 'brief' | 'proposal' | 'security' | 'prototype';
 export type ArtifactStatus = 'draft' | 'in-progress' | 'complete';
 
 export interface Artifact {
@@ -24,6 +24,10 @@ export const ARTIFACT_TYPE_LABEL: Record<ArtifactType, string> = {
   implementation: 'Impl. Plan',
   code:           'Code',
   preview:        'Preview',
+  brief:          'Project Brief',
+  proposal:       'Proposal',
+  security:       'Security Review',
+  prototype:      'Prototype',
 };
 
 export const ARTIFACT_STATUS_VARIANT: Record<ArtifactStatus, 'neutral' | 'warning' | 'success'> = {

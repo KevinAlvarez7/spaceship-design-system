@@ -2,6 +2,7 @@
 
 import { Preview } from '@/components/viewer/Preview';
 import { ChatThread, ChatBubble, ChatMessage, ChatInputBox } from '@/components/ui';
+import { ChatPanel } from '@/components/patterns';
 import { useChatDemo } from '@/app/patterns/_shared/useChatDemo';
 
 export function ChatPage() {
@@ -16,7 +17,19 @@ export function ChatPage() {
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Interactive Demo</h2>
         <Preview label="Interactive Demo" className="h-[32rem]">
-          <div className="flex flex-col h-full w-full">
+          <ChatPanel
+            footer={
+              <ChatInputBox
+                size="sm"
+                submitLabel="Send"
+                placeholder="Iterate further..."
+                value={inputValue}
+                onChange={e => setInputValue(e.target.value)}
+                onSubmit={handleSubmit}
+                disabled={isStreaming}
+              />
+            }
+          >
             <ChatThread className="flex-1 min-h-0">
               {messages.map((msg, i) =>
                 msg.role === 'user'
@@ -27,19 +40,7 @@ export function ChatPage() {
                 <ChatMessage content={streamedText} isStreaming />
               )}
             </ChatThread>
-
-            <div className="px-4 pb-3 shrink-0">
-              <ChatInputBox
-                size="sm"
-                submitLabel="Send"
-                placeholder="Iterate further..."
-                value={inputValue}
-                onChange={e => setInputValue(e.target.value)}
-                onSubmit={handleSubmit}
-                disabled={isStreaming}
-              />
-            </div>
-          </div>
+          </ChatPanel>
         </Preview>
       </section>
     </div>

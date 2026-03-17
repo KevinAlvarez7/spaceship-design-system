@@ -37,3 +37,18 @@ export type { SortableListProps, SortableItemProps } from './sortable-list';
 
 export { TabBar, TabBarItem, tabBarVariants } from './tab-bar';
 export type { TabBarProps, TabBarItemProps } from './tab-bar';
+
+export { FolderTabs, FolderTab, folderTabsVariants } from './folder-tabs';
+export type { FolderTabsProps, FolderTabProps } from './folder-tabs';
+
+export { ThinkingDots, thinkingDotsVariants } from './thinking-dots';
+export type { ThinkingDotsProps } from './thinking-dots';
+
+export { Thinking, thinkingVariants } from './thinking';
+export type { ThinkingProps } from './thinking';
+
+export { ShimmerText } from './shimmer-text';
+export type { ShimmerTextProps } from './shimmer-text';
+
+export { ShimmerDots } from './shimmer-dots';
+export type { ShimmerDotsProps } from './shimmer-dots';

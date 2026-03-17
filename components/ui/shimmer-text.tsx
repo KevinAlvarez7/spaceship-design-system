@@ -8,9 +8,32 @@ import { cn } from '@/lib/utils';
 
 export interface ShimmerTextProps extends React.HTMLAttributes<HTMLSpanElement> {
   disableMotion?: boolean;
-  /** Animation style. 'blob' = JS-driven radial blobs (default). 'linear' = pure-CSS sweep. */
-  variant?: 'blob' | 'linear';
+  /** Animation style. 'blob' = JS-driven radial blobs (default). 'linear' = pure-CSS sweep. 'subtle' = secondary→white CSS sweep. */
+  variant?: 'blob' | 'linear' | 'subtle';
+  /** Render three animated bounce dots inline after the text, with zero gap. */
+  dots?: boolean;
   children?: ReactNode;
+}
+
+// ─── Dots ─────────────────────────────────────────────────────────────────────
+
+function DotMarkup({ variant }: { variant: 'blob' | 'linear' | 'subtle' }) {
+  if (variant === 'subtle') {
+    return (
+      <>
+        <span className="shimmer-dot-subtle shimmer-dot-subtle-1">.</span>
+        <span className="shimmer-dot-subtle shimmer-dot-subtle-2">.</span>
+        <span className="shimmer-dot-subtle shimmer-dot-subtle-3">.</span>
+      </>
+    );
+  }
+  return (
+    <>
+      <span className="thinking-dot-bounce thinking-dot-1">.</span>
+      <span className="thinking-dot-bounce thinking-dot-2">.</span>
+      <span className="thinking-dot-bounce thinking-dot-3">.</span>
+    </>
+  );
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -18,6 +41,7 @@ export interface ShimmerTextProps extends React.HTMLAttributes<HTMLSpanElement> 
 export function ShimmerText({
   disableMotion = false,
   variant = 'blob',
+  dots = false,
   children,
   className,
   ...props
@@ -54,7 +78,7 @@ export function ShimmerText({
   if (disableMotion) {
     return (
       <span className={cn('text-(--text-secondary)', className)} {...props}>
-        {children}
+        {children}{dots && <span className="ml-1">{'…'}</span>}
       </span>
     );
   }
@@ -62,7 +86,15 @@ export function ShimmerText({
   if (variant === 'linear') {
     return (
       <span className={cn('shimmer-text-linear', className)} {...props}>
-        {children}
+        {children}{dots && <span className="ml-1"><DotMarkup variant="linear" /></span>}
+      </span>
+    );
+  }
+
+  if (variant === 'subtle') {
+    return (
+      <span className={cn('shimmer-text-subtle', className)} {...props}>
+        {children}{dots && <span className="ml-1"><DotMarkup variant="subtle" /></span>}
       </span>
     );
   }
@@ -74,7 +106,7 @@ export function ShimmerText({
       className={cn('thinking-text-animated', className)}
       {...props}
     >
-      {children}
+      {children}{dots && <span className="ml-1"><DotMarkup variant="blob" /></span>}
     </span>
   );
 }

@@ -1,84 +1,11 @@
 'use client';
 
-import { Eye } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import { Eye, Smartphone } from 'lucide-react';
 import { type Artifact } from '@/app/patterns/_shared/artifactData';
 
 interface ArtifactContentRendererProps {
   artifact: Artifact;
-}
-
-function renderMarkdown(text: string) {
-  const lines = text.split('\n');
-  const elements: React.ReactNode[] = [];
-  let key = 0;
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-
-    if (line.startsWith('## ')) {
-      elements.push(
-        <h2
-          key={key++}
-          className="font-sans [font-size:var(--font-size-base)] [font-weight:var(--font-weight-bold)] [line-height:var(--line-height-base)] text-(--text-primary) mt-4 mb-1 first:mt-0"
-        >
-          {line.slice(3)}
-        </h2>
-      );
-    } else if (line.startsWith('### ')) {
-      elements.push(
-        <h3
-          key={key++}
-          className="font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-bold)] [line-height:var(--line-height-sm)] text-(--text-primary) mt-3 mb-1"
-        >
-          {line.slice(4)}
-        </h3>
-      );
-    } else if (line.startsWith('- ')) {
-      elements.push(
-        <li
-          key={key++}
-          className="font-sans [font-size:var(--font-size-sm)] [line-height:var(--line-height-sm)] text-(--text-secondary) ml-4 list-disc"
-        >
-          {line.slice(2)}
-        </li>
-      );
-    } else if (/^\d+\. /.test(line)) {
-      const match = line.match(/^(\d+)\. (.+)/);
-      if (match) {
-        elements.push(
-          <li
-            key={key++}
-            className="font-sans [font-size:var(--font-size-sm)] [line-height:var(--line-height-sm)] text-(--text-secondary) ml-4 list-decimal"
-          >
-            {match[2]}
-          </li>
-        );
-      }
-    } else if (line.startsWith('|')) {
-      // Skip table rows — render as plain text
-      elements.push(
-        <p
-          key={key++}
-          className="font-sans [font-size:var(--font-size-xs)] [line-height:var(--line-height-sm)] text-(--text-tertiary) font-mono"
-        >
-          {line}
-        </p>
-      );
-    } else if (line === '') {
-      elements.push(<div key={key++} className="h-2" />);
-    } else {
-      elements.push(
-        <p
-          key={key++}
-          className="font-sans [font-size:var(--font-size-sm)] [line-height:var(--line-height-sm)] text-(--text-secondary)"
-        >
-          {line}
-        </p>
-      );
-    }
-  }
-
-  return elements;
 }
 
 export function ArtifactContentRenderer({ artifact }: ArtifactContentRendererProps) {
@@ -100,6 +27,24 @@ export function ArtifactContentRenderer({ artifact }: ArtifactContentRendererPro
     );
   }
 
+  if (artifact.type === 'prototype') {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8 bg-(--bg-surface-secondary)">
+        <div className="flex items-center justify-center size-16 rounded-2xl bg-(--bg-surface-tertiary) shadow-(--shadow-border)">
+          <Smartphone className="size-8 text-(--text-tertiary)" />
+        </div>
+        <div className="text-center">
+          <p className="font-sans [font-size:var(--font-size-base)] [font-weight:var(--font-weight-bold)] text-(--text-secondary)">
+            Prototype Ready
+          </p>
+          <p className="font-sans [font-size:var(--font-size-sm)] text-(--text-tertiary) mt-1">
+            Share this link with your test participants to begin user testing
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (artifact.type === 'code') {
     return (
       <div className="flex flex-1 overflow-auto bg-(--bg-surface-secondary) p-4">
@@ -111,9 +56,25 @@ export function ArtifactContentRenderer({ artifact }: ArtifactContentRendererPro
   }
 
   return (
-    <div className="flex flex-1 overflow-auto p-6">
-      <div className="flex flex-col w-full max-w-2xl">
-        {renderMarkdown(artifact.content)}
+    <div className="flex flex-1 overflow-auto bg-(--bg-surface-primary) p-6">
+      <div
+        className={[
+          'flex flex-col w-full max-w-2xl font-(family-name:--font-family-mono)',
+          '[&_h2]:[font-size:var(--font-size-lg)] [&_h2]:[font-weight:var(--font-weight-bold)] [&_h2]:text-(--text-primary) [&_h2]:mt-8 [&_h2]:mb-3 [&_h2:first-child]:mt-0',
+          '[&_h3]:[font-size:var(--font-size-base)] [&_h3]:[font-weight:var(--font-weight-semibold)] [&_h3]:text-(--text-primary) [&_h3]:mt-5 [&_h3]:mb-2',
+          '[&_p]:[font-size:var(--font-size-sm)] [&_p]:[line-height:var(--line-height-sm)] [&_p]:text-(--text-secondary) [&_p]:mb-3 [&_p:last-child]:mb-0',
+          '[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_ul]:mb-3',
+          '[&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1 [&_ol]:mb-3',
+          '[&_li]:[font-size:var(--font-size-sm)] [&_li]:text-(--text-secondary)',
+          '[&_strong]:[font-weight:var(--font-weight-semibold)] [&_strong]:text-(--text-primary)',
+          '[&_hr]:my-6 [&_hr]:border-(--border-default)',
+          '[&_table]:w-full [&_table]:mb-3 [&_table]:border-collapse',
+          '[&_th]:[font-size:var(--font-size-sm)] [&_th]:[font-weight:var(--font-weight-semibold)] [&_th]:text-(--text-primary) [&_th]:text-left [&_th]:px-3 [&_th]:py-2 [&_th]:border-b [&_th]:border-(--border-default)',
+          '[&_td]:[font-size:var(--font-size-sm)] [&_td]:text-(--text-secondary) [&_td]:px-3 [&_td]:py-2 [&_td]:border-b [&_td]:border-(--border-default)',
+          '[&_blockquote]:pl-4 [&_blockquote]:border-l-2 [&_blockquote]:border-(--border-default) [&_blockquote]:text-(--text-secondary) [&_blockquote]:my-4',
+        ].join(' ')}
+      >
+        <ReactMarkdown>{artifact.content}</ReactMarkdown>
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import { ArtifactNavigationPage }          from './ArtifactNavigationPage';
 import { ClarificationCardPage } from './ClarificationCardPage';
 import { ClarificationChatDemoPage } from './ClarificationChatDemoPage';
 import { ArtifactSegmentedControlPage } from './ArtifactSegmentedControlPage';
+import { ChatPanelPage } from './ChatPanelPage';
 import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
 const PATTERNS: Record<string, React.ComponentType> = {
@@ -25,6 +26,7 @@ const PATTERNS: Record<string, React.ComponentType> = {
   'clarification-card':           ClarificationCardPage,
   'clarification-chat':           ClarificationChatDemoPage,
   'artifact-segmented-control':   ArtifactSegmentedControlPage,
+  'chat-panel':                   ChatPanelPage,
 };
 
 export function generateStaticParams() {

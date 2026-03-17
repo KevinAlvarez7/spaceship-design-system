@@ -7,7 +7,11 @@ import { ChatMessagePage } from './ChatMessagePage';
 import { ChatThreadPage }  from './ChatThreadPage';
 import { ModalPage }       from './ModalPage';
 import { TagPage }         from './TagPage';
-import { TabBarPage }     from './TabBarPage';
+import { TabBarPage }      from './TabBarPage';
+import { FolderTabsPage } from './FolderTabsPage';
+import { ThinkingDotsPage } from './ThinkingDotsPage';
+import { ThinkingPage } from './ThinkingPage';
+import { TaskListPage } from './TaskListPage';
 import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
 const COMPONENTS: Record<string, React.ComponentType> = {
@@ -19,6 +23,10 @@ const COMPONENTS: Record<string, React.ComponentType> = {
   modal:            ModalPage,
   tag:              TagPage,
   'tab-bar':        TabBarPage,
+  'folder-tabs':    FolderTabsPage,
+  'thinking-dots':  ThinkingDotsPage,
+  'thinking':       ThinkingPage,
+  'task-list':      TaskListPage,
 };
 
 export function generateStaticParams() {

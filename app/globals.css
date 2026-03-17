@@ -107,15 +107,6 @@
   -webkit-text-fill-color: transparent;
 }
 
-@keyframes thinking-dot-bounce {
-  0%, 70%, 100% {
-    transform: translateY(0);
-  }
-  35% {
-    transform: translateY(-0.2em);
-  }
-}
-
 @keyframes thinking-dots-sweep {
   from { background-position-x: 0%; }
   to   { background-position-x: 300%; }
@@ -136,13 +127,23 @@
 }
 
 /* Each dot is staggered by 1/3 of the 4s sweep cycle so colors flow left → right across the trio */
-.thinking-dot-1 { animation: thinking-dot-bounce 1.4s ease-in-out 0s infinite, thinking-dots-sweep 4s linear 0s infinite; }
-.thinking-dot-2 { animation: thinking-dot-bounce 1.4s ease-in-out 0.15s infinite, thinking-dots-sweep 4s linear -1.33s infinite; }
-.thinking-dot-3 { animation: thinking-dot-bounce 1.4s ease-in-out 0.3s infinite, thinking-dots-sweep 4s linear -2.67s infinite; }
+.thinking-dot-1 { animation: thinking-dots-sweep 4s linear 0s infinite; }
+.thinking-dot-2 { animation: thinking-dots-sweep 4s linear -1.33s infinite; }
+.thinking-dot-3 { animation: thinking-dots-sweep 4s linear -2.67s infinite; }
+
+.thinking-dots-subtle {
+  --effect-thinking-1: var(--text-secondary);
+  --effect-thinking-2: var(--effect-shimmer-highlight);
+  --effect-thinking-3: var(--text-secondary);
+  --effect-thinking-4: var(--effect-shimmer-highlight);
+  --effect-thinking-5: var(--text-secondary);
+  --effect-thinking-dot: color-mix(in srgb, var(--text-secondary) 50%, transparent);
+  --effect-thinking-line: color-mix(in srgb, var(--text-secondary) 48%, transparent);
+}
 
 @keyframes shimmer-text-sweep {
-  from { background-position-x: 0%; }
-  to   { background-position-x: 400%; }
+  from { background-position-x: 400%; }
+  to   { background-position-x: 0%; }
 }
 
 .shimmer-text-linear {
@@ -160,3 +161,33 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+.shimmer-text-subtle {
+  background: linear-gradient(90deg,
+    var(--text-secondary),
+    var(--effect-shimmer-highlight),
+    var(--text-secondary)
+  );
+  background-size: 400% 100%;
+  animation: shimmer-text-sweep 6s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.shimmer-dot-subtle {
+  display: inline-block;
+  background: linear-gradient(90deg,
+    var(--text-secondary),
+    var(--effect-shimmer-highlight),
+    var(--text-secondary)
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.shimmer-dot-subtle-1 { animation: thinking-dots-sweep 4s linear 0s infinite; }
+.shimmer-dot-subtle-2 { animation: thinking-dots-sweep 4s linear -1.33s infinite; }
+.shimmer-dot-subtle-3 { animation: thinking-dots-sweep 4s linear -2.67s infinite; }
