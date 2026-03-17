@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { ChevronRight, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useState } from 'react';
 import { ExperimentBadge } from '@/components/viewer/ExperimentBadge';
+import { PlaygroundBadge } from '@/components/viewer/PlaygroundBadge';
 import { buildNav, type NavItem } from '@/lib/viewer-registry';
 
 const NAV = buildNav();
@@ -32,21 +33,29 @@ function NavLink({ item }: { item: NavItem }) {
       )}
     >
       <span>{item.label}</span>
-      {item.experiment && <ExperimentBadge />}
+      {item.playground && <PlaygroundBadge />}
+      {!item.playground && item.experiment && <ExperimentBadge />}
     </Link>
   );
 }
 
 function NavSection({ item }: { item: NavItem }) {
   const [open, setOpen] = useState(true);
+  // Strip "Playground " prefix for cleaner display in the sidebar
+  const displayLabel = item.label.replace('Playground ', '');
 
   return (
     <div>
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex w-full items-center justify-between px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-400 hover:text-zinc-600 transition-colors"
+        className={cn(
+          'flex w-full items-center justify-between px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors',
+          item.playground
+            ? 'text-violet-400 hover:text-violet-600'
+            : 'text-zinc-400 hover:text-zinc-600'
+        )}
       >
-        {item.label}
+        {displayLabel}
         <ChevronRight className={cn('h-3 w-3 transition-transform', open && 'rotate-90')} />
       </button>
       {open && item.children && (
@@ -56,6 +65,17 @@ function NavSection({ item }: { item: NavItem }) {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function GroupDivider({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-2 px-1 pt-1 pb-0.5">
+      <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-300">
+        {label}
+      </span>
+      <div className="flex-1 h-px bg-zinc-100" />
     </div>
   );
 }
@@ -92,9 +112,19 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
       </div>
       {!collapsed && (
         <nav className="flex-1 overflow-y-auto p-3 space-y-4">
-          {NAV.map(section => (
-            <NavSection key={section.label} item={section} />
-          ))}
+          {NAV.map((section, i) => {
+            const prevSection = NAV[i - 1];
+            const isFirstConfirmed = section.label === 'Components';
+            const isFirstPlayground = section.playground && !prevSection?.playground;
+
+            return (
+              <div key={section.label}>
+                {isFirstConfirmed && <GroupDivider label="Confirmed" />}
+                {isFirstPlayground && <GroupDivider label="Playground" />}
+                <NavSection item={section} />
+              </div>
+            );
+          })}
         </nav>
       )}
     </aside>
