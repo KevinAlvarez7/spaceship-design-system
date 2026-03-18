@@ -1,4 +1,4 @@
-import { Thinking, ShimmerText, ShimmerDots } from '@/components/ui';
+import { Thinking, ThinkingShip, ThinkingLogo, ShimmerText, ShimmerDots } from '@/components/ui';
 import { Preview } from '@/components/viewer/Preview';
 import { PropsTable, type PropRow } from '@/components/viewer/PropsTable';
 import { CodeBlock } from '@/components/viewer/CodeBlock';
@@ -9,6 +9,7 @@ const PROPS: PropRow[] = [
   { name: 'shimmerVariant', type: '"blob" | "linear" | "subtle"',            default: '"blob"',       description: 'Controls the shimmer style applied to both text and dots. subtle uses a secondary→white sweep instead of rainbow colours.' },
   { name: 'dots',           type: 'boolean',                                  default: 'true',         description: 'Append sequentially-animated dots after the label. Set to false when passing a label that already includes punctuation.' },
   { name: 'textScramble',   type: 'boolean',                                  default: 'false',        description: 'Cycle through themed loading labels (Thinking, Launching, Orbiting…) with a character-decode scramble effect every 3 s. Characters resolve left-to-right over ~900 ms. Bypasses ShimmerText — the decode animation is the visual effect. Overrides children. Disabled when disableMotion is set.' },
+  { name: 'icon',           type: '"dots" | "spaceship" | "logo"',            default: '"dots"',       description: 'Icon shown before the label. dots = 3×3 gravity grid. spaceship = mini saucer weaving through asteroid streaks. logo = full SpaceshipLogoScene (saucer + beam sweep) at 20×24 px.' },
   { name: 'disableMotion',  type: 'boolean',                                  default: 'false',        description: 'Renders a static dot grid and plain secondary-coloured text. No CSS animation.' },
   { name: 'children',       type: 'ReactNode',                                default: '"Thinking"',   description: 'Text label shown beside the dots. Omit trailing punctuation — the component appends its own animated dots by default.' },
   { name: 'className',       type: 'string',                                  default: '—',            description: 'Additional classes applied to the outer wrapper span.' },
@@ -46,7 +47,18 @@ const USAGE = `import { Thinking } from '@/components/ui';
 <Thinking textScramble surface="shadow-border" />
 
 // Text scramble is a no-op when motion is disabled
-<Thinking textScramble disableMotion />`;
+<Thinking textScramble disableMotion />
+
+// Spaceship icon
+<Thinking icon="spaceship" />
+<Thinking icon="spaceship" size="caption-2" />
+<Thinking icon="spaceship" textScramble />
+<Thinking icon="spaceship" shimmerVariant="subtle" />
+<Thinking icon="spaceship" disableMotion />
+
+// Logo icon — full SpaceshipLogoScene saucer + beam
+<Thinking icon="logo" />
+<Thinking icon="logo" textScramble />`;
 
 const SHIMMER_PROPS: PropRow[] = [
   { name: 'variant',       type: '"blob" | "linear" | "subtle"', default: '"blob"',  description: 'Animation style. blob = JS-driven radial blobs that drift and wobble organically. linear = pure-CSS rainbow sweep, no JS. subtle = secondary→white CSS sweep, no JS.' },
@@ -156,6 +168,53 @@ export function ThinkingPage() {
           </Preview>
           <Preview justify="start" label='shimmerVariant="subtle" — secondary→white sweep'>
             <Thinking shimmerVariant="subtle" />
+          </Preview>
+        </div>
+      </section>
+
+      {/* Spaceship Icon */}
+      <section>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">Spaceship Icon</h2>
+        <p className="text-sm text-zinc-500 mb-4">
+          An alternative to the gravity-grid icon: a mini saucer weaving sinusoidally as it
+          flies toward the upper-right, dodging asteroid streaks that fall diagonally across
+          the 20&times;20 viewBox. Use <code>icon=&quot;spaceship&quot;</code> to activate.
+        </p>
+        <div className="space-y-4">
+          <Preview justify="start" label='icon="spaceship" — caption-1 + caption-2'>
+            <Thinking icon="spaceship" size="caption-1" />
+            <Thinking icon="spaceship" size="caption-2" />
+          </Preview>
+          <Preview justify="start" label='icon="spaceship" + textScramble'>
+            <Thinking icon="spaceship" textScramble />
+          </Preview>
+          <Preview justify="start" label='icon="spaceship" + shimmerVariant="subtle"'>
+            <Thinking icon="spaceship" shimmerVariant="subtle" />
+          </Preview>
+          <Preview justify="start" label='icon="spaceship" + disableMotion — static ship, no streaks'>
+            <ThinkingShip size="sm" disableMotion />
+            <Thinking icon="spaceship" disableMotion />
+          </Preview>
+        </div>
+      </section>
+
+      {/* Logo Icon */}
+      <section>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">Logo Icon</h2>
+        <p className="text-sm text-zinc-500 mb-4">
+          The full SpaceshipLogoScene artwork — saucer + animated beam sweep — rendered at 20&times;24&thinsp;px
+          as a thinking indicator. Use <code>icon=&quot;logo&quot;</code> to activate.
+        </p>
+        <div className="space-y-4">
+          <Preview justify="start" label='icon="logo" — saucer + beam sweep'>
+            <Thinking icon="logo" />
+          </Preview>
+          <Preview justify="start" label='icon="logo" + textScramble'>
+            <Thinking icon="logo" textScramble />
+          </Preview>
+          <Preview justify="start" label='icon="logo" + disableMotion — static saucer'>
+            <ThinkingLogo disableMotion />
+            <Thinking icon="logo" disableMotion />
           </Preview>
         </div>
       </section>
