@@ -6,6 +6,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { springs } from '@/tokens';
 import { ShimmerText } from './shimmer-text';
+import { SpaceshipLogoScene } from '@/components/effects/SpaceshipLogo/SpaceshipLogoScene';
 
 // ━━━ ThinkingDots — animated 3×3 gravity grid icon ━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -586,6 +587,31 @@ export function ThinkingShip({
   );
 }
 
+// ━━━ ThinkingLogo — SpaceshipLogoScene at 20×24 px ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// ─── Props ────────────────────────────────────────────────────────────────────
+
+export interface ThinkingLogoProps {
+  disableMotion?: boolean;
+  className?:     string;
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+/** SpaceshipLogoScene (saucer + beam sweep) rendered at 20×24 px as a thinking indicator. */
+export function ThinkingLogo({ disableMotion = false, className }: ThinkingLogoProps) {
+  return (
+    <span className={cn('inline-flex items-center justify-center w-5 h-6 overflow-hidden', className)}>
+      <SpaceshipLogoScene
+        width={20}
+        interactive={false}
+        disableMotion={disableMotion}
+        decorations={[]}
+      />
+    </span>
+  );
+}
+
 // ━━━ Thinking — shimmer label with scramble and dots ━━━━━━━━━━━━━━━━━━━━━━━━━
 
 // ─── Labels ───────────────────────────────────────────────────────────────────
@@ -693,7 +719,7 @@ export interface ThinkingProps
   /** Cycle through themed loading labels with a character-decode scramble every 3 s. Overrides children. Disabled when disableMotion is set. */
   textScramble?: boolean;
   /** Icon shown before the label. Defaults to 'dots'. */
-  icon?: 'dots' | 'spaceship';
+  icon?: 'dots' | 'spaceship' | 'logo';
   children?: ReactNode;
 }
 
@@ -723,7 +749,9 @@ export function Thinking({
     return () => clearInterval(id);
   }, [scrambleActive]);
 
-  const iconEl = icon === 'spaceship'
+  const iconEl = icon === 'logo'
+    ? <ThinkingLogo disableMotion={disableMotion} />
+    : icon === 'spaceship'
     ? <ThinkingShip size="sm" disableMotion={disableMotion} />
     : <ThinkingDots size="sm" pattern="radial" variant={shimmerVariant === 'subtle' ? 'subtle' : 'rainbow'} disableMotion={disableMotion} />;
 

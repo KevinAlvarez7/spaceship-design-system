@@ -41,14 +41,20 @@ export type { TabBarProps, TabBarItemProps } from './tab-bar';
 export { FolderTabs, FolderTab, folderTabsVariants } from './folder-tabs';
 export type { FolderTabsProps, FolderTabProps } from './folder-tabs';
 
-export { ThinkingDots, thinkingDotsVariants } from './thinking-dots';
-export type { ThinkingDotsProps } from './thinking-dots';
+export { ThinkingDots, thinkingDotsVariants } from './thinking';
+export type { ThinkingDotsProps } from './thinking';
+
+export { ThinkingShip, thinkingShipVariants } from './thinking';
+export type { ThinkingShipProps } from './thinking';
 
 export { Thinking, thinkingVariants } from './thinking';
 export type { ThinkingProps } from './thinking';
 
+export { ThinkingLogo } from './thinking';
+export type { ThinkingLogoProps } from './thinking';
+
 export { ShimmerText } from './shimmer-text';
 export type { ShimmerTextProps } from './shimmer-text';
 
-export { ShimmerDots } from './shimmer-dots';
-export type { ShimmerDotsProps } from './shimmer-dots';
+export { ShimmerDots } from './shimmer-text';
+export type { ShimmerDotsProps } from './shimmer-text';
