@@ -1,4 +1,4 @@
-import { ThinkingDots, ThinkingShip, ThinkingSaucer } from '@/components/ui';
+import { ThinkingDots, ThinkingShip } from '@/components/ui';
 import { Preview } from '@/components/viewer/Preview';
 import { PropsTable, type PropRow } from '@/components/viewer/PropsTable';
 import { CodeBlock } from '@/components/viewer/CodeBlock';
@@ -220,35 +220,6 @@ export function ThinkingDotsPage() {
         </Preview>
       </section>
 
-      {/* ── ThinkingSaucer ────────────────────────────────────────────────────── */}
-      <div className="border-t border-zinc-200 pt-10">
-        <h1 className="text-2xl font-bold text-zinc-900">Thinking Saucer</h1>
-        <p className="mt-2 text-sm text-zinc-500">
-          A beam-less inline saucer icon at 16&times;16&nbsp;px sourced directly from the
-          Figma 32&times;32 exports. Unlike <code>ThinkingLogo</code>, there is no animated
-          beam sweep — just the clean saucer silhouette. Two orientations: <code>tilted</code>
-          (the classic angled pose) and <code>upright</code> (level disc). Fades in via
-          a gentle motion spring; pass <code>disableMotion</code> to render immediately.
-          Use <code>icon=&quot;saucer&quot;</code> or <code>icon=&quot;saucer-upright&quot;</code> on the{' '}
-          <code>Thinking</code> component to swap the leading icon.
-        </p>
-      </div>
-
-      <section>
-        <h2 className="text-base font-semibold text-zinc-800 mb-3">Variants</h2>
-        <Preview label='variant="tilted" (default) · variant="upright"'>
-          <ThinkingSaucer variant="tilted" />
-          <ThinkingSaucer variant="upright" />
-        </Preview>
-      </section>
-
-      <section>
-        <h2 className="text-base font-semibold text-zinc-800 mb-3">Static</h2>
-        <Preview label="disableMotion — tilted · upright">
-          <ThinkingSaucer variant="tilted"  disableMotion />
-          <ThinkingSaucer variant="upright" disableMotion />
-        </Preview>
-      </section>
     </div>
   );
 }
