@@ -239,6 +239,7 @@
   /* ── Effects ─────────────────────────────────────────────────
      Not in Figma variables — maintained manually.
      ──────────────────────────────────────────────────────────── */
+  --effect-gravity-bg:   #fafaf8;
   --effect-gravity-dot:  color-mix(in srgb, var(--neutral-400) 32%, transparent);
   --effect-gravity-grid: color-mix(in srgb, var(--neutral-400) 13%, transparent);
 
@@ -250,6 +251,11 @@
   --effect-thinking-3: var(--nova-mint-500);
   --effect-thinking-4: var(--orbit-blue-500);
   --effect-thinking-5: var(--cosmic-lilac-500);
+
+  --effect-thinking-ship-belly:   var(--solar-coral-500);
+  --effect-thinking-ship-body:    var(--orbit-blue-500);
+  --effect-thinking-ship-dome:    var(--lumen-yellow-500);
+  --effect-thinking-asteroid:     var(--neutral-400);
 
   --effect-shimmer-highlight: var(--white);
 
@@ -316,6 +322,7 @@
     0px 2px 4px 0px rgba(0, 0, 0, 0.4);
 
   /* Effects — dark */
+  --effect-gravity-bg:   var(--neutral-950);
   --effect-thinking-dot:  color-mix(in srgb, var(--neutral-500) 50%, transparent);
   --effect-thinking-line: color-mix(in srgb, var(--neutral-500) 48%, transparent);
 
@@ -324,4 +331,9 @@
   --effect-thinking-3: var(--nova-mint-400);
   --effect-thinking-4: var(--orbit-blue-400);
   --effect-thinking-5: var(--cosmic-lilac-400);
+
+  --effect-thinking-ship-belly:   var(--solar-coral-400);
+  --effect-thinking-ship-body:    var(--orbit-blue-400);
+  --effect-thinking-ship-dome:    var(--lumen-yellow-400);
+  --effect-thinking-asteroid:     var(--neutral-500);
 }
