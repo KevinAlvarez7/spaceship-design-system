@@ -24,6 +24,7 @@ export interface GravityWellProps {
   // Grid
   cols?: number;
   rows?: number;
+  step?: number;
   // Visual
   className?: string;
   style?: React.CSSProperties;
@@ -134,6 +135,7 @@ export function GravityWell({
   disableMouse = false,
   cols = 52,
   rows = 36,
+  step = 38,
   className,
   style,
   lineColorBase = 'var(--neutral-300, #d4d4d8)',
@@ -164,7 +166,7 @@ export function GravityWell({
   // after commit so the ref is up-to-date before the next RAF tick.
   // NOTE: sourcesRef is already a ref — do NOT add it to propsRef.
   const propsRef = useRef({
-    radius, mass, softness, spring, colorSensitivity, attractStrength, repelStrength, disableMouse, cols, rows,
+    radius, mass, softness, spring, colorSensitivity, attractStrength, repelStrength, disableMouse, cols, rows, step,
     lineColorBase, lineColorActive, lineColors, dotColor, massColor, background, staticGridColor, sources, invert, showMass, showDots, showStaticGrid, showDynamicGrid,
   });
   const parsedRingRef = useRef<[number, number, number, number][]>([]);
@@ -179,7 +181,7 @@ export function GravityWell({
   });
   useLayoutEffect(() => {
     propsRef.current = {
-      radius, mass, softness, spring, colorSensitivity, attractStrength, repelStrength, disableMouse, cols, rows,
+      radius, mass, softness, spring, colorSensitivity, attractStrength, repelStrength, disableMouse, cols, rows, step,
       lineColorBase, lineColorActive, lineColors, dotColor, massColor, background, staticGridColor, sources, invert, showMass, showDots, showStaticGrid, showDynamicGrid,
     };
     resolveRef.current();
@@ -204,8 +206,6 @@ export function GravityWell({
 
     function buildGrid() {
       const { cols, rows } = propsRef.current;
-      const safeCols = Math.max(cols, 2);
-      const safeRows = Math.max(rows, 2);
       // getBoundingClientRect reflects CSS layout; offsetWidth can be 0 before paint
       const rect = canvas.getBoundingClientRect();
       const W = Math.round(rect.width);
@@ -215,6 +215,8 @@ export function GravityWell({
       canvas.height = H;
       sizeRef.current = { W, H };
 
+      const safeCols = Math.max(cols, 2);
+      const safeRows = Math.max(rows, 2);
       const cw = W / (safeCols - 1);
       const ch = H / (safeRows - 1);
       const next: Vertex[][] = [];
@@ -397,8 +399,7 @@ export function GravityWell({
     function drawBg() {
       const { W, H } = sizeRef.current;
       const { background, dotColor, staticGridColor } = resolvedColorsRef.current;
-      const { showDots, showStaticGrid } = propsRef.current;
-      const step = 38;
+      const { showDots, showStaticGrid, step } = propsRef.current;
 
       if (background && background !== 'transparent') {
         ctx.fillStyle = background;
@@ -555,10 +556,10 @@ export function GravityWell({
     };
   }, []); // intentionally empty — all prop reads go through propsRef
 
-  // Rebuild grid when grid dimensions change (other props update via propsRef)
+  // Rebuild grid when step changes (other props update via propsRef)
   useEffect(() => {
     rebuildRef.current();
-  }, [cols, rows]);
+  }, [cols, rows, step]);
 
   return (
     <canvas

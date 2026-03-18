@@ -53,6 +53,10 @@ node scripts/generate-tokens.mjs   # regenerate tokens from Figma export
 - **Spring calibration** — keep damping ratio ζ ≥ 0.7 to avoid visible oscillation. Formula: `ζ = damping / (2 × √(stiffness))`. E.g., `{ stiffness: 400, damping: 30 }` → ζ = 0.75.
 - **GPU layer promotion** — `motion.*` elements with scale animations need `style={{ willChange: 'transform' }}` to prevent text jitter from mid-animation layer promotion.
 - **Icon pattern** — use `leadingIcon` / `trailingIcon` props + `ICON_CLASSES` record + `IconSlot` helper.
+- **Section separators** — use `// ─── Name ──────...` (single em-dash line, padded to ~col 80) for sub-sections within a component block.
+- **Multi-component files** — use `// ━━━ ComponentName — brief description ━━━...` (double thick line, padded to ~col 80) as a divider between major component blocks in a shared file.
+- **Section order within a block** — Types → Constants → Helpers → Hooks → CVA → Props → Component. Group each component's CVA + Props + Component together; shared infra (constants, helpers) stays at the top of the file.
+- **Helper docs** — add a one-line JSDoc comment above non-obvious helper functions (physics, math, animation).
 
 ---
 

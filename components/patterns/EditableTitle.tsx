@@ -23,11 +23,8 @@ export function EditableTitle({
   className,
 }: EditableTitleProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isFullWidth, setIsFullWidth] = useState(false);
   const [editValue, setEditValue] = useState(title);
   const inputRef = useRef<HTMLInputElement>(null);
-  // Set to true while expanding so onAnimationComplete knows to swap content
-  const pendingEditRef = useRef(false);
 
   const showEditing = isEditing || !!error;
 
@@ -41,27 +38,17 @@ export function EditableTitle({
 
   function handlePencilClick() {
     setEditValue(title);
-    pendingEditRef.current = true;
-    setIsFullWidth(true); // Step 1: expand pill
-  }
-
-  function handleAnimationComplete() {
-    if (pendingEditRef.current) {
-      pendingEditRef.current = false;
-      setIsEditing(true); // Step 2: swap content after expansion
-    }
+    setIsEditing(true);
   }
 
   function handleDone() {
     if (error) return;
     onTitleChange?.(editValue);
     setIsEditing(false);
-    setIsFullWidth(false);
   }
 
   function handleCancel() {
     setIsEditing(false);
-    setIsFullWidth(false);
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -84,18 +71,18 @@ export function EditableTitle({
         aria-label="Toggle sidebar"
         surface="shadow"
       />
+      {/* Pill — animates flexGrow, NO overflow-hidden */}
       <motion.div
         initial={false}
-        animate={{ flexGrow: isFullWidth || showEditing ? 1 : 0 }}
+        animate={{ flexGrow: showEditing ? 1 : 0 }}
         transition={springs.interactive}
-        onAnimationComplete={handleAnimationComplete}
         className={cn(
           showEditing ? 'bg-(--bg-surface-base)' : 'bg-(--bg-surface-primary)',
-          'flex items-center overflow-hidden rounded-lg shadow-(--shadow-border)',
+          'flex items-center rounded-lg shadow-(--shadow-border)',
         )}
       >
-        {/* Text section */}
-        <div className="flex items-center gap-1.5 flex-1 p-2">
+        {/* Title section — overflow-hidden clips text during transition */}
+        <div className="flex items-center gap-1.5 overflow-hidden flex-1 p-2">
           {showEditing ? (
             <input
               ref={inputRef}
@@ -125,7 +112,7 @@ export function EditableTitle({
           )}
         </div>
 
-        {/* Actions section — edit mode only */}
+        {/* Actions section — outside overflow-hidden, never clipped */}
         {showEditing && (
           <span className="flex items-center shrink-0 p-2">
             <motion.span

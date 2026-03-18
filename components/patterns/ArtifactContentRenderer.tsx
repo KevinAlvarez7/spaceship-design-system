@@ -59,7 +59,7 @@ export function ArtifactContentRenderer({ artifact }: ArtifactContentRendererPro
     <div className="min-h-full w-full bg-(--bg-surface-base)">
       <div
         className={[
-          'flex flex-col w-full max-w-2xl p-6 font-(family-name:--font-family-mono)',
+          'flex flex-col w-full p-6 font-(family-name:--font-family-mono)',
           '[&_h2]:[font-size:var(--font-size-lg)] [&_h2]:[font-weight:var(--font-weight-bold)] [&_h2]:text-(--text-primary) [&_h2]:mt-8 [&_h2]:mb-3 [&_h2:first-child]:mt-0',
           '[&_h3]:[font-size:var(--font-size-base)] [&_h3]:[font-weight:var(--font-weight-semibold)] [&_h3]:text-(--text-primary) [&_h3]:mt-5 [&_h3]:mb-2',
           '[&_p]:[font-size:var(--font-size-sm)] [&_p]:[line-height:var(--line-height-sm)] [&_p]:text-(--text-secondary) [&_p]:mb-3 [&_p:last-child]:mb-0',

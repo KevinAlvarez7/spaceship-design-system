@@ -17,28 +17,30 @@ export function ChatPage() {
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Interactive Demo</h2>
         <Preview label="Interactive Demo" className="h-[32rem]">
-          <ChatPanel
-            input={{
-              size: 'sm',
-              submitLabel: 'Send',
-              placeholder: 'Iterate further...',
-              value: inputValue,
-              onChange: e => setInputValue(e.target.value),
-              onSubmit: handleSubmit,
-              onStop: isStreaming ? handleStop : undefined,
-            }}
-          >
-            <ChatThread className="flex-1 min-h-0">
-              {messages.map((msg, i) =>
-                msg.role === 'user'
-                  ? <ChatBubble key={i}>{msg.content}</ChatBubble>
-                  : <ChatMessage key={i} content={msg.content} />
-              )}
-              {isStreaming && (
-                <ChatMessage content={streamedText} isStreaming />
-              )}
-            </ChatThread>
-          </ChatPanel>
+          <div className="w-(--sizing-chat-default)">
+            <ChatPanel
+              input={{
+                size: 'sm',
+                submitLabel: 'Send',
+                placeholder: 'Iterate further...',
+                value: inputValue,
+                onChange: e => setInputValue(e.target.value),
+                onSubmit: handleSubmit,
+                onStop: isStreaming ? handleStop : undefined,
+              }}
+            >
+              <ChatThread className="flex-1 min-h-0">
+                {messages.map((msg, i) =>
+                  msg.role === 'user'
+                    ? <ChatBubble key={i}>{msg.content}</ChatBubble>
+                    : <ChatMessage key={i} content={msg.content} />
+                )}
+                {isStreaming && (
+                  <ChatMessage content={streamedText} isStreaming />
+                )}
+              </ChatThread>
+            </ChatPanel>
+          </div>
         </Preview>
       </section>
     </div>

@@ -27,3 +27,6 @@ export type { SpaceshipLogoSceneProps, SceneDecoration } from './SpaceshipLogo';
 
 export { ThreeBodyPlanets } from './ThreeBodyPlanets';
 export type { ThreeBodyPlanetsProps } from './ThreeBodyPlanets';
+
+export { BlackHoleCursor } from './BlackHoleCursor';
+export type { BlackHoleCursorProps } from './BlackHoleCursor';

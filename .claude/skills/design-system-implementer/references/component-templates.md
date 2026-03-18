@@ -138,7 +138,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex items-center rounded-(--radius-full) px-2.5 py-0.5 text-(--font-size-xs) font-(--font-weight-semibold) transition-colors',
+  'inline-flex items-center rounded-(--radius-full) px-2.5 py-0.5 text-(--font-size-xs) [font-weight:var(--font-weight-semibold)] transition-colors',
   {
     variants: {
       variant: {

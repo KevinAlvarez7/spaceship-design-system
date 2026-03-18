@@ -9,7 +9,7 @@ const PROPS: PropRow[] = [
   { name: 'shimmerVariant', type: '"blob" | "linear" | "subtle"',            default: '"blob"',       description: 'Controls the shimmer style applied to both text and dots. subtle uses a secondary→white sweep instead of rainbow colours.' },
   { name: 'dots',           type: 'boolean',                                  default: 'true',         description: 'Append sequentially-animated dots after the label. Set to false when passing a label that already includes punctuation.' },
   { name: 'textScramble',   type: 'boolean',                                  default: 'false',        description: 'Cycle through themed loading labels (Thinking, Launching, Orbiting…) with a character-decode scramble effect every 3 s. Characters resolve left-to-right over ~900 ms. Bypasses ShimmerText — the decode animation is the visual effect. Overrides children. Disabled when disableMotion is set.' },
-  { name: 'icon',           type: '"dots" | "spaceship" | "logo" | "saucer" | "saucer-upright"', default: '"dots"', description: 'Icon shown before the label. dots = 3×3 gravity grid. spaceship = mini animated saucer + asteroid streaks. logo = SpaceshipLogoScene (saucer + beam sweep) at 20×24 px. saucer / saucer-upright = beam-less static 16×16 saucer from the Figma 32×32 export, tilted or upright.' },
+  { name: 'icon',           type: '"dots" | "spaceship" | "logo" | "saucer" | "saucer-upright"', default: '"dots"', description: 'Icon shown before the label. dots = 3×3 gravity grid. spaceship = mini animated saucer + asteroid streaks (20×20 viewBox). logo = SpaceshipLogoScene (saucer + beam sweep) at 20×24 px. saucer / saucer-upright = animated beam-less saucer from the Figma 32×32 export with horizontal weave + falling asteroids, tilted or upright.' },
   { name: 'disableMotion',  type: 'boolean',                                  default: 'false',        description: 'Renders a static dot grid and plain secondary-coloured text. No CSS animation.' },
   { name: 'children',       type: 'ReactNode',                                default: '"Thinking"',   description: 'Text label shown beside the dots. Omit trailing punctuation — the component appends its own animated dots by default.' },
   { name: 'className',       type: 'string',                                  default: '—',            description: 'Additional classes applied to the outer wrapper span.' },
@@ -60,13 +60,41 @@ const USAGE = `import { Thinking } from '@/components/ui';
 <Thinking icon="logo" />
 <Thinking icon="logo" textScramble />
 
-// Saucer icon — beam-less Figma 32×32 tilted saucer
+// Saucer icon — animated beam-less saucer (horizontal weave + falling asteroids)
 <Thinking icon="saucer" />
 <Thinking icon="saucer" textScramble />
 <Thinking icon="saucer" disableMotion />
 
 // Saucer upright
 <Thinking icon="saucer-upright" />`;
+
+const SAUCER_PROPS: PropRow[] = [
+  { name: 'variant',       type: '"tilted" | "upright"',              default: '"tilted"',  description: 'Saucer orientation. tilted = Figma angled disc. upright = level disc.' },
+  { name: 'size',          type: '"sm" | "md" | "lg"',               default: '"lg"',      description: 'Icon size: sm = 16px, md = 20px, lg = 24px.' },
+  { name: 'surface',       type: '"default" | "shadow-border"',       default: '"default"', description: 'shadow-border adds a rounded shadow ring around the icon.' },
+  { name: 'duration',      type: 'number',                            default: '4',         description: 'Exposed for API consistency; internal animation speeds are fixed.' },
+  { name: 'disableMotion', type: 'boolean',                           default: 'false',     description: 'Skips weave + asteroid animation and fades in statically.' },
+  { name: 'className',     type: 'string',                            default: '—',         description: 'Additional classes merged via cn().' },
+];
+
+const SAUCER_USAGE = `import { ThinkingSaucer } from '@/components/ui';
+
+// Default — lg (24px), tilted, animated
+<ThinkingSaucer />
+
+// Upright orientation
+<ThinkingSaucer variant="upright" />
+
+// Sizes
+<ThinkingSaucer size="sm" />
+<ThinkingSaucer size="md" />
+<ThinkingSaucer size="lg" />
+
+// Surface
+<ThinkingSaucer surface="shadow-border" />
+
+// Static — no weave or asteroids
+<ThinkingSaucer disableMotion />`;
 
 const SHIMMER_PROPS: PropRow[] = [
   { name: 'variant',       type: '"blob" | "linear" | "subtle"', default: '"blob"',  description: 'Animation style. blob = JS-driven radial blobs that drift and wobble organically. linear = pure-CSS rainbow sweep, no JS. subtle = secondary→white CSS sweep, no JS.' },
@@ -231,13 +259,13 @@ export function ThinkingPage() {
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Saucer Icon</h2>
         <p className="text-sm text-zinc-500 mb-4">
-          A beam-less inline saucer sourced from the Figma 32&times;32 export, rendered at 16&times;16&thinsp;px.
-          Two orientations: <code>icon=&quot;saucer&quot;</code> (tilted) and{' '}
-          <code>icon=&quot;saucer-upright&quot;</code> (level disc). Unlike <code>icon=&quot;logo&quot;</code>,
-          there is no beam sweep — just the clean saucer silhouette.
+          A beam-less inline saucer sourced from the Figma 32&times;32 export, animated with a horizontal
+          weave and falling asteroid streaks. Some asteroids render behind the saucer and some in front,
+          creating a simple depth effect. Two orientations: <code>icon=&quot;saucer&quot;</code> (tilted) and{' '}
+          <code>icon=&quot;saucer-upright&quot;</code> (level disc).
         </p>
         <div className="space-y-4">
-          <Preview justify="start" label='icon="saucer" — tilted'>
+          <Preview justify="start" label='icon="saucer" — tilted (caption-1 + caption-2)'>
             <Thinking icon="saucer" size="caption-1" />
             <Thinking icon="saucer" size="caption-2" />
           </Preview>
@@ -248,12 +276,55 @@ export function ThinkingPage() {
           <Preview justify="start" label='icon="saucer" + textScramble'>
             <Thinking icon="saucer" textScramble />
           </Preview>
-          <Preview justify="start" label='icon="saucer" + disableMotion'>
+          <Preview justify="start" label='icon="saucer" + disableMotion — static, no weave or asteroids'>
             <ThinkingSaucer disableMotion />
             <Thinking icon="saucer" disableMotion />
             <Thinking icon="saucer-upright" disableMotion />
           </Preview>
         </div>
+      </section>
+
+      {/* ThinkingSaucer standalone */}
+      <section>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">ThinkingSaucer — Standalone</h2>
+        <p className="text-sm text-zinc-500 mb-4">
+          The saucer icon can also be used standalone. Defaults to <code>lg</code> (24&times;24&thinsp;px).
+          Asteroids wrap vertically on a 48-unit cycle; z-order is static (deterministic behind/front split
+          for SSR safety).
+        </p>
+        <div className="space-y-4">
+          <Preview justify="start" label="Sizes — sm (16px) · md (20px) · lg (24px)">
+            <ThinkingSaucer size="sm" />
+            <ThinkingSaucer size="md" />
+            <ThinkingSaucer size="lg" />
+          </Preview>
+          <Preview justify="start" label='variant="upright" — level disc at sm · md · lg'>
+            <ThinkingSaucer variant="upright" size="sm" />
+            <ThinkingSaucer variant="upright" size="md" />
+            <ThinkingSaucer variant="upright" size="lg" />
+          </Preview>
+          <Preview justify="start" label='surface="shadow-border" — tilted + upright'>
+            <ThinkingSaucer surface="shadow-border" />
+            <ThinkingSaucer variant="upright" surface="shadow-border" />
+          </Preview>
+          <Preview justify="start" label="disableMotion — static saucer, no animation">
+            <ThinkingSaucer size="sm" disableMotion />
+            <ThinkingSaucer size="md" disableMotion />
+            <ThinkingSaucer size="lg" disableMotion />
+          </Preview>
+        </div>
+      </section>
+
+      {/* ThinkingSaucer Props */}
+      <section>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">ThinkingSaucer Props</h2>
+        <PropsTable props={SAUCER_PROPS} />
+      </section>
+
+      {/* ThinkingSaucer Usage */}
+      <section>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">ThinkingSaucer Usage</h2>
+        <CodeBlock code={SAUCER_USAGE} lang="tsx" />
       </section>
 
       {/* Static */}

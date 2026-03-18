@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useEffect } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
 import { motion, useAnimation, type HTMLMotionProps } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
@@ -154,9 +154,12 @@ export function Button({
   const motionVariants = { idle: { scale: 1 }, hover: { scale: scale.hover }, tap: { scale: scale.tap } };
 
   const colorControls = useAnimation();
+  const mountedRef = useRef(false);
 
   useEffect(() => {
+    mountedRef.current = true;
     colorControls.set({ backgroundColor: resolveColor(tokens.default) });
+    return () => { mountedRef.current = false; };
   }, [variantKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const content = icon ? (
@@ -197,27 +200,35 @@ export function Button({
       animate={colorControls}
       transition={SPRING_TRANSITION}
       onHoverStart={(e, info) => {
-        colorControls.start({ backgroundColor: resolveColor(tokens.hover) }, COLOR_TRANSITION);
+        if (mountedRef.current) {
+          colorControls.start({ backgroundColor: resolveColor(tokens.hover) }, COLOR_TRANSITION);
+        }
         onHoverStart?.(e, info);
       }}
       onHoverEnd={(e, info) => {
-        colorControls.start({ backgroundColor: resolveColor(tokens.default) }, COLOR_TRANSITION);
+        if (mountedRef.current) {
+          colorControls.start({ backgroundColor: resolveColor(tokens.default) }, COLOR_TRANSITION);
+        }
         onHoverEnd?.(e, info);
       }}
       onTapStart={(e, info) => {
-        if (tokens.pressed) {
+        if (mountedRef.current && tokens.pressed) {
           colorControls.start({ backgroundColor: resolveColor(tokens.pressed) }, PRESSED_TRANSITION);
         }
         onTapStart?.(e, info);
       }}
       onTap={(e, info) => {
         // Cursor is still over button after tap — return to hover color
-        colorControls.start({ backgroundColor: resolveColor(tokens.hover) }, COLOR_TRANSITION);
+        if (mountedRef.current) {
+          colorControls.start({ backgroundColor: resolveColor(tokens.hover) }, COLOR_TRANSITION);
+        }
         onTap?.(e, info);
       }}
       onTapCancel={(e, info) => {
         // Pointer moved away during press — return to default
-        colorControls.start({ backgroundColor: resolveColor(tokens.default) }, COLOR_TRANSITION);
+        if (mountedRef.current) {
+          colorControls.start({ backgroundColor: resolveColor(tokens.default) }, COLOR_TRANSITION);
+        }
         onTapCancel?.(e, info);
       }}
     >

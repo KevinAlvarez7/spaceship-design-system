@@ -53,7 +53,7 @@ export type { ThinkingProps } from './thinking';
 export { ThinkingLogo } from './thinking';
 export type { ThinkingLogoProps } from './thinking';
 
-export { ThinkingSaucer } from './thinking';
+export { ThinkingSaucer, thinkingSaucerVariants } from './thinking';
 export type { ThinkingSaucerProps } from './thinking';
 
 export { ShimmerText } from './shimmer-text';

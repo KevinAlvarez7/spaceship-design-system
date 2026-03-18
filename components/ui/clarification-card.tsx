@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import useMeasure from 'react-use-measure';
 import { cva, type VariantProps } from 'class-variance-authority';
 import {
   ChevronLeft,
@@ -149,6 +150,7 @@ export function ClarificationCard({
   surface,
   className,
 }: ClarificationCardProps) {
+  const [contentRef, { height: contentHeight }] = useMeasure();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<ClarificationAnswers>({});
   const [submitted, setSubmitted] = useState(false);
@@ -379,33 +381,6 @@ export function ClarificationCard({
           {question.label}
         </span>
 
-        {/* Pagination */}
-        <div className="flex items-center gap-1 shrink-0">
-          <Button
-            variant="ghost"
-            size="icon-md"
-            icon={<ChevronLeft strokeWidth={2.5} />}
-            onClick={handlePrev}
-            disabled={currentIndex === 0}
-            disableMotion={disableMotion}
-            className="w-6 h-6"
-          />
-
-          <span className="[font-size:var(--font-size-xs)] text-(--text-tertiary) min-w-[3rem] text-center tabular-nums">
-            {currentIndex + 1} of {total}
-          </span>
-
-          <Button
-            variant="ghost"
-            size="icon-md"
-            icon={<ChevronRight strokeWidth={2.5} />}
-            onClick={handleNext}
-            disabled={currentIndex >= maxVisited}
-            disableMotion={disableMotion}
-            className="w-6 h-6"
-          />
-        </div>
-
         {/* Close */}
         {onClose && (
           <Button
@@ -420,25 +395,32 @@ export function ClarificationCard({
       </div>
 
       {/* Question content — animated */}
-      <div className="relative overflow-hidden p-2">
-        {disableMotion ? (
-          renderQuestion()
-        ) : (
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={currentIndex}
-              custom={direction}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={springs.interactive}
-            >
-              {renderQuestion()}
-            </motion.div>
-          </AnimatePresence>
-        )}
-      </div>
+      <motion.div
+        animate={{ height: contentHeight || 'auto' }}
+        initial={false}
+        transition={disableMotion ? { duration: 0 } : springs.interactive}
+        className="relative overflow-hidden"
+      >
+        <div ref={contentRef} className="p-2">
+          {disableMotion ? (
+            renderQuestion()
+          ) : (
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={currentIndex}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={springs.interactive}
+              >
+                {renderQuestion()}
+              </motion.div>
+            </AnimatePresence>
+          )}
+        </div>
+      </motion.div>
 
       {/* Footer */}
       {question.type === 'single' && question.freeText ? (
@@ -477,6 +459,32 @@ export function ClarificationCard({
         </div>
       ) : (
         <div className="flex items-center gap-2 px-4 py-3">
+          {/* Pagination */}
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon-md"
+              icon={<ChevronLeft strokeWidth={2.5} />}
+              onClick={handlePrev}
+              disabled={currentIndex === 0}
+              disableMotion={disableMotion}
+              className="w-6 h-6"
+            />
+
+            <span className="[font-size:var(--font-size-xs)] text-(--text-tertiary) min-w-[3rem] text-center tabular-nums">
+              {currentIndex + 1} of {total}
+            </span>
+
+            <Button
+              variant="ghost"
+              size="icon-md"
+              icon={<ChevronRight strokeWidth={2.5} />}
+              onClick={handleNext}
+              disabled={currentIndex >= maxVisited}
+              disableMotion={disableMotion}
+              className="w-6 h-6"
+            />
+          </div>
           <div className="flex-1" />
           <Button
             variant="ghost"

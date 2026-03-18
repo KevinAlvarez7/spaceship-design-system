@@ -54,28 +54,36 @@ export function ChatInputBoxPage() {
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Medium (default)</h2>
         <Preview label='size="md"'>
-          <ChatInputBoxDemo size="md" />
+          <div className="w-(--sizing-chat-default)">
+            <ChatInputBoxDemo size="md" />
+          </div>
         </Preview>
       </section>
 
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Small</h2>
         <Preview label='size="sm"'>
-          <ChatInputBoxDemo size="sm" />
+          <div className="w-(--sizing-chat-default)">
+            <ChatInputBoxDemo size="sm" />
+          </div>
         </Preview>
       </section>
 
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Disabled</h2>
         <Preview label="disabled">
-          <ChatInputBox disabled placeholder="Disabled state" />
+          <div className="w-(--sizing-chat-default)">
+            <ChatInputBox disabled placeholder="Disabled state" />
+          </div>
         </Preview>
       </section>
 
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Stop (streaming)</h2>
         <Preview label="onStop">
-          <ChatInputBoxStopDemo />
+          <div className="w-(--sizing-chat-default)">
+            <ChatInputBoxStopDemo />
+          </div>
         </Preview>
       </section>
 

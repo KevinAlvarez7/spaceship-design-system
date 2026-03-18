@@ -1,9 +1,8 @@
 'use client';
 
 import { useRef, useEffect, useState, type MutableRefObject } from 'react';
-import { motion, useAnimation, useMotionValue, useSpring, AnimatePresence } from 'motion/react';
-import { GravityWell } from '@/components/effects';
-import { SpaceshipLogoScene } from '@/components/effects';
+import { motion, useAnimation, useMotionValue, useSpring } from 'motion/react';
+import { GravityWell, SpaceshipLogoScene, BlackHoleCursor } from '@/components/effects';
 import { ChatInputBox } from '@/components/ui';
 
 type Mode = 'idle' | 'blackHole';
@@ -102,12 +101,14 @@ export function GravityChatPage() {
     >
       <GravityWell
         sourcesRef={sourcesRef}
-        radius={120}
-        softness={50}
+        cols={72}
+        rows={50}
+        radius={140}
+        softness={40}
         showMass={false}
         colorSensitivity={0.2}
         attractStrength={0}
-        repelStrength={20}
+        repelStrength={60}
         disableMouse={mode === 'idle'}
         // lineColorBase="var(--neutral-100)"
         // lineColorActive="var(--neutral-200)"
@@ -120,31 +121,11 @@ export function GravityChatPage() {
         ]}
       />
 
-      <AnimatePresence>
-        {mode === 'blackHole' && (
-          <motion.div
-            key="blackhole-cursor"
-            className="pointer-events-none fixed z-50 w-4 h-4 rounded-full"
-            style={{
-              left: 0,
-              top: 0,
-              x: springX,
-              y: springY,
-              background: 'radial-gradient(circle, rgba(9,9,11,0.95) 0%, rgba(9,9,11,0.3) 60%, transparent 100%)',
-              boxShadow: '0 0 0 1.5px rgba(9,9,11,0.8), 0 0 14px rgba(9,9,11,0.15)',
-            }}
-            transformTemplate={(_, generated) => `${generated} translate(-50%, -50%)`}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-          />
-        )}
-      </AnimatePresence>
+      <BlackHoleCursor x={springX} y={springY} isVisible={mode === 'blackHole'} />
 
       {/* Positioned stack: spaceship logo, heading, ChatInputBox — centered in viewport */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="flex flex-col items-center gap-4 w-full max-w-2xl pointer-events-none">
+        <div className="flex flex-col items-center gap-6 w-full max-w-(--sizing-chat-max) pointer-events-none">
           {/* Spaceship logo — easter egg trigger (catch the ship!) */}
           <motion.div
             ref={triggerRef}
@@ -168,7 +149,7 @@ export function GravityChatPage() {
             />
           </motion.div>
 
-          <h1 className="font-serif text-(length:--font-size-4xl) font-(--font-weight-bold) leading-(--line-height-4xl) text-text-primary text-center">
+          <h1 className="font-serif text-(length:--font-size-4xl) [font-weight:var(--font-weight-bold)] leading-(--line-height-4xl) text-text-primary text-center">
             What ideas do you want to explore?
           </h1>
 

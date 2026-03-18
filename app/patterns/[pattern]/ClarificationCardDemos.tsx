@@ -42,7 +42,7 @@ export function ClarificationCardDemos() {
 
   return (
     <div className="flex flex-col gap-6 items-center">
-      <div className="w-full max-w-sm">
+      <div className="w-(--sizing-chat-default)">
         <ClarificationCard
           key={key}
           questions={QUESTIONS}
@@ -52,7 +52,7 @@ export function ClarificationCardDemos() {
       </div>
 
       {result && (
-        <div className="flex flex-col gap-2 w-full max-w-sm">
+        <div className="flex flex-col gap-2 w-(--sizing-chat-default)">
           <p className="[font-size:var(--font-size-sm)] text-(--text-tertiary)">Submitted answers:</p>
           <pre className="[font-size:var(--font-size-xs)] text-(--text-primary) bg-(--bg-surface-primary) rounded-lg p-3 overflow-auto">
             {JSON.stringify(result, null, 2)}

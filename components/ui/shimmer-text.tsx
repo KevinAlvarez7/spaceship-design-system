@@ -4,6 +4,53 @@ import { useRef, type ReactNode } from 'react';
 import { useAnimationFrame } from 'motion/react';
 import { cn } from '@/lib/utils';
 
+// ━━━ ShimmerDots — three animated bounce dots ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// ─── Props ────────────────────────────────────────────────────────────────────
+
+export interface ShimmerDotsProps extends React.HTMLAttributes<HTMLSpanElement> {
+  disableMotion?: boolean;
+  /** Animation style. 'rainbow' = cycling hue sweep (default). 'subtle' = secondary→white sweep. */
+  variant?: 'rainbow' | 'subtle';
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export function ShimmerDots({
+  disableMotion = false,
+  variant = 'rainbow',
+  className,
+  ...props
+}: ShimmerDotsProps) {
+  if (disableMotion) {
+    return (
+      <span aria-hidden="true" className={cn('text-(--text-secondary)', className)} {...props}>
+        {'\u2026'}
+      </span>
+    );
+  }
+
+  if (variant === 'subtle') {
+    return (
+      <span aria-hidden="true" className={className} {...props}>
+        <span className="shimmer-dot-subtle shimmer-dot-subtle-1">.</span>
+        <span className="shimmer-dot-subtle shimmer-dot-subtle-2">.</span>
+        <span className="shimmer-dot-subtle shimmer-dot-subtle-3">.</span>
+      </span>
+    );
+  }
+
+  return (
+    <span aria-hidden="true" className={className} {...props}>
+      <span className="thinking-dot-bounce thinking-dot-1">.</span>
+      <span className="thinking-dot-bounce thinking-dot-2">.</span>
+      <span className="thinking-dot-bounce thinking-dot-3">.</span>
+    </span>
+  );
+}
+
+// ━━━ ShimmerText — animated gradient text with optional dots ━━━━━━━━━━━━━━━━━
+
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 export interface ShimmerTextProps extends React.HTMLAttributes<HTMLSpanElement> {
@@ -13,27 +60,6 @@ export interface ShimmerTextProps extends React.HTMLAttributes<HTMLSpanElement> 
   /** Render three animated bounce dots inline after the text, with zero gap. */
   dots?: boolean;
   children?: ReactNode;
-}
-
-// ─── Dots ─────────────────────────────────────────────────────────────────────
-
-function DotMarkup({ variant }: { variant: 'blob' | 'linear' | 'subtle' }) {
-  if (variant === 'subtle') {
-    return (
-      <>
-        <span className="shimmer-dot-subtle shimmer-dot-subtle-1">.</span>
-        <span className="shimmer-dot-subtle shimmer-dot-subtle-2">.</span>
-        <span className="shimmer-dot-subtle shimmer-dot-subtle-3">.</span>
-      </>
-    );
-  }
-  return (
-    <>
-      <span className="thinking-dot-bounce thinking-dot-1">.</span>
-      <span className="thinking-dot-bounce thinking-dot-2">.</span>
-      <span className="thinking-dot-bounce thinking-dot-3">.</span>
-    </>
-  );
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -86,7 +112,7 @@ export function ShimmerText({
   if (variant === 'linear') {
     return (
       <span className={cn('shimmer-text-linear', className)} {...props}>
-        {children}{dots && <span className="ml-1"><DotMarkup variant="linear" /></span>}
+        {children}{dots && <ShimmerDots variant="rainbow" className="ml-1" />}
       </span>
     );
   }
@@ -94,7 +120,7 @@ export function ShimmerText({
   if (variant === 'subtle') {
     return (
       <span className={cn('shimmer-text-subtle', className)} {...props}>
-        {children}{dots && <span className="ml-1"><DotMarkup variant="subtle" /></span>}
+        {children}{dots && <ShimmerDots variant="subtle" className="ml-1" />}
       </span>
     );
   }
@@ -106,7 +132,7 @@ export function ShimmerText({
       className={cn('thinking-text-animated', className)}
       {...props}
     >
-      {children}{dots && <span className="ml-1"><DotMarkup variant="blob" /></span>}
+      {children}{dots && <ShimmerDots variant="rainbow" className="ml-1" />}
     </span>
   );
 }

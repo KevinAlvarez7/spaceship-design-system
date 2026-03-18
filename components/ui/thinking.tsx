@@ -641,33 +641,160 @@ const SAUCER_PATHS: Record<'tilted' | 'upright', SaucerPaths> = {
   },
 } as const;
 
+// ─── Animation constants ──────────────────────────────────────────────────────
+
+const SAUCER_CX            = 16;    // center X in 32×32 viewBox
+const SAUCER_CY            = 16;    // center Y
+const SAUCER_WEAVE_AMP     = 2.0;   // primary horizontal weave amplitude
+const SAUCER_WEAVE_AMP_2   = 1.0;   // secondary weave amplitude
+const SAUCER_WEAVE_FREQ    = 1.1;   // primary frequency (rad/s)
+const SAUCER_WEAVE_FREQ_2  = 2.7;   // secondary frequency (rad/s)
+
+type SaucerAsteroidDef = {
+  x: number; y0: number; speed: number; phase: number; half: number; behind: boolean;
+};
+
+const SAUCER_ASTEROIDS: SaucerAsteroidDef[] = [
+  { x:  5, y0: -4, speed: 12, phase: 0.00, half: 2.5, behind: true  },
+  { x: 12, y0:  2, speed:  9, phase: 0.40, half: 3.0, behind: false },
+  { x: 21, y0: -1, speed: 14, phase: 0.15, half: 2.0, behind: true  },
+  { x: 27, y0:  5, speed:  8, phase: 0.65, half: 2.8, behind: false },
+  { x:  9, y0: -6, speed: 11, phase: 0.80, half: 2.3, behind: true  },
+  { x: 24, y0:  1, speed: 10, phase: 0.30, half: 2.6, behind: false },
+];
+
+/** Vertical wrap distance per asteroid cycle (viewBox units). */
+const SAUCER_ASTEROID_CYCLE = 48;
+
+const SAUCER_ASTEROIDS_BEHIND = SAUCER_ASTEROIDS.filter(a => a.behind);
+const SAUCER_ASTEROIDS_FRONT  = SAUCER_ASTEROIDS.filter(a => !a.behind);
+
+// ─── CVA ──────────────────────────────────────────────────────────────────────
+
+export const thinkingSaucerVariants = cva(
+  ['inline-flex items-center justify-center'],
+  {
+    variants: {
+      size: {
+        sm: 'size-4',
+        md: 'size-5',
+        lg: 'size-6',
+      },
+      surface: {
+        default:         '',
+        'shadow-border': 'rounded-sm shadow-(--shadow-border)',
+      },
+    },
+    defaultVariants: { size: 'lg', surface: 'default' },
+  },
+);
+
 // ─── Props ────────────────────────────────────────────────────────────────────
 
-export interface ThinkingSaucerProps {
+export interface ThinkingSaucerProps
+  extends React.SVGAttributes<SVGSVGElement>,
+    VariantProps<typeof thinkingSaucerVariants> {
   variant?:       'tilted' | 'upright';
+  duration?:      number;
   disableMotion?: boolean;
-  className?:     string;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-/** Beam-less inline saucer icon at 16×16 px — Figma 32×32 paths scaled to fit. */
+/** Animated beam-less saucer icon — weaves horizontally with falling asteroid streaks. */
 export function ThinkingSaucer({
-  variant = 'tilted',
+  variant       = 'tilted',
+  duration      = 4,
   disableMotion = false,
+  size,
+  surface,
   className,
+  ...props
 }: ThinkingSaucerProps) {
+  void duration; // exposed for API consistency; internal speeds are fixed
+
   const paths = SAUCER_PATHS[variant];
-  const wrapperClass = cn('inline-flex size-4 items-center justify-center', className);
+  const wrapperClass = cn(thinkingSaucerVariants({ size, surface }), className);
+
+  const saucerRef  = useRef<SVGGElement | null>(null);
+  const behindRefs = useRef<(SVGLineElement | null)[]>([]);
+  const frontRefs  = useRef<(SVGLineElement | null)[]>([]);
+
+  useAnimationFrame((time) => {
+    if (disableMotion) return;
+    const t = time / 1000;
+
+    // ── Saucer horizontal weave ──────────────────────────────────────────────
+    const wave = SAUCER_WEAVE_AMP * Math.sin(t * SAUCER_WEAVE_FREQ)
+               + SAUCER_WEAVE_AMP_2 * Math.sin(t * SAUCER_WEAVE_FREQ_2);
+    saucerRef.current?.setAttribute('transform',
+      `translate(${(SAUCER_CX + wave).toFixed(2)}, ${SAUCER_CY})`
+    );
+
+    // ── Asteroids: vertical fall with wrap ───────────────────────────────────
+    function updateAsteroids(
+      defs: SaucerAsteroidDef[],
+      refs: React.RefObject<(SVGLineElement | null)[]>,
+    ) {
+      for (let i = 0; i < defs.length; i++) {
+        const a        = defs[i];
+        const progress = (t * a.speed + a.phase * SAUCER_ASTEROID_CYCLE) % SAUCER_ASTEROID_CYCLE;
+        const cy       = a.y0 + progress;
+        // Fade in over first 3 units, fade out over last 5 units
+        const opacity  = Math.min(1, Math.min(progress / 3, (SAUCER_ASTEROID_CYCLE - progress) / 5));
+        const el       = refs.current[i];
+        if (el) {
+          el.setAttribute('x1', String(a.x));
+          el.setAttribute('y1', (cy - a.half).toFixed(2));
+          el.setAttribute('x2', String(a.x));
+          el.setAttribute('y2', (cy + a.half).toFixed(2));
+          el.setAttribute('opacity', opacity.toFixed(3));
+        }
+      }
+    }
+    updateAsteroids(SAUCER_ASTEROIDS_BEHIND, behindRefs);
+    updateAsteroids(SAUCER_ASTEROIDS_FRONT,  frontRefs);
+  });
 
   const svg = (
-    <svg aria-hidden="true" viewBox="0 0 32 32" width="100%" height="100%" fill="none">
-      <path d={paths.bellyFill}    fill="#F9614D" />
-      <path d={paths.bellyOutline} fill="black" fillOpacity={0.25} />
-      <path d={paths.discFill}     fill="#3C7DFF" />
-      <path d={paths.discOutline}  fill="black" fillOpacity={0.25} />
-      <path d={paths.domeFill}     fill="#F9C600" />
-      <path d={paths.domeOutline}  fill="black" fillOpacity={0.25} />
+    <svg aria-hidden="true" {...props} viewBox="0 0 32 32" width="100%" height="100%" fill="none">
+      {/* Behind asteroids — rendered first, appear below saucer */}
+      {SAUCER_ASTEROIDS_BEHIND.map((_, i) => (
+        <line
+          key={`b-${i}`}
+          ref={(el) => { behindRefs.current[i] = el; }}
+          x1="0" y1="-10" x2="0" y2="-10"
+          stroke="var(--effect-thinking-asteroid)"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          opacity={0}
+        />
+      ))}
+
+      {/* Saucer group — translated by weave; paths offset by -16,-16 to center at origin */}
+      <g ref={saucerRef} transform={`translate(${SAUCER_CX}, ${SAUCER_CY})`}>
+        <g transform="translate(-16, -16)">
+          <path d={paths.bellyFill}    fill="var(--effect-thinking-ship-belly)" />
+          <path d={paths.bellyOutline} fill="black" fillOpacity={0.25} />
+          <path d={paths.discFill}     fill="var(--effect-thinking-ship-body)" />
+          <path d={paths.discOutline}  fill="black" fillOpacity={0.25} />
+          <path d={paths.domeFill}     fill="var(--effect-thinking-ship-dome)" />
+          <path d={paths.domeOutline}  fill="black" fillOpacity={0.25} />
+        </g>
+      </g>
+
+      {/* Front asteroids — rendered after saucer, appear on top */}
+      {SAUCER_ASTEROIDS_FRONT.map((_, i) => (
+        <line
+          key={`f-${i}`}
+          ref={(el) => { frontRefs.current[i] = el; }}
+          x1="0" y1="-10" x2="0" y2="-10"
+          stroke="var(--effect-thinking-asteroid)"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          opacity={0}
+        />
+      ))}
     </svg>
   );
 
@@ -829,9 +956,9 @@ export function Thinking({
     : icon === 'spaceship'
     ? <ThinkingShip size="sm" disableMotion={disableMotion} />
     : icon === 'saucer'
-    ? <ThinkingSaucer variant="tilted" disableMotion={disableMotion} />
+    ? <ThinkingSaucer size="sm" variant="tilted" disableMotion={disableMotion} />
     : icon === 'saucer-upright'
-    ? <ThinkingSaucer variant="upright" disableMotion={disableMotion} />
+    ? <ThinkingSaucer size="sm" variant="upright" disableMotion={disableMotion} />
     : <ThinkingDots size="sm" pattern="radial" variant={shimmerVariant === 'subtle' ? 'subtle' : 'rainbow'} disableMotion={disableMotion} />;
 
   let content: ReactNode;

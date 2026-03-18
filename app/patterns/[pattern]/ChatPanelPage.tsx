@@ -22,51 +22,55 @@ export function ChatPanelPage() {
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">With Header &amp; Footer</h2>
         <Preview label="Chat Panel — editable title + input" className="h-[36rem]">
-          <ChatPanel
-            title={title}
-            onTitleChange={setTitle}
-            onMenuClick={() => {}}
-            input={{
-              size: 'sm',
-              submitLabel: 'Send',
-              placeholder: 'Iterate further...',
-              value: inputValue,
-              onChange: e => setInputValue(e.target.value),
-              onSubmit: handleSubmit,
-              onStop: isStreaming ? handleStop : undefined,
-            }}
-          >
-            <ChatThread className="flex-1 min-h-0">
-              {messages.map((msg, i) =>
-                msg.role === 'user'
-                  ? <ChatBubble key={i}>{msg.content}</ChatBubble>
-                  : <ChatMessage key={i} content={msg.content} />
-              )}
-              {isStreaming && (
-                <ChatMessage content={streamedText} isStreaming />
-              )}
-            </ChatThread>
-          </ChatPanel>
+          <div className="w-(--sizing-chat-default)">
+            <ChatPanel
+              title={title}
+              onTitleChange={setTitle}
+              onMenuClick={() => {}}
+              input={{
+                size: 'sm',
+                submitLabel: 'Send',
+                placeholder: 'Iterate further...',
+                value: inputValue,
+                onChange: e => setInputValue(e.target.value),
+                onSubmit: handleSubmit,
+                onStop: isStreaming ? handleStop : undefined,
+              }}
+            >
+              <ChatThread className="flex-1 min-h-0">
+                {messages.map((msg, i) =>
+                  msg.role === 'user'
+                    ? <ChatBubble key={i}>{msg.content}</ChatBubble>
+                    : <ChatMessage key={i} content={msg.content} />
+                )}
+                {isStreaming && (
+                  <ChatMessage content={streamedText} isStreaming />
+                )}
+              </ChatThread>
+            </ChatPanel>
+          </div>
         </Preview>
       </section>
 
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Footer Only (no header)</h2>
         <Preview label="Chat Panel — no title header" className="h-[28rem]">
-          <ChatPanel
-            input={{
-              size: 'sm',
-              submitLabel: 'Send',
-              placeholder: 'Ask anything...',
-              value: '',
-              onChange: () => {},
-              onSubmit: () => {},
-            }}
-          >
-            <ChatThread className="flex-1 min-h-0">
-              <ChatMessage content="This panel has no header — the title lives at page level. Use this when the chat is one panel inside a larger layout." />
-            </ChatThread>
-          </ChatPanel>
+          <div className="w-(--sizing-chat-default)">
+            <ChatPanel
+              input={{
+                size: 'sm',
+                submitLabel: 'Send',
+                placeholder: 'Ask anything...',
+                value: '',
+                onChange: () => {},
+                onSubmit: () => {},
+              }}
+            >
+              <ChatThread className="flex-1 min-h-0">
+                <ChatMessage content="This panel has no header — the title lives at page level. Use this when the chat is one panel inside a larger layout." />
+              </ChatThread>
+            </ChatPanel>
+          </div>
         </Preview>
       </section>
     </div>
