@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useId, type ReactNode } from 'react';
-import { motion, useAnimationFrame } from 'motion/react';
+import { motion, useAnimationFrame, useAnimate } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { springs } from '@/tokens';
@@ -622,52 +622,41 @@ type SaucerPaths = {
   domeFill:  string; domeOutline:  string;
 };
 
-const SAUCER_PATHS: Record<'tilted' | 'upright', SaucerPaths> = {
-  tilted: {
-    bellyFill:    'M25.6806 16.8948C26.1817 19.2521 22.5111 22.0296 17.4822 23.0985C12.4533 24.1675 7.97036 23.123 7.4693 20.7657C6.96824 18.4084 10.6388 15.6309 15.6677 14.562C20.6966 13.4931 25.1796 14.5375 25.6806 16.8948Z',
-    bellyOutline: 'M24.2133 17.2063C24.1549 16.9327 23.7129 16.2966 22.0318 15.9049C20.4785 15.543 18.3285 15.53 15.9801 16.0291C13.6314 16.5283 11.6719 17.4149 10.4 18.3773C9.02356 19.4189 8.87852 20.1798 8.93645 20.4535C8.99458 20.727 9.43624 21.364 11.1182 21.7559C12.6715 22.1178 14.8222 22.1307 17.1709 21.6315L17.4822 23.0985L17.0125 23.1927C12.177 24.101 7.95471 23.0494 7.4693 20.7657C6.96824 18.4084 10.6388 15.6309 15.6677 14.562L16.1375 14.4681C20.9727 13.5598 25.1949 14.6114 25.6806 16.8948C26.1817 19.2521 22.5111 22.0296 17.4822 23.0985L17.1709 21.6315C19.5193 21.1322 21.4782 20.2459 22.7499 19.2835C24.1271 18.2414 24.2714 17.4798 24.2133 17.2063Z',
-    discFill:     'M31.681 12.9427C32.182 15.3 25.5813 18.7004 16.9379 20.5376C8.29441 22.3748 0.881317 21.9532 0.380256 19.5959C-0.120805 17.2386 6.47991 13.8382 15.1234 12.001C23.7668 10.1638 31.1799 10.5854 31.681 12.9427Z',
-    discOutline:  'M15.1234 12.001C23.7668 10.1638 31.1799 10.5854 31.681 12.9427C32.182 15.3 25.5813 18.7004 16.9379 20.5376L16.6261 19.0706C20.8559 18.1715 24.5327 16.8992 27.0516 15.6016C28.3208 14.9478 29.2179 14.3273 29.747 13.8017C30.0152 13.5353 30.1261 13.3579 30.1726 13.263C30.0913 13.1951 29.9176 13.079 29.5649 12.9449C28.8677 12.6799 27.7959 12.4779 26.3704 12.3969C23.5415 12.236 19.6651 12.5692 15.4352 13.4682C11.2054 14.3673 7.52861 15.6396 5.00971 16.9372C3.74039 17.5911 2.84337 18.2115 2.31429 18.7372C2.04607 19.0036 1.93405 19.1802 1.88752 19.2751C1.96847 19.3429 2.14237 19.4594 2.49642 19.594C3.19355 19.859 4.26545 20.0609 5.6909 20.142C8.51982 20.3029 12.3962 19.9697 16.6261 19.0706L16.9379 20.5376L16.1315 20.7033C7.83792 22.3466 0.865661 21.8795 0.380256 19.5959C-0.120805 17.2386 6.47991 13.8382 15.1234 12.001Z',
-    domeFill:     'M22.7994 14.5331C22.6088 13.6363 22.2434 12.7858 21.724 12.0302C21.2047 11.2746 20.5417 10.6287 19.7727 10.1293C19.0038 9.62994 18.144 9.28693 17.2425 9.11984C16.341 8.95276 15.4154 8.96487 14.5185 9.1555C13.6217 9.34613 12.7712 9.71153 12.0156 10.2308C11.26 10.7502 10.614 11.4132 10.1147 12.1822C9.61533 12.9511 9.27231 13.8109 9.10523 14.7124C8.93814 15.6139 8.95026 16.5395 9.14089 17.4363C9.14089 17.4363 10.6738 18.3516 16.2225 17.1722C21.7713 15.9928 22.7994 14.5331 22.7994 14.5331Z',
-    domeOutline:  'M14.5185 9.1555C15.4154 8.96487 16.341 8.95276 17.2425 9.11984C18.144 9.28693 19.0038 9.62994 19.7727 10.1293C20.5417 10.6287 21.2047 11.2746 21.724 12.0302C22.2434 12.7858 22.6088 13.6363 22.7994 14.5331C22.7994 14.5331 21.7713 15.9928 16.2225 17.1722L15.9104 15.7055C18.5862 15.1368 20.0876 14.5173 20.8804 14.09C20.9498 14.0527 21.0123 14.0148 21.0708 13.9807C20.9188 13.5938 20.7239 13.2239 20.4873 12.8797C20.0797 12.2866 19.5596 11.7791 18.9561 11.3871C18.3524 10.9951 17.6772 10.7256 16.9695 10.5943C16.2617 10.4632 15.5342 10.4731 14.83 10.6228C14.126 10.7725 13.4581 11.0591 12.8649 11.4668C12.2717 11.8745 11.7646 12.3953 11.3726 12.999C10.9805 13.6028 10.711 14.2778 10.5798 14.9856C10.5037 15.3963 10.4761 15.8134 10.4946 16.2287C10.5621 16.2361 10.635 16.245 10.714 16.251C11.612 16.3189 13.2348 16.2742 15.9104 15.7055L16.2225 17.1722L15.2289 17.3699C10.4883 18.2413 9.14089 17.4363 9.14089 17.4363C8.95026 16.5395 8.93814 15.6139 9.10523 14.7124C9.27231 13.8109 9.61533 12.9511 10.1147 12.1822C10.614 11.4132 11.26 10.7502 12.0156 10.2308C12.7712 9.71153 13.6217 9.34613 14.5185 9.1555Z',
-  },
-  upright: {
-    bellyFill:    'M25.3091 18.8909C25.3091 21.3009 21.1413 23.2545 16 23.2545C10.8587 23.2545 6.69091 21.3009 6.69091 18.8909C6.69091 16.4809 10.8587 14.5273 16 14.5273C21.1413 14.5273 25.3091 16.4809 25.3091 18.8909Z',
-    bellyOutline: 'M23.8091 18.8906C23.8088 18.6107 23.5088 17.8967 21.9458 17.164C20.5017 16.4871 18.4014 16.0273 16.0005 16.0273C13.5993 16.0273 11.4984 16.487 10.0542 17.164C8.49122 17.8967 8.19116 18.6107 8.19091 18.8906C8.19091 19.1701 8.49047 19.8851 10.0542 20.6181C11.4984 21.295 13.5993 21.7548 16.0005 21.7548L16 23.2545L15.521 23.249C10.6023 23.1321 6.69091 21.2256 6.69091 18.8909C6.69091 16.4809 10.8587 14.5273 16 14.5273L16.479 14.5331C21.3974 14.65 25.3087 16.5564 25.3091 18.8909C25.3091 21.3009 21.1413 23.2545 16 23.2545L16.0005 21.7548C18.4014 21.7548 20.5017 21.295 21.9458 20.6181C23.5095 19.8851 23.8091 19.1701 23.8091 18.8906Z',
-    discFill:     'M32 16.2727C32 18.6827 24.8366 20.6364 16 20.6364C7.16344 20.6364 0 18.6827 0 16.2727C0 13.8628 7.16344 11.9091 16 11.9091C24.8366 11.9091 32 13.8628 32 16.2727Z',
-    discOutline:  'M16 11.9091C24.8366 11.9091 32 13.8628 32 16.2727C32 18.6827 24.8366 20.6364 16 20.6364V19.1366C20.3243 19.1366 24.1853 18.6566 26.9189 17.911C28.2964 17.5354 29.3029 17.115 29.9297 16.7108C30.2474 16.506 30.3927 16.3556 30.458 16.2724C30.3926 16.1891 30.2469 16.0394 29.9297 15.8349C29.3029 15.4307 28.2965 15.0104 26.9189 14.6347C24.1853 13.8891 20.3244 13.4091 16 13.4091C11.6756 13.4091 7.8147 13.8891 5.08105 14.6347C3.70353 15.0104 2.69711 15.4307 2.07031 15.8349C1.75254 16.0398 1.60627 16.1891 1.54102 16.2724C1.6061 16.3555 1.75198 16.5056 2.07031 16.7108C2.69712 17.115 3.70361 17.5354 5.08105 17.911C7.8147 18.6566 11.6757 19.1366 16 19.1366V20.6364L15.1768 20.6308C6.72278 20.5139 0 18.6074 0 16.2727C0 13.8628 7.16344 11.9091 16 11.9091Z',
-    domeFill:     'M22.9818 15.9818C22.9818 15.065 22.8012 14.1571 22.4504 13.31C22.0995 12.4629 21.5852 11.6932 20.9369 11.0449C20.2886 10.3966 19.5189 9.88233 18.6718 9.53146C17.8248 9.18059 16.9169 9 16 9C15.0831 9 14.1752 9.18059 13.3282 9.53146C12.4811 9.88233 11.7114 10.3966 11.0631 11.0449C10.4148 11.6932 9.90051 12.4629 9.54964 13.31C9.19877 14.1571 9.01818 15.065 9.01818 15.9818C9.01818 15.9818 10.3273 17.1958 16 17.1958C21.6727 17.1958 22.9818 15.9818 22.9818 15.9818Z',
-    domeOutline:  'M16 9C16.9169 9 17.8248 9.18059 18.6718 9.53146C19.5189 9.88233 20.2886 10.3966 20.9369 11.0449C21.5852 11.6932 22.0995 12.4629 22.4504 13.31C22.8012 14.1571 22.9818 15.065 22.9818 15.9818C22.9818 15.9818 21.6727 17.1958 16 17.1958L15.9996 15.6963C18.7352 15.6963 20.3326 15.4025 21.1969 15.1494C21.2725 15.1273 21.3416 15.1032 21.4059 15.082C21.3376 14.672 21.2239 14.2696 21.0641 13.8838C20.7886 13.2189 20.3855 12.6144 19.8766 12.1055C19.3676 11.5965 18.7632 11.1925 18.0983 10.917C17.4332 10.6415 16.7195 10.5 15.9996 10.5C15.2799 10.5 14.5669 10.6416 13.902 10.917C13.2369 11.1925 12.6327 11.5965 12.1237 12.1055C11.6146 12.6145 11.2107 13.2187 10.9352 13.8838C10.7753 14.2697 10.6616 14.672 10.5934 15.082C10.6579 15.1033 10.7274 15.1272 10.8033 15.1494C11.6676 15.4025 13.2643 15.6963 15.9996 15.6963L16 17.1958L14.9869 17.1826C10.1688 17.0493 9.01818 15.9818 9.01818 15.9818C9.01818 15.065 9.19877 14.1571 9.54964 13.31C9.90051 12.4629 10.4148 11.6932 11.0631 11.0449C11.7114 10.3966 12.4811 9.88233 13.3282 9.53146C14.1752 9.18059 15.0831 9 16 9Z',
-  },
-} as const;
+const SAUCER_PATHS: SaucerPaths = {
+  bellyFill:    'M25.6806 16.8948C26.1817 19.2521 22.5111 22.0296 17.4822 23.0985C12.4533 24.1675 7.97036 23.123 7.4693 20.7657C6.96824 18.4084 10.6388 15.6309 15.6677 14.562C20.6966 13.4931 25.1796 14.5375 25.6806 16.8948Z',
+  bellyOutline: 'M24.2133 17.2063C24.1549 16.9327 23.7129 16.2966 22.0318 15.9049C20.4785 15.543 18.3285 15.53 15.9801 16.0291C13.6314 16.5283 11.6719 17.4149 10.4 18.3773C9.02356 19.4189 8.87852 20.1798 8.93645 20.4535C8.99458 20.727 9.43624 21.364 11.1182 21.7559C12.6715 22.1178 14.8222 22.1307 17.1709 21.6315L17.4822 23.0985L17.0125 23.1927C12.177 24.101 7.95471 23.0494 7.4693 20.7657C6.96824 18.4084 10.6388 15.6309 15.6677 14.562L16.1375 14.4681C20.9727 13.5598 25.1949 14.6114 25.6806 16.8948C26.1817 19.2521 22.5111 22.0296 17.4822 23.0985L17.1709 21.6315C19.5193 21.1322 21.4782 20.2459 22.7499 19.2835C24.1271 18.2414 24.2714 17.4798 24.2133 17.2063Z',
+  discFill:     'M31.681 12.9427C32.182 15.3 25.5813 18.7004 16.9379 20.5376C8.29441 22.3748 0.881317 21.9532 0.380256 19.5959C-0.120805 17.2386 6.47991 13.8382 15.1234 12.001C23.7668 10.1638 31.1799 10.5854 31.681 12.9427Z',
+  discOutline:  'M15.1234 12.001C23.7668 10.1638 31.1799 10.5854 31.681 12.9427C32.182 15.3 25.5813 18.7004 16.9379 20.5376L16.6261 19.0706C20.8559 18.1715 24.5327 16.8992 27.0516 15.6016C28.3208 14.9478 29.2179 14.3273 29.747 13.8017C30.0152 13.5353 30.1261 13.3579 30.1726 13.263C30.0913 13.1951 29.9176 13.079 29.5649 12.9449C28.8677 12.6799 27.7959 12.4779 26.3704 12.3969C23.5415 12.236 19.6651 12.5692 15.4352 13.4682C11.2054 14.3673 7.52861 15.6396 5.00971 16.9372C3.74039 17.5911 2.84337 18.2115 2.31429 18.7372C2.04607 19.0036 1.93405 19.1802 1.88752 19.2751C1.96847 19.3429 2.14237 19.4594 2.49642 19.594C3.19355 19.859 4.26545 20.0609 5.6909 20.142C8.51982 20.3029 12.3962 19.9697 16.6261 19.0706L16.9379 20.5376L16.1315 20.7033C7.83792 22.3466 0.865661 21.8795 0.380256 19.5959C-0.120805 17.2386 6.47991 13.8382 15.1234 12.001Z',
+  domeFill:     'M22.7994 14.5331C22.6088 13.6363 22.2434 12.7858 21.724 12.0302C21.2047 11.2746 20.5417 10.6287 19.7727 10.1293C19.0038 9.62994 18.144 9.28693 17.2425 9.11984C16.341 8.95276 15.4154 8.96487 14.5185 9.1555C13.6217 9.34613 12.7712 9.71153 12.0156 10.2308C11.26 10.7502 10.614 11.4132 10.1147 12.1822C9.61533 12.9511 9.27231 13.8109 9.10523 14.7124C8.93814 15.6139 8.95026 16.5395 9.14089 17.4363C9.14089 17.4363 10.6738 18.3516 16.2225 17.1722C21.7713 15.9928 22.7994 14.5331 22.7994 14.5331Z',
+  domeOutline:  'M14.5185 9.1555C15.4154 8.96487 16.341 8.95276 17.2425 9.11984C18.144 9.28693 19.0038 9.62994 19.7727 10.1293C20.5417 10.6287 21.2047 11.2746 21.724 12.0302C22.2434 12.7858 22.6088 13.6363 22.7994 14.5331C22.7994 14.5331 21.7713 15.9928 16.2225 17.1722L15.9104 15.7055C18.5862 15.1368 20.0876 14.5173 20.8804 14.09C20.9498 14.0527 21.0123 14.0148 21.0708 13.9807C20.9188 13.5938 20.7239 13.2239 20.4873 12.8797C20.0797 12.2866 19.5596 11.7791 18.9561 11.3871C18.3524 10.9951 17.6772 10.7256 16.9695 10.5943C16.2617 10.4632 15.5342 10.4731 14.83 10.6228C14.126 10.7725 13.4581 11.0591 12.8649 11.4668C12.2717 11.8745 11.7646 12.3953 11.3726 12.999C10.9805 13.6028 10.711 14.2778 10.5798 14.9856C10.5037 15.3963 10.4761 15.8134 10.4946 16.2287C10.5621 16.2361 10.635 16.245 10.714 16.251C11.612 16.3189 13.2348 16.2742 15.9104 15.7055L16.2225 17.1722L15.2289 17.3699C10.4883 18.2413 9.14089 17.4363 9.14089 17.4363C8.95026 16.5395 8.93814 15.6139 9.10523 14.7124C9.27231 13.8109 9.61533 12.9511 10.1147 12.1822C10.614 11.4132 11.26 10.7502 12.0156 10.2308C12.7712 9.71153 13.6217 9.34613 14.5185 9.1555Z',
+};
 
 // ─── Animation constants ──────────────────────────────────────────────────────
 
-const SAUCER_CX            = 16;    // center X in 32×32 viewBox
-const SAUCER_CY            = 16;    // center Y
-const SAUCER_WEAVE_AMP     = 2.0;   // primary horizontal weave amplitude
-const SAUCER_WEAVE_AMP_2   = 1.0;   // secondary weave amplitude
-const SAUCER_WEAVE_FREQ    = 1.1;   // primary frequency (rad/s)
-const SAUCER_WEAVE_FREQ_2  = 2.7;   // secondary frequency (rad/s)
-
-type SaucerAsteroidDef = {
-  x: number; y0: number; speed: number; phase: number; half: number; behind: boolean;
+/** Sway-bank-rest cycle constants. */
+const SWAY = {
+  x:          2,  // px lateral drift per sway
+  bankAngle:  6,  // degrees tilt opposite to sway direction
+  neutral:    8,  // neutral rotate (compensates SVG leftward tilt)
+};
+const BOB = {
+  y: 1.5,         // px vertical float amplitude
 };
 
-const SAUCER_ASTEROIDS: SaucerAsteroidDef[] = [
-  { x:  5, y0: -4, speed: 12, phase: 0.00, half: 2.5, behind: true  },
-  { x: 12, y0:  2, speed:  9, phase: 0.40, half: 3.0, behind: false },
-  { x: 21, y0: -1, speed: 14, phase: 0.15, half: 2.0, behind: true  },
-  { x: 27, y0:  5, speed:  8, phase: 0.65, half: 2.8, behind: false },
-  { x:  9, y0: -6, speed: 11, phase: 0.80, half: 2.3, behind: true  },
-  { x: 24, y0:  1, speed: 10, phase: 0.30, half: 2.6, behind: false },
-];
+/** Possible drift targets — left, center, right. */
+const DRIFT_TARGETS = [-SWAY.x, 0, SWAY.x];
+/** Spring for lateral drift transitions. */
+const DRIFT_SPRING = { type: 'spring' as const, stiffness: 20, damping: 8, duration: 2 };
+/** Random pause range (seconds) between drift moves. */
+const DRIFT_PAUSE_MIN = 2;
+const DRIFT_PAUSE_MAX = 5;
+/** Bob animation config — ease tween, mirrors infinitely for a continuous float. */
+const BOB_ANIMATION = { duration: 1.0, repeat: Infinity, repeatType: 'mirror' as const, ease: 'easeInOut' as const };
 
-/** Vertical wrap distance per asteroid cycle (viewBox units). */
-const SAUCER_ASTEROID_CYCLE = 48;
-
-const SAUCER_ASTEROIDS_BEHIND = SAUCER_ASTEROIDS.filter(a => a.behind);
-const SAUCER_ASTEROIDS_FRONT  = SAUCER_ASTEROIDS.filter(a => !a.behind);
+/** Return a random float between min and max. */
+const randBetween = (min: number, max: number) => min + Math.random() * (max - min);
+/** Pick a random element from an array. */
+const randPick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
 // ─── CVA ──────────────────────────────────────────────────────────────────────
 
@@ -676,9 +665,8 @@ export const thinkingSaucerVariants = cva(
   {
     variants: {
       size: {
-        sm: 'size-4',
-        md: 'size-5',
         lg: 'size-6',
+        xl: 'size-7',
       },
       surface: {
         default:         '',
@@ -694,16 +682,14 @@ export const thinkingSaucerVariants = cva(
 export interface ThinkingSaucerProps
   extends React.SVGAttributes<SVGSVGElement>,
     VariantProps<typeof thinkingSaucerVariants> {
-  variant?:       'tilted' | 'upright';
   duration?:      number;
   disableMotion?: boolean;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-/** Animated beam-less saucer icon — weaves horizontally with falling asteroid streaks. */
+/** Animated saucer icon — bobs gently while drifting to random positions, giving a weightless searching-in-space feel. */
 export function ThinkingSaucer({
-  variant       = 'tilted',
   duration      = 4,
   disableMotion = false,
   size,
@@ -713,88 +699,54 @@ export function ThinkingSaucer({
 }: ThinkingSaucerProps) {
   void duration; // exposed for API consistency; internal speeds are fixed
 
-  const paths = SAUCER_PATHS[variant];
-  const wrapperClass = cn(thinkingSaucerVariants({ size, surface }), className);
+  const [scope, animateEl] = useAnimate();
 
-  const saucerRef  = useRef<SVGGElement | null>(null);
-  const behindRefs = useRef<(SVGLineElement | null)[]>([]);
-  const frontRefs  = useRef<(SVGLineElement | null)[]>([]);
-
-  useAnimationFrame((time) => {
+  useEffect(() => {
     if (disableMotion) return;
-    const t = time / 1000;
 
-    // ── Saucer horizontal weave ──────────────────────────────────────────────
-    const wave = SAUCER_WEAVE_AMP * Math.sin(t * SAUCER_WEAVE_FREQ)
-               + SAUCER_WEAVE_AMP_2 * Math.sin(t * SAUCER_WEAVE_FREQ_2);
-    saucerRef.current?.setAttribute('transform',
-      `translate(${(SAUCER_CX + wave).toFixed(2)}, ${SAUCER_CY})`
-    );
+    let cancelled = false;
 
-    // ── Asteroids: vertical fall with wrap ───────────────────────────────────
-    function updateAsteroids(
-      defs: SaucerAsteroidDef[],
-      refs: React.RefObject<(SVGLineElement | null)[]>,
-    ) {
-      for (let i = 0; i < defs.length; i++) {
-        const a        = defs[i];
-        const progress = (t * a.speed + a.phase * SAUCER_ASTEROID_CYCLE) % SAUCER_ASTEROID_CYCLE;
-        const cy       = a.y0 + progress;
-        // Fade in over first 3 units, fade out over last 5 units
-        const opacity  = Math.min(1, Math.min(progress / 3, (SAUCER_ASTEROID_CYCLE - progress) / 5));
-        const el       = refs.current[i];
-        if (el) {
-          el.setAttribute('x1', String(a.x));
-          el.setAttribute('y1', (cy - a.half).toFixed(2));
-          el.setAttribute('x2', String(a.x));
-          el.setAttribute('y2', (cy + a.half).toFixed(2));
-          el.setAttribute('opacity', opacity.toFixed(3));
-        }
+    const run = async () => {
+      await animateEl(scope.current, { opacity: 1 }, springs.gentle);
+
+      // Continuous bob on y — runs independently of the sway loop.
+      // Motion tracks each property separately, so animating x/rotate won't interrupt this.
+      animateEl(
+        scope.current,
+        { y: [-BOB.y, BOB.y] },
+        BOB_ANIMATION,
+      );
+
+      while (!cancelled) {
+        const pause = randBetween(DRIFT_PAUSE_MIN, DRIFT_PAUSE_MAX);
+        await new Promise<void>(r => setTimeout(r, pause * 1000));
+        if (cancelled) break;
+
+        const targetX = randPick(DRIFT_TARGETS);
+        const targetRotate = SWAY.neutral - (targetX / SWAY.x) * SWAY.bankAngle;
+
+        await animateEl(
+          scope.current,
+          { x: targetX, rotate: targetRotate },
+          DRIFT_SPRING,
+        );
       }
-    }
-    updateAsteroids(SAUCER_ASTEROIDS_BEHIND, behindRefs);
-    updateAsteroids(SAUCER_ASTEROIDS_FRONT,  frontRefs);
-  });
+    };
+
+    run();
+    return () => { cancelled = true; };
+  }, [disableMotion, animateEl]);
+
+  const wrapperClass = cn(thinkingSaucerVariants({ size, surface }), className);
 
   const svg = (
     <svg aria-hidden="true" {...props} viewBox="0 0 32 32" width="100%" height="100%" fill="none">
-      {/* Behind asteroids — rendered first, appear below saucer */}
-      {SAUCER_ASTEROIDS_BEHIND.map((_, i) => (
-        <line
-          key={`b-${i}`}
-          ref={(el) => { behindRefs.current[i] = el; }}
-          x1="0" y1="-10" x2="0" y2="-10"
-          stroke="var(--effect-thinking-asteroid)"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          opacity={0}
-        />
-      ))}
-
-      {/* Saucer group — translated by weave; paths offset by -16,-16 to center at origin */}
-      <g ref={saucerRef} transform={`translate(${SAUCER_CX}, ${SAUCER_CY})`}>
-        <g transform="translate(-16, -16)">
-          <path d={paths.bellyFill}    fill="var(--effect-thinking-ship-belly)" />
-          <path d={paths.bellyOutline} fill="black" fillOpacity={0.25} />
-          <path d={paths.discFill}     fill="var(--effect-thinking-ship-body)" />
-          <path d={paths.discOutline}  fill="black" fillOpacity={0.25} />
-          <path d={paths.domeFill}     fill="var(--effect-thinking-ship-dome)" />
-          <path d={paths.domeOutline}  fill="black" fillOpacity={0.25} />
-        </g>
-      </g>
-
-      {/* Front asteroids — rendered after saucer, appear on top */}
-      {SAUCER_ASTEROIDS_FRONT.map((_, i) => (
-        <line
-          key={`f-${i}`}
-          ref={(el) => { frontRefs.current[i] = el; }}
-          x1="0" y1="-10" x2="0" y2="-10"
-          stroke="var(--effect-thinking-asteroid)"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          opacity={0}
-        />
-      ))}
+      <path d={SAUCER_PATHS.bellyFill}    fill="var(--effect-thinking-ship-belly)" />
+      <path d={SAUCER_PATHS.bellyOutline} fill="black" fillOpacity={0.25} />
+      <path d={SAUCER_PATHS.discFill}     fill="var(--effect-thinking-ship-body)" />
+      <path d={SAUCER_PATHS.discOutline}  fill="black" fillOpacity={0.25} />
+      <path d={SAUCER_PATHS.domeFill}     fill="var(--effect-thinking-ship-dome)" />
+      <path d={SAUCER_PATHS.domeOutline}  fill="black" fillOpacity={0.25} />
     </svg>
   );
 
@@ -804,10 +756,10 @@ export function ThinkingSaucer({
 
   return (
     <motion.span
+      ref={scope}
       className={wrapperClass}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={springs.gentle}
+      style={{ willChange: 'transform' }}
+      initial={{ opacity: 0, x: 0, y: -BOB.y, rotate: SWAY.neutral }}
     >
       {svg}
     </motion.span>
@@ -892,19 +844,19 @@ function useTextScramble(target: string, active: boolean): ScrambleChar[] {
 // ─── Variants ─────────────────────────────────────────────────────────────────
 
 export const thinkingVariants = cva(
-  ['inline-flex items-center', '[font-weight:var(--font-weight-semibold)]', 'font-(family-name:--font-family-secondary)'],
+  ['inline-flex items-center gap-2',
+   '[font-weight:var(--font-weight-semibold)]',
+   'font-(family-name:--font-family-secondary)',
+   '[font-size:var(--font-size-base)]',
+   'leading-(--line-height-sm)'],
   {
     variants: {
-      size: {
-        'caption-1': ['gap-1.5', '[font-size:var(--font-size-base)]', 'leading-(--line-height-sm)'],
-        'caption-2': ['gap-1',   '[font-size:var(--font-size-sm)]',   'leading-(--line-height-xs)'],
-      },
       surface: {
         default:         '',
         'shadow-border': 'rounded-full shadow-(--shadow-border) px-2 py-0.5',
       },
     },
-    defaultVariants: { size: 'caption-1', surface: 'default' },
+    defaultVariants: { surface: 'default' },
   },
 );
 
@@ -920,21 +872,17 @@ export interface ThinkingProps
   dots?: boolean;
   /** Cycle through themed loading labels with a character-decode scramble every 3 s. Overrides children. Disabled when disableMotion is set. */
   textScramble?: boolean;
-  /** Icon shown before the label. Defaults to 'dots'. */
-  icon?: 'dots' | 'spaceship' | 'logo' | 'saucer' | 'saucer-upright';
   children?: ReactNode;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function Thinking({
-  size = 'caption-1',
   surface = 'default',
   shimmerVariant = 'blob',
   disableMotion = false,
   dots = true,
   textScramble = false,
-  icon = 'dots',
   children = 'Thinking',
   className,
   ...props
@@ -951,15 +899,7 @@ export function Thinking({
     return () => clearInterval(id);
   }, [scrambleActive]);
 
-  const iconEl = icon === 'logo'
-    ? <ThinkingLogo disableMotion={disableMotion} />
-    : icon === 'spaceship'
-    ? <ThinkingShip size="sm" disableMotion={disableMotion} />
-    : icon === 'saucer'
-    ? <ThinkingSaucer size="sm" variant="tilted" disableMotion={disableMotion} />
-    : icon === 'saucer-upright'
-    ? <ThinkingSaucer size="sm" variant="upright" disableMotion={disableMotion} />
-    : <ThinkingDots size="sm" pattern="radial" variant={shimmerVariant === 'subtle' ? 'subtle' : 'rainbow'} disableMotion={disableMotion} />;
+  const iconEl = <ThinkingSaucer disableMotion={disableMotion} />;
 
   let content: ReactNode;
 
@@ -985,7 +925,7 @@ export function Thinking({
 
   if (disableMotion) {
     return (
-      <span className={cn(thinkingVariants({ size, surface }), className)} {...props}>
+      <span className={cn(thinkingVariants({ surface }), className)} {...props}>
         {content}
       </span>
     );
@@ -993,7 +933,7 @@ export function Thinking({
 
   return (
     <motion.span
-      className={cn(thinkingVariants({ size, surface }), className)}
+      className={cn(thinkingVariants({ surface }), className)}
       {...(props as object)}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
