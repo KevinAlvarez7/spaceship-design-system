@@ -1,4 +1,4 @@
-import type { Artifact } from './artifactData';
+import type { Artifact } from '@/components/patterns/artifact-types';
 import type { ClarificationQuestion } from '@/components/ui';
 
 // ─── User message ─────────────────────────────────────────────────────────────

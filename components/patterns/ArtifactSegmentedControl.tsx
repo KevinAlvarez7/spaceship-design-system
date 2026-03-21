@@ -9,7 +9,7 @@ import {
   type ArtifactNavigationProps,
   type ArtifactType,
   ARTIFACT_TYPE_LABEL,
-} from '@/app/patterns/_shared/artifactData';
+} from './artifact-types';
 
 const TYPE_ICON: Record<ArtifactType, React.ReactNode> = {
   prd:            <FileText className="size-4" />,
@@ -71,7 +71,7 @@ export function ArtifactSegmentedControl({
   );
 
   return (
-    <div className="flex flex-1 min-h-0 flex-col rounded-xl shadow-(--shadow-border) bg-(--bg-surface-base) overflow-clip">
+    <div className="flex flex-1 min-h-0 flex-col border-l border-(--bg-surface-tertiary) bg-(--bg-surface-base) overflow-clip">
       {/* Folder tab bar — active tab merges with content surface */}
       <FolderTabs
         value={activeId}

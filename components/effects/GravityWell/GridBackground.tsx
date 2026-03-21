@@ -89,12 +89,12 @@ function toRgba(r: number, g: number, b: number, a: number): string {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function GridBackground({
-  background = 'var(--effect-gravity-bg, #fafaf8)',
+  background = '#ffffff',
   dotColor = 'var(--effect-gravity-dot, rgba(161, 161, 170, 0.32))',
-  staticGridColor = 'var(--effect-gravity-grid, rgba(161, 161, 170, 0.13))',
-  showDots = true,
+  staticGridColor = 'rgba(147, 197, 230, 0.38)',
+  showDots = false,
   showStaticGrid = true,
-  step = 38,
+  step = 28,
   dotRadius = 0.9,
   lineWidth = 0.4,
   colorRing = [],

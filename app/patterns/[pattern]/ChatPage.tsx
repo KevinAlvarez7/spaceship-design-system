@@ -3,7 +3,7 @@
 import { Preview } from '@/components/viewer/Preview';
 import { ChatThread, ChatBubble, ChatMessage } from '@/components/ui';
 import { ChatPanel } from '@/components/patterns';
-import { useChatDemo } from '@/app/patterns/_shared/useChatDemo';
+import { useChatDemo } from '@/app/_shared/useChatDemo';
 
 export function ChatPage() {
   const { messages, streamedText, isStreaming, inputValue, setInputValue, handleSubmit, handleStop } = useChatDemo();

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { GridBackground } from '@/components/effects';
 import { ArtifactSegmentedControl, ChatPanel } from '@/components/patterns';
-import { MOCK_ARTIFACTS } from '@/app/patterns/_shared/artifactData';
+import { MOCK_ARTIFACTS } from '@/app/_shared/artifactData';
 import { ArtifactClarificationChat } from './ArtifactClarificationChat';
 
 export function ArtifactNavigationPage() {
@@ -14,12 +14,10 @@ export function ArtifactNavigationPage() {
       <GridBackground />
 
       <div className="relative z-10 flex flex-1 flex-col size-full">
-        <main className="flex flex-1 min-h-0 gap-6 p-4">
-          <div className="flex flex-col w-(--sizing-chat-default) shrink-0 min-h-0">
-            <ChatPanel>
-              <ArtifactClarificationChat />
-            </ChatPanel>
-          </div>
+        <main className="flex flex-1 min-h-0 gap-6">
+          <ChatPanel className="w-(--sizing-chat-default) shrink-0">
+            <ArtifactClarificationChat />
+          </ChatPanel>
           <div className="flex flex-col flex-1 min-w-0 min-h-0">
             <ArtifactSegmentedControl
               artifacts={MOCK_ARTIFACTS}

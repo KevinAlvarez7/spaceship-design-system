@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ChatThread, ChatBubble, ChatMessage, ChatInputBox } from '@/components/ui';
 import { GridBackground } from '@/components/effects';
 import { PreviewPanel, EditableTitle, ShareableLink } from '@/components/patterns';
-import { useChatDemo } from '@/app/patterns/_shared/useChatDemo';
+import { useChatDemo } from '@/app/_shared/useChatDemo';
 
 const DEMO_URL = 'https://spaceship.design';
 
@@ -23,7 +23,7 @@ export function PrototypeWorkspacePage() {
       <div className="relative z-10 flex flex-1 flex-col size-full">
 
         {/* Project Navbar */}
-        <nav className="flex shrink-0 items-center justify-between px-4 py-3 gap-3">
+        <nav className="flex shrink-0 items-center justify-between gap-3">
           {/* Left: project name pill with integrated menu */}
           <div className="flex items-center gap-3">
             <EditableTitle
@@ -40,7 +40,7 @@ export function PrototypeWorkspacePage() {
         </nav>
 
         {/* Side-by-side panels */}
-        <main className="flex flex-1 min-h-0 gap-6 px-4 pb-4">
+        <main className="flex flex-1 min-h-0">
 
           {/* Chat Panel */}
           <div className="flex flex-col w-(--sizing-chat-default) shrink-0 min-h-0">

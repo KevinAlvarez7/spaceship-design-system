@@ -71,13 +71,12 @@ export function EditableTitle({
         aria-label="Toggle sidebar"
         surface="shadow"
       />
-      {/* Pill — animates flexGrow, NO overflow-hidden */}
+      {/* Pill — layout FLIP for flexGrow change (B-tier), NO overflow-hidden */}
       <motion.div
-        initial={false}
-        animate={{ flexGrow: showEditing ? 1 : 0 }}
-        transition={springs.interactive}
+        layout
+        transition={{ layout: springs.interactive }}
         className={cn(
-          showEditing ? 'bg-(--bg-surface-base)' : 'bg-(--bg-surface-primary)',
+          showEditing ? 'bg-(--bg-surface-base) flex-1' : 'bg-(--bg-surface-primary)',
           'flex items-center rounded-lg shadow-(--shadow-border)',
         )}
       >
@@ -116,8 +115,8 @@ export function EditableTitle({
         {showEditing && (
           <span className="flex items-center shrink-0 p-2">
             <motion.span
-              initial={{ scale: 0.4, width: 0 }}
-              animate={{ scale: 1, width: 'auto' }}
+              initial={{ scale: 0.4, opacity: 0, clipPath: 'inset(0 100% 0 0)' }}
+              animate={{ scale: 1, opacity: 1, clipPath: 'inset(0 0% 0 0)' }}
               transition={springs.interactive}
               style={{ willChange: 'transform' }}
             >

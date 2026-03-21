@@ -285,26 +285,24 @@ export function ThinkingDots({
       }
     }
 
-    // Update dots: shift position, pulse radius, influence-based opacity
+    // Update dots: displace via transform (compositor-tier), pulse radius, influence-based opacity
     for (let i = 0; i < DOTS.length; i++) {
       const { cx, cy }            = DOTS[i];
       const { dx, dy, influence } = displacePoint(cx, cy, gx, gy, shiftStr);
-      const shiftedCx             = cx + dx;
-      const shiftedCy             = cy + dy;
       const r                     = DOT_R_MIN + influence * (DOT_R_MAX - DOT_R_MIN);
+      // translate in SVG user-space units (no px suffix) for compositor compositing
+      const translateStr          = `translate(${dx.toFixed(2)}, ${dy.toFixed(2)})`;
 
       const base = dotBaseRefs.current[i];
       if (base) {
-        base.setAttribute('cx', String(shiftedCx));
-        base.setAttribute('cy', String(shiftedCy));
+        base.setAttribute('transform', translateStr);
         base.setAttribute('opacity', String(0.65 + influence * 0.35));
         base.setAttribute('r', String(r));
       }
 
       const overlay = dotOverlayRefs.current[i];
       if (overlay) {
-        overlay.setAttribute('cx', String(shiftedCx));
-        overlay.setAttribute('cy', String(shiftedCy));
+        overlay.setAttribute('transform', translateStr);
         overlay.setAttribute('opacity', String(influence));
         overlay.setAttribute('r', String(r));
       }
@@ -494,9 +492,12 @@ export function ThinkingShip({
     const normalized = wave / (WEAVE_AMP + WEAVE_AMP_2);
     const absTilt    = Math.abs(normalized);
 
-    // Body ry grows symmetrically at both tilt extremes
-    const bodyRY = BODY_RY_MIN + absTilt * (BODY_RY_MAX - BODY_RY_MIN);
-    bodyRef.current?.setAttribute('ry', bodyRY.toFixed(3));
+    // Body ry grows symmetrically at both tilt extremes; use scaleY (compositor-tier) instead of ry
+    const bodyRY      = BODY_RY_MIN + absTilt * (BODY_RY_MAX - BODY_RY_MIN);
+    const bodyScaleY  = bodyRY / BODY_RY_MIN;
+    if (bodyRef.current) {
+      bodyRef.current.style.transform = `scaleY(${bodyScaleY.toFixed(3)})`;
+    }
 
     // Dome swells when facing viewer (wave > 0)
     const domeH = DOME_H_MIN + Math.max(0, normalized) * (DOME_H_MAX - DOME_H_MIN);
@@ -554,12 +555,13 @@ export function ThinkingShip({
           d={`M ${-BELLY_R} ${BODY_RY_MIN} A ${BELLY_R} ${BELLY_H_MIN} 0 0 1 ${BELLY_R} ${BODY_RY_MIN} Z`}
           fill="var(--effect-thinking-ship-belly)"
         />
-        {/* Body — ellipse with dynamic ry, fattens at tilt extremes */}
+        {/* Body — scaleY animates ry (compositor-tier); transformBox/Origin pin scale to ellipse center */}
         <ellipse
           ref={bodyRef}
           cx="0" cy="0"
           rx={BODY_RX} ry={BODY_RY_MIN}
           fill="var(--effect-thinking-ship-body)"
+          style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
         />
         {/* Dome — semicircle above body, grows when facing toward viewer */}
         <path
@@ -783,7 +785,7 @@ const SCRAMBLE_LABELS = [
 
 // ─── Scramble ─────────────────────────────────────────────────────────────────
 
-const SCRAMBLE_CHARS = 'abcdefghijklmnopqrstuvwxyz~+=*^•·-';
+const SCRAMBLE_CHARS = '▲△▼▽●○■□◆◇◈★☆◎⬡⬢';
 const SCRAMBLE_DURATION = 900;
 
 type ScrambleChar = { char: string; resolved: boolean };

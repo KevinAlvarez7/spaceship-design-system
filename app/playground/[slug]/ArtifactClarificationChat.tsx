@@ -16,7 +16,7 @@ import {
   STAGES,
   buildAnswerSummary,
   buildClosingMessage,
-} from '@/app/patterns/_shared/clarification';
+} from '@/components/patterns';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

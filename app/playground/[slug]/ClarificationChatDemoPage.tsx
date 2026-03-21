@@ -30,8 +30,8 @@ import {
   SECURITY_ARTIFACT,
   PROTOTYPE_ARTIFACT,
   IMPLEMENTATION_TASKS,
-} from '@/app/patterns/_shared/clarification-chat.mock';
-import type { Artifact, ArtifactStatus } from '@/app/patterns/_shared/artifactData';
+} from '@/app/_shared/clarification-chat.mock';
+import type { Artifact, ArtifactStatus } from '@/components/patterns';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -259,7 +259,7 @@ export function ClarificationChatDemoPage() {
 
       <div className="relative z-10 flex flex-1 flex-col size-full">
         {/* Main split */}
-        <main className="flex flex-1 min-h-0 gap-6 p-4">
+        <main className="flex flex-1 min-h-0 gap-6">
           {/* Chat side */}
           <div className={cn('flex flex-col min-h-0', artifacts.length > 0 ? 'w-(--sizing-chat-default) shrink-0' : 'flex-1')}>
           <ChatPanel
@@ -343,7 +343,7 @@ export function ClarificationChatDemoPage() {
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <Thinking textScramble size="caption-1" />
+                      <Thinking textScramble />
                     </motion.div>
                   );
                 }

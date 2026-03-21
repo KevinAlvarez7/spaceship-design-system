@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import useMeasure from 'react-use-measure';
 import { cva, type VariantProps } from 'class-variance-authority';
 import {
   ChevronLeft,
@@ -150,7 +149,6 @@ export function ClarificationCard({
   surface,
   className,
 }: ClarificationCardProps) {
-  const [contentRef, { height: contentHeight }] = useMeasure();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<ClarificationAnswers>({});
   const [submitted, setSubmitted] = useState(false);
@@ -394,18 +392,17 @@ export function ClarificationCard({
         )}
       </div>
 
-      {/* Question content — animated */}
+      {/* Question content — layout FLIP for height morphing between questions (B-tier) */}
       <motion.div
-        animate={{ height: contentHeight || 'auto' }}
-        initial={false}
-        transition={disableMotion ? { duration: 0 } : springs.interactive}
+        layout
+        transition={{ layout: disableMotion ? { duration: 0 } : springs.interactive }}
         className="relative overflow-hidden"
       >
-        <div ref={contentRef} className="p-2">
+        <div className="p-2">
           {disableMotion ? (
             renderQuestion()
           ) : (
-            <AnimatePresence mode="wait" custom={direction}>
+            <AnimatePresence mode="sync" custom={direction}>
               <motion.div
                 key={currentIndex}
                 custom={direction}

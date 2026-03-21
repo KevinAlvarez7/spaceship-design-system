@@ -76,6 +76,14 @@
   }
 }
 
+/* Register shimmer gradient variables so style recalculation stays scoped to the element */
+@property --_g1-x { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+@property --_g1-y { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+@property --_g2-x { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+@property --_g2-y { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+@property --_g3-x { syntax: "<percentage>"; inherits: false; initial-value: 100%; }
+@property --_g3-y { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+
 .thinking-text-animated {
   --_g1-x: 0%;   --_g1-y: 50%;
   --_g2-x: 50%;  --_g2-y: 50%;
@@ -199,4 +207,41 @@
 
 .blink-dot {
   animation: blink-dot 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Stop all indefinite CSS keyframe animations */
+  .thinking-dot-1,
+  .thinking-dot-2,
+  .thinking-dot-3,
+  .shimmer-dot-subtle-1,
+  .shimmer-dot-subtle-2,
+  .shimmer-dot-subtle-3 {
+    animation: none !important;
+    background-position-x: 0% !important;
+  }
+
+  .shimmer-text-linear,
+  .shimmer-text-subtle {
+    animation: none !important;
+    background-position-x: 0% !important;
+  }
+
+  .blink-dot {
+    animation: none !important;
+  }
+
+  /* Stop spinning indicators (Tailwind's animate-spin) */
+  .animate-spin {
+    animation: none !important;
+  }
+
+  /* Disable long CSS transitions */
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

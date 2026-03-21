@@ -2,7 +2,7 @@
 
 import ReactMarkdown from 'react-markdown';
 import { Eye, Smartphone } from 'lucide-react';
-import { type Artifact } from '@/app/patterns/_shared/artifactData';
+import { type Artifact } from './artifact-types';
 
 interface ArtifactContentRendererProps {
   artifact: Artifact;

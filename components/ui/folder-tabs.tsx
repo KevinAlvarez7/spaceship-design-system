@@ -1,11 +1,29 @@
 'use client';
 
 import React, { createContext, useContext, useState, type ReactNode } from 'react';
-import { motion } from 'motion/react';
+import { motion, LayoutGroup, AnimatePresence } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const SPRING = { type: 'spring', stiffness: 200, damping: 24 } as const;
+
+/** Container orchestrates stagger timing for child action buttons. */
+const actionsContainerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.04, delayChildren: 0.02 },
+  },
+  exit: {
+    transition: { staggerChildren: 0.03, staggerDirection: -1 },
+  },
+};
+
+/** Each action button fades + scales in; GPU-composited properties only. */
+const actionButtonVariants = {
+  hidden: { opacity: 0, scale: 0.4 },
+  visible: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.4 },
+};
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 
@@ -94,12 +112,14 @@ export function FolderTabs({
 
   return (
     <FolderTabsContext.Provider value={{ value, onChange: handleChange, disableMotion, activeActions }}>
-      <div
-        role="tablist"
-        className={cn(folderTabsVariants({ surface }), className)}
-      >
-        {children}
-      </div>
+      <LayoutGroup>
+        <div
+          role="tablist"
+          className={cn(folderTabsVariants({ surface }), className)}
+        >
+          {children}
+        </div>
+      </LayoutGroup>
     </FolderTabsContext.Provider>
   );
 }
@@ -149,21 +169,29 @@ export function FolderTab({
       </span>
     ) : null
   ) : (
-    isActive && activeActions ? (
-      <span className="flex items-center gap-2 shrink-0 p-2">
-        {actionItems.map((child, index) => (
-          <motion.span
-            key={index}
-            initial={{ scale: 0.4, width: 0 }}
-            animate={{ scale: 1, width: 'auto' }}
-            transition={{ ...SPRING, delay: index * 0.04 }}
-            style={{ willChange: 'transform' }}
-          >
-            {child}
-          </motion.span>
-        ))}
-      </span>
-    ) : null
+    <AnimatePresence mode="popLayout">
+      {isActive && activeActions ? (
+        <motion.span
+          key="actions"
+          className="flex items-center gap-2 shrink-0 p-2"
+          variants={actionsContainerVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+        >
+          {actionItems.map((child, index) => (
+            <motion.span
+              key={index}
+              variants={actionButtonVariants}
+              transition={SPRING}
+              style={{ willChange: 'transform' }}
+            >
+              {child}
+            </motion.span>
+          ))}
+        </motion.span>
+      ) : null}
+    </AnimatePresence>
   );
 
   const content = (
@@ -176,10 +204,10 @@ export function FolderTab({
         onClick={() => !disabled && onChange(value)}
         className={buttonClasses}
       >
-        <span className="flex items-center gap-1.5 px-2">
+        <motion.span layout="position" className="flex items-center gap-1.5 px-2">
           <IconSlot icon={leadingIcon} />
           {children}
-        </span>
+        </motion.span>
       </button>
       {actionsContent}
     </>
@@ -191,10 +219,10 @@ export function FolderTab({
 
   return (
     <motion.div
-      initial={false}
-      animate={{ flexGrow: isActive ? 1 : 0 }}
-      transition={SPRING}
-      className={wrapperClasses}
+      layout
+      transition={{ layout: SPRING }}
+      className={cn(wrapperClasses, isActive && 'flex-1')}
+      style={{ willChange: 'transform' }}
     >
       {content}
     </motion.div>

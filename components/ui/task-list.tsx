@@ -67,10 +67,10 @@ export function TaskList({
         onClick={() => setExpanded(v => !v)}
         className="relative flex items-center justify-between px-4 py-3 overflow-hidden bg-(--bg-surface-base) border-b border-(--bg-surface-secondary) cursor-pointer w-full text-left"
       >
-        {/* Progress fill — absolute, behind content */}
+        {/* Progress fill — absolute, behind content; scaleX from left (compositor-only) */}
         <span
-          className="absolute inset-y-0 left-0 bg-(--bg-surface-success-base) transition-[width] duration-500 ease-out overflow-hidden"
-          style={{ width: `${progressPct}%` }}
+          className="absolute inset-y-0 left-0 w-full bg-(--bg-surface-success-base) transition-transform duration-500 ease-out overflow-hidden origin-left"
+          style={{ transform: `scaleX(${progressPct / 100})` }}
           aria-hidden
         >
           {!disableMotion && progressPct > 0 && (
@@ -107,11 +107,11 @@ export function TaskList({
         {expanded && (
           <motion.div
             key="body"
-            initial={disableMotion ? false : { height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={disableMotion ? undefined : { height: 0, opacity: 0 }}
+            initial={disableMotion ? false : { opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
+            animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
+            exit={disableMotion ? undefined : { opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
             transition={springs.interactive}
-            className="overflow-hidden bg-(--bg-surface-primary)"
+            className="bg-(--bg-surface-primary)"
           >
             <ol className="flex flex-col gap-3 px-4 py-4 list-none">
               {items.map((task, i) => {

@@ -61,3 +61,5 @@ export type { ShimmerTextProps } from './shimmer-text';
 
 export { ShimmerDots } from './shimmer-text';
 export type { ShimmerDotsProps } from './shimmer-text';
+
+export { useSystemReducedMotion } from './use-reduced-motion';

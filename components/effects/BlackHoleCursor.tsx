@@ -61,17 +61,17 @@ export function BlackHoleCursor({
    */
   const smoothMomentum = useSpring(rawMomentum, { stiffness: 150, damping: 20 });
 
-  // ── Perspective tilt: squash ry + shift cy per shape ─────────────────
-  // At rest (m=0): perfect circles (ry = rx). Moving (m=1): strongly squashed ellipses.
-  // Red belly: rx=14 (narrower than blue). At rest cy=24 matches blue exactly → fully hidden.
-  // When moving, cy shifts down so the crescent peeks below the blue disc.
-  const redCy        = useTransform(smoothMomentum, [0, 1], [24, 27]);
-  const redRy        = useTransform(smoothMomentum, [0, 1], [19, 10]);
-  const redStrokeRy  = useTransform(redRy, (v) => v - 1.5);
+  // ── Perspective tilt: squash + shift per shape (A-tier CSS transforms) ──────
+  // translateY replaces cy attribute changes; scaleY replaces ry attribute changes.
+  // transformBox:fill-box + transformOrigin:center anchors scaleY to the ellipse center.
+  // Red belly: base cy=24, base ry=19 (same as blue at rest → fully hidden).
+  const redY               = useTransform(smoothMomentum, [0, 1], [0, 3]);        // cy 24→27
+  const redScaleYVal       = useTransform(smoothMomentum, [0, 1], [1, 10 / 19]);  // ry 19→10
+  const redStrokeScaleYVal = useTransform(smoothMomentum, [0, 1], [1, 8.5 / 17.5]); // ry 17.5→8.5
 
-  const blueCy       = useTransform(smoothMomentum, [0, 1], [24, 23]);
-  const blueRy       = useTransform(smoothMomentum, [0, 1], [19, 8]);
-  const blueStrokeRy = useTransform(blueRy, (v) => v - 1.5);
+  const blueY               = useTransform(smoothMomentum, [0, 1], [0, -1]);       // cy 24→23
+  const blueScaleYVal       = useTransform(smoothMomentum, [0, 1], [1, 8 / 19]);   // ry 19→8
+  const blueStrokeScaleYVal = useTransform(smoothMomentum, [0, 1], [1, 6.5 / 17.5]); // ry 17.5→6.5
 
   // Yellow dome — asymmetric path: crown arc stays full, base arc flattens on momentum.
   // At rest ryTop=ryBottom=9 → perfect circle. Moving: crown grows, base flattens.
@@ -184,12 +184,16 @@ export function BlackHoleCursor({
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Red back crescent — rx=14 (narrower than blue), hidden at rest, peeks when moving */}
-            <motion.ellipse cx={24} cy={redCy} rx={14} ry={redRy} fill="#F9614D" />
-            <motion.ellipse cx={24} cy={redCy} rx={12.5} ry={redStrokeRy} stroke="black" strokeOpacity="0.1" strokeWidth="3" fill="none" />
-            {/* Blue disc — main saucer body, squashes most on momentum */}
-            <motion.ellipse cx={24} cy={blueCy} rx={19} ry={blueRy} fill="#3C7DFF" />
-            <motion.ellipse cx={24} cy={blueCy} rx={17.5} ry={blueStrokeRy} stroke="black" strokeOpacity="0.1" strokeWidth="3" fill="none" />
+            {/* Red back crescent — cx/cy fixed; y+scaleY CSS transforms are A-tier */}
+            <motion.ellipse cx={24} cy={24} rx={14} ry={19} fill="#F9614D"
+              style={{ y: redY, scaleY: redScaleYVal, transformBox: 'fill-box', transformOrigin: 'center' }} />
+            <motion.ellipse cx={24} cy={24} rx={12.5} ry={17.5} stroke="black" strokeOpacity="0.1" strokeWidth="3" fill="none"
+              style={{ y: redY, scaleY: redStrokeScaleYVal, transformBox: 'fill-box', transformOrigin: 'center' }} />
+            {/* Blue disc — main saucer body */}
+            <motion.ellipse cx={24} cy={24} rx={19} ry={19} fill="#3C7DFF"
+              style={{ y: blueY, scaleY: blueScaleYVal, transformBox: 'fill-box', transformOrigin: 'center' }} />
+            <motion.ellipse cx={24} cy={24} rx={17.5} ry={17.5} stroke="black" strokeOpacity="0.1" strokeWidth="3" fill="none"
+              style={{ y: blueY, scaleY: blueStrokeScaleYVal, transformBox: 'fill-box', transformOrigin: 'center' }} />
             {/* Yellow dome — asymmetric path: crown arc full, base arc flattens on momentum */}
             <motion.path d={yellowPath} fill="#F9C600" />
             <motion.path d={yellowStrokePath} stroke="black" strokeOpacity="0.1" strokeWidth="3" fill="none" />

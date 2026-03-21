@@ -3,7 +3,7 @@ import { Topbar }                    from '@/components/viewer/Topbar';
 import { ComponentPlayground }       from '@/components/viewer/ComponentPlayground';
 import { GravityAssistPage }         from './GravityAssistPage';
 import { GridBackgroundPage }        from './GridBackgroundPage';
-import { GravityChatPage }           from './GravityChatPage';
+import { HomepagePage }              from './HomepagePage';
 import { PrototypeWorkspacePage }    from './PrototypeWorkspacePage';
 import { ArtifactNavigationPage }    from './ArtifactNavigationPage';
 import { ClarificationChatDemoPage } from './ClarificationChatDemoPage';
@@ -12,7 +12,7 @@ import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-regis
 const PLAYGROUND: Record<string, React.ComponentType> = {
   'gravity-assist':      GravityAssistPage,
   'grid-background':     GridBackgroundPage,
-  'gravity-chat':        GravityChatPage,
+  'homepage':            HomepagePage,
   'prototype-workspace': PrototypeWorkspacePage,
   'artifact-navigation': ArtifactNavigationPage,
   'clarification-chat':  ClarificationChatDemoPage,
@@ -36,7 +36,7 @@ export default async function PlaygroundSlugPage({
     return (
       <div className="flex flex-1 flex-col overflow-hidden">
         <Topbar title={buildTopbarTitle(entry)} />
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto">
           <ComponentPlayground slug={slug} />
         </main>
       </div>
@@ -53,7 +53,7 @@ export default async function PlaygroundSlugPage({
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <Topbar title={buildTopbarTitle(entry)} />
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 overflow-y-auto">
         <Component />
       </main>
     </div>

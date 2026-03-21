@@ -56,12 +56,12 @@ export function ShareableLink({
             {value || placeholder}
           </span>
 
-          {/* motion.div in flow — drives layout width so suffix slides smoothly */}
+          {/* motion.div in flow — layout FLIP drives width so suffix slides smoothly (B-tier) */}
           <motion.div
+            layout
+            transition={{ layout: SPRING }}
             className="cursor-text overflow-hidden"
-            animate={{ width: sizerWidth || undefined }}
-            initial={false}
-            transition={SPRING}
+            style={{ width: sizerWidth || undefined }}
             onClick={() => inputRef.current?.focus()}
           >
             <input

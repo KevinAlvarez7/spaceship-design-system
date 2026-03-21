@@ -86,7 +86,7 @@ export const PAGE_REGISTRY: PageEntry[] = [
   { slug: 'grid-background', title: 'Grid Background', section: 'Playground Effects', route: 'playground', layout: 'standard', status: 'playground' },
 
   // Playground Pages (moved from Pages section)
-  { slug: 'gravity-chat',        title: 'Gravity Chat',        section: 'Playground Pages', route: 'playground', layout: 'bare', status: 'playground' },
+  { slug: 'homepage',            title: 'Homepage',            section: 'Playground Pages', route: 'playground', layout: 'bare', status: 'playground' },
   { slug: 'prototype-workspace', title: 'Prototype Workspace', section: 'Playground Pages', route: 'playground', layout: 'bare', status: 'playground' },
   { slug: 'artifact-navigation', title: 'Artifact Navigation', section: 'Playground Pages', route: 'playground', layout: 'bare', status: 'playground' },
   { slug: 'clarification-chat',  title: 'Clarification Chat',  section: 'Playground Pages', route: 'playground', layout: 'bare', status: 'playground' },

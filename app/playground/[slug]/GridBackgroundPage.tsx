@@ -7,7 +7,7 @@ import { ChatPanel } from '@/components/patterns';
 import { PropsTable, type PropRow } from '@/components/viewer/PropsTable';
 import { ExperimentBadge } from '@/components/viewer/ExperimentBadge';
 import { colorPrimitives } from '@/tokens/colors';
-import { useChatDemo } from '@/app/patterns/_shared/useChatDemo';
+import { useChatDemo } from '@/app/_shared/useChatDemo';
 
 // ━━━ Types ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -31,14 +31,14 @@ interface EditorConfig {
 // ── Presets ───────────────────────────────────────────────────────────────────
 
 const DEFAULT_CONFIG: EditorConfig = {
-  showDots: true,
+  showDots: false,
   showStaticGrid: true,
-  step: 38,
+  step: 28,
   dotRadius: 0.9,
   lineWidth: 0.4,
   dotColor: 'var(--neutral-400)',
-  gridColor: 'var(--neutral-200)',
-  background: 'var(--neutral-50)',
+  gridColor: 'rgba(147, 197, 230, 0.38)',
+  background: '#ffffff',
   majorEvery: 0,
   majorLineWidth: 1.0,
   majorGridColor: 'var(--neutral-400)',
