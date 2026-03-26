@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/shadcn/tooltip';
 
 interface TokenSwatchProps {
   cssVar: string;
@@ -19,11 +20,12 @@ export function TokenSwatch({ cssVar, name, description }: TokenSwatchProps) {
   }
 
   return (
-    <button
-      onClick={copy}
-      className="group flex items-center gap-3 rounded-lg border border-zinc-200 bg-white p-3 text-left hover:border-zinc-300 hover:shadow-sm transition-all w-full"
-      title={`Copy var(${cssVar})`}
-    >
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          onClick={copy}
+          className="group flex items-center gap-3 rounded-lg border border-zinc-200 bg-white p-3 text-left hover:border-zinc-300 hover:shadow-sm transition-all w-full"
+        >
       <div
         className="h-10 w-10 flex-shrink-0 rounded-md border border-black/10"
         style={{ background: `var(${cssVar})` }}
@@ -38,6 +40,11 @@ export function TokenSwatch({ cssVar, name, description }: TokenSwatchProps) {
       <span className={cn('text-xs flex-shrink-0 transition-opacity', copied ? 'text-green-600 opacity-100' : 'text-zinc-400 opacity-0 group-hover:opacity-100')}>
         {copied ? 'Copied!' : 'Copy'}
       </span>
-    </button>
+        </button>
+      </TooltipTrigger>
+      <TooltipContent className="bg-zinc-900 text-white border-zinc-800 text-xs">
+        Copy var({cssVar})
+      </TooltipContent>
+    </Tooltip>
   );
 }

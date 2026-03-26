@@ -68,6 +68,7 @@ export function ShareableLink({
               ref={inputRef}
               value={value}
               onChange={e => onChange(e.target.value)}
+              aria-label="Domain name"
               placeholder={placeholder}
               className={cn(
                 'w-full bg-transparent outline-none px-0',

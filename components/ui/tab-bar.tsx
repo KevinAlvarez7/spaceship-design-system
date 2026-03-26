@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useId, useState, type ReactNode } from 'react';
+import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { motion } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
@@ -10,7 +11,6 @@ import { springs } from '@/tokens';
 
 type TabBarContextValue = {
   value: string;
-  onChange: (value: string) => void;
   disableMotion: boolean;
   layoutId: string;
 };
@@ -94,13 +94,17 @@ export function TabBar({
   }
 
   return (
-    <TabBarContext.Provider value={{ value, onChange: handleChange, disableMotion, layoutId }}>
-      <div
-        className={cn(tabBarVariants({ surface }), className)}
-        role="tablist"
+    <TabBarContext.Provider value={{ value, disableMotion, layoutId }}>
+      <TabsPrimitive.Root
+        value={value}
+        onValueChange={handleChange}
       >
-        {children}
-      </div>
+        <TabsPrimitive.List
+          className={cn(tabBarVariants({ surface }), className)}
+        >
+          {children}
+        </TabsPrimitive.List>
+      </TabsPrimitive.Root>
     </TabBarContext.Provider>
   );
 }
@@ -116,7 +120,7 @@ export function TabBarItem({
   children,
   className,
 }: TabBarItemProps) {
-  const { value: groupValue, onChange, disableMotion, layoutId } = useTabBarContext();
+  const { value: groupValue, disableMotion, layoutId } = useTabBarContext();
   const isActive = groupValue === value;
 
   return (
@@ -133,27 +137,29 @@ export function TabBarItem({
           />
         )
       )}
-      <button
-        type="button"
-        role="tab"
-        aria-selected={isActive}
+      <TabsPrimitive.Trigger
+        value={value}
         disabled={disabled}
-        onClick={() => !disabled && onChange(value)}
-        className={cn(
-          'relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-md cursor-pointer',
-          'font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] whitespace-nowrap',
-          'transition-colors duration-(--duration-fast) ease-(--ease-in-out)',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--border-input-focus)',
-          'disabled:pointer-events-none disabled:opacity-50',
-          isActive ? 'text-(--text-primary)' : 'text-(--text-tertiary) hover:text-(--text-secondary)',
-          className,
-        )}
+        asChild
       >
-        <IconSlot icon={leadingIcon} />
-        {children}
-        <IconSlot icon={trailingIcon} />
-        {badge}
-      </button>
+        <button
+          type="button"
+          className={cn(
+            'relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-md cursor-pointer',
+            'font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] whitespace-nowrap',
+            'transition-colors duration-(--duration-fast) ease-(--ease-in-out)',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--border-input-focus)',
+            'disabled:pointer-events-none disabled:opacity-50',
+            isActive ? 'text-(--text-primary)' : 'text-(--text-tertiary) hover:text-(--text-secondary)',
+            className,
+          )}
+        >
+          <IconSlot icon={leadingIcon} />
+          {children}
+          <IconSlot icon={trailingIcon} />
+          {badge}
+        </button>
+      </TabsPrimitive.Trigger>
     </div>
   );
 }

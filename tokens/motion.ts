@@ -42,17 +42,64 @@ export type ScalePreset = {
  * Rule: damping ratio ζ = damping / (2 × √stiffness) must be ≥ 0.7.
  */
 export const springs = {
-  interactive: { type: 'spring' as const, stiffness: 400, damping: 30 },
-  gentle:      { type: 'spring' as const, stiffness: 160, damping: 24 },  // ζ ≈ 0.95 — slow, no overshoot
+  /**
+   * Fast, responsive spring for direct user interactions.
+   * Feel: snappy with minimal overshoot — the UI reacts immediately to user input.
+   * Use for: button taps, toggles, modal enter/exit, radio/checkbox indicators,
+   *          tab-bar active indicator, card enter/exit, slide transitions.
+   * Components: Button, Modal, RadioGroup, CheckboxGroup, TabBar, ClarificationCard,
+   *             TaskList, EditableTitle, ChatPanel footer swap, ChatInputSlot.
+   */
+  interactive: { type: 'spring' as const, stiffness: 400, damping: 30 },   // ζ ≈ 0.75
+
+  /**
+   * Slow, critically-damped spring with no overshoot.
+   * Feel: smooth and ambient — motion that breathes rather than snaps.
+   * Use for: container height morphs, layout-id shared transitions,
+   *          background/ambient animations, thinking/loading states.
+   * Components: ThinkingDots, ThinkingSaucer, ChatPanel height morph,
+   *             Homepage layout-id transition, ChatInputSlot height morph.
+   */
+  gentle: { type: 'spring' as const, stiffness: 160, damping: 24 },        // ζ ≈ 0.95
+
+  /**
+   * Medium spring for expand/collapse and layout shifts.
+   * Feel: balanced — fast enough to feel responsive, soft enough to not jolt.
+   * Use for: tab expand/collapse, folder-tab layout morphs, action reveal animations.
+   * Components: FolderTabs.
+   */
+  layout: { type: 'spring' as const, stiffness: 200, damping: 24 },        // ζ ≈ 0.85
 } satisfies Record<string, SpringPreset>;
 
 /**
  * Named scale presets — import directly into DS components.
  */
 export const scales = {
-  prominent: { hover: 0.98, tap: 0.94 },
-  subtle:    { hover: 0.98, tap: 0.94 },
+  prominent: { hover: 0.99, tap: 0.96 },
+  subtle:    { hover: 0.99, tap: 0.96 },
 } satisfies Record<string, ScalePreset>;
+
+// ─── Stagger presets ─────────────────────────────────────────────────────────
+
+/** Stagger timing preset for orchestrating child animations. */
+export type StaggerPreset = {
+  /** Delay between each child's animation start (seconds). */
+  staggerChildren: number;
+  /** Delay before the first child begins animating (seconds). */
+  delayChildren: number;
+  /** Delay between each child's exit animation, played in reverse order (seconds). */
+  exitStagger: number;
+};
+
+export const staggers = {
+  /**
+   * Quick cascade for small action buttons appearing inside a container.
+   * Feel: popcorn — items pop in rapidly one after another.
+   * Use for: action icons revealed on tab activation, toolbar items.
+   * Components: FolderTabs action buttons.
+   */
+  actions: { staggerChildren: 0.04, delayChildren: 0.02, exitStagger: 0.03 },
+} satisfies Record<string, StaggerPreset>;
 
 /* Viewer display arrays */
 
@@ -63,11 +110,16 @@ export type FramerMotionToken = {
 };
 
 export const springPresetTokens: FramerMotionToken[] = [
-  { name: 'interactive', value: 'stiffness: 400, damping: 30 (ζ ≈ 0.75)', usedBy: 'Button' },
-  { name: 'gentle',      value: 'stiffness: 160, damping: 24 (ζ ≈ 0.95)', usedBy: 'ThinkingDots' },
+  { name: 'interactive', value: 'stiffness: 400, damping: 30 (ζ ≈ 0.75)', usedBy: 'Button, Modal, RadioGroup, CheckboxGroup, TabBar, ClarificationCard, TaskList' },
+  { name: 'gentle',      value: 'stiffness: 160, damping: 24 (ζ ≈ 0.95)', usedBy: 'ThinkingDots, ThinkingSaucer, ChatPanel height morph, ChatInputSlot height morph' },
+  { name: 'layout',      value: 'stiffness: 200, damping: 24 (ζ ≈ 0.85)', usedBy: 'FolderTabs' },
 ];
 
 export const scalePresetTokens: FramerMotionToken[] = [
   { name: 'prominent', value: 'hover: 0.99, tap: 0.95', usedBy: 'Button (default surface)' },
   { name: 'subtle',    value: 'hover: 0.99, tap: 0.95', usedBy: 'Button (shadow surface)' },
+];
+
+export const staggerPresetTokens: FramerMotionToken[] = [
+  { name: 'actions', value: 'stagger: 0.04s, delay: 0.02s, exit stagger: 0.03s', usedBy: 'FolderTabs action buttons' },
 ];

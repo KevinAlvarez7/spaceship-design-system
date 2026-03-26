@@ -1,6 +1,8 @@
 'use client';
 
 import { type ReactNode } from 'react';
+import * as SeparatorPrimitive from '@radix-ui/react-separator';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { GripVertical } from 'lucide-react';
 import {
   DndContext,
@@ -69,7 +71,7 @@ export function SortableItem({ id, children, showDivider }: SortableItemProps) {
 
   return (
     <>
-      {showDivider && <div className="mx-4 h-px bg-(--bg-surface-secondary)" />}
+      {showDivider && <SeparatorPrimitive.Root className="mx-4 h-px bg-(--bg-surface-secondary)" />}
       <div
         ref={setNodeRef}
         style={{ transform: CSS.Transform.toString(transform), transition }}
@@ -122,6 +124,7 @@ export function SortableList({
 
   return (
     <div className={cn(sortableListVariants({ surface }), className)}>
+      <VisuallyHidden>Drag items to reorder. Use arrow keys when focused on a drag handle.</VisuallyHidden>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}

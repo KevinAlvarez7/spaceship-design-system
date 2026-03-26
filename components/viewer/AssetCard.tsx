@@ -5,6 +5,8 @@ import { Download, Copy, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { type AssetEntry } from '@/assets';
 import { AnimationPlayer } from './AnimationPlayer';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/shadcn/tooltip';
+import { Badge } from '@/components/shadcn/badge';
 
 interface AssetCardProps {
   asset: AssetEntry;
@@ -75,22 +77,34 @@ export function AssetCard({ asset }: AssetCardProps) {
         <div className="flex items-center justify-between gap-2">
           <span className="truncate text-xs font-medium text-zinc-800">{asset.name}</span>
           <div className="flex flex-shrink-0 items-center gap-1">
-            <button
-              onClick={handleCopy}
-              title={asset.format === 'svg' || asset.format === 'svg-anim' ? 'Copy SVG' : 'Copy path'}
-              className="rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
-            >
-              {copied
-                ? <Check className="h-3.5 w-3.5 text-green-600" />
-                : <Copy className="h-3.5 w-3.5" />}
-            </button>
-            <button
-              onClick={handleDownload}
-              title="Download"
-              className="rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
-            >
-              <Download className="h-3.5 w-3.5" />
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleCopy}
+                  className="rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+                >
+                  {copied
+                    ? <Check className="h-3.5 w-3.5 text-green-600" />
+                    : <Copy className="h-3.5 w-3.5" />}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-zinc-900 text-white border-zinc-800 text-xs">
+                {asset.format === 'svg' || asset.format === 'svg-anim' ? 'Copy SVG' : 'Copy path'}
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleDownload}
+                  className="rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-zinc-900 text-white border-zinc-800 text-xs">
+                Download
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
         {asset.description && (
@@ -99,9 +113,9 @@ export function AssetCard({ asset }: AssetCardProps) {
         {asset.tags && asset.tags.length > 0 && (
           <div className="mt-1.5 flex flex-wrap gap-1">
             {asset.tags.map(tag => (
-              <span key={tag} className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] text-zinc-500">
+              <Badge key={tag} className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-normal text-zinc-500 border-transparent hover:bg-zinc-100">
                 {tag}
-              </span>
+              </Badge>
             ))}
           </div>
         )}

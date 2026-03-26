@@ -12,7 +12,10 @@ import { FolderTabsPage } from './FolderTabsPage';
 import { ThinkingDotsPage } from './ThinkingDotsPage';
 import { ThinkingPage } from './ThinkingPage';
 import { TaskListPage } from './TaskListPage';
-import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
+import { DropdownMenuPage } from './DropdownMenuPage';
+import { ApprovalCardPage } from './ApprovalCardPage';
+import { buildTopbarTitle } from '@/lib/viewer-registry';
+import { discoverComponentEntries, getComponentEntry } from '@/lib/discover-components';
 
 const COMPONENTS: Record<string, React.ComponentType> = {
   button:           ButtonPage,
@@ -27,10 +30,21 @@ const COMPONENTS: Record<string, React.ComponentType> = {
   'thinking-dots':  ThinkingDotsPage,
   'thinking':       ThinkingPage,
   'task-list':      TaskListPage,
+  'dropdown-menu':  DropdownMenuPage,
+  'approval-card':  ApprovalCardPage,
 };
 
+function StubPage({ title }: { title: string }) {
+  return (
+    <div className="flex flex-col gap-2 p-2">
+      <h1 className="text-lg font-semibold text-zinc-900">{title}</h1>
+      <p className="text-sm text-zinc-500">Viewer page coming soon.</p>
+    </div>
+  );
+}
+
 export function generateStaticParams() {
-  return getSlugsForRoute('components').map(slug => ({ component: slug }));
+  return discoverComponentEntries().map(e => ({ component: e.slug }));
 }
 
 export default async function ComponentPage({
@@ -39,16 +53,16 @@ export default async function ComponentPage({
   params: Promise<{ component: string }>;
 }) {
   const { component } = await params;
-  const entry = getEntry('components', component);
+  const entry = getComponentEntry(component);
   if (!entry) notFound();
+
   const Component = COMPONENTS[component];
-  if (!Component) notFound();
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <Topbar title={buildTopbarTitle(entry)} />
       <main className="flex-1 overflow-y-auto p-8">
-        <Component />
+        {Component ? <Component /> : <StubPage title={entry.title} />}
       </main>
     </div>
   );

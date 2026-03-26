@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Copy, Check, GraduationCap, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Preview } from '@/components/viewer/Preview';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/shadcn/tooltip';
+import { Badge } from '@/components/shadcn/badge';
 import { PropsPanel } from '@/components/viewer/PropsPanel';
 import {
   PLAYGROUND_CONFIGS,
@@ -129,21 +131,27 @@ function VersionPills({
             )}
 
             {isThisVersionGraduated && (
-              <span className="flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
+              <Badge className="flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700 border-green-200 hover:bg-green-50">
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 Graduated
-              </span>
+              </Badge>
             )}
 
             {showGraduateButton && isActive && (
-              <button
-                onClick={onGraduate}
-                title="Graduate this version to components/ui"
-                className="flex items-center gap-1.5 rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-50"
-              >
-                <GraduationCap className="h-3.5 w-3.5" />
-                Graduate
-              </button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={onGraduate}
+                    className="flex items-center gap-1.5 rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-50"
+                  >
+                    <GraduationCap className="h-3.5 w-3.5" />
+                    Graduate
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-zinc-900 text-white border-zinc-800 text-xs">
+                  Graduate this version to components/ui
+                </TooltipContent>
+              </Tooltip>
             )}
           </div>
         );
@@ -228,15 +236,21 @@ function PlaygroundContent({
         <div className="overflow-hidden rounded-lg border border-zinc-200">
           <div className="flex items-center justify-between border-b border-zinc-200 bg-zinc-50 px-4 py-2.5">
             <span className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Code</span>
-            <button
-              onClick={handleCopy}
-              title="Copy code snippet"
-              className="flex-shrink-0 rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
-            >
-              {copied
-                ? <Check className="h-3.5 w-3.5 text-green-600" />
-                : <Copy className="h-3.5 w-3.5" />}
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleCopy}
+                  className="flex-shrink-0 rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+                >
+                  {copied
+                    ? <Check className="h-3.5 w-3.5 text-green-600" />
+                    : <Copy className="h-3.5 w-3.5" />}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-zinc-900 text-white border-zinc-800 text-xs">
+                Copy code snippet
+              </TooltipContent>
+            </Tooltip>
           </div>
           <pre className="overflow-x-auto bg-white p-4 font-mono text-sm text-zinc-800">
             {codeSnippet}

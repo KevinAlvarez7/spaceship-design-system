@@ -2,6 +2,7 @@
 
 import { useRef, type ReactNode } from 'react';
 import { useAnimationFrame } from 'motion/react';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { cn } from '@/lib/utils';
 
 // ━━━ ShimmerDots — three animated bounce dots ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -24,27 +25,34 @@ export function ShimmerDots({
 }: ShimmerDotsProps) {
   if (disableMotion) {
     return (
-      <span aria-hidden="true" className={cn('text-(--text-secondary)', className)} {...props}>
-        {'\u2026'}
+      <span className={cn('text-(--text-secondary)', className)} {...props}>
+        <VisuallyHidden>Loading</VisuallyHidden>
+        <span aria-hidden="true">{'\u2026'}</span>
       </span>
     );
   }
 
   if (variant === 'subtle') {
     return (
-      <span aria-hidden="true" className={className} {...props}>
-        <span className="shimmer-dot-subtle shimmer-dot-subtle-1">.</span>
-        <span className="shimmer-dot-subtle shimmer-dot-subtle-2">.</span>
-        <span className="shimmer-dot-subtle shimmer-dot-subtle-3">.</span>
+      <span className={className} {...props}>
+        <VisuallyHidden>Loading</VisuallyHidden>
+        <span aria-hidden="true">
+          <span className="shimmer-dot-subtle shimmer-dot-subtle-1">.</span>
+          <span className="shimmer-dot-subtle shimmer-dot-subtle-2">.</span>
+          <span className="shimmer-dot-subtle shimmer-dot-subtle-3">.</span>
+        </span>
       </span>
     );
   }
 
   return (
-    <span aria-hidden="true" className={className} {...props}>
-      <span className="thinking-dot-bounce thinking-dot-1">.</span>
-      <span className="thinking-dot-bounce thinking-dot-2">.</span>
-      <span className="thinking-dot-bounce thinking-dot-3">.</span>
+    <span className={className} {...props}>
+      <VisuallyHidden>Loading</VisuallyHidden>
+      <span aria-hidden="true">
+        <span className="thinking-dot-bounce thinking-dot-1">.</span>
+        <span className="thinking-dot-bounce thinking-dot-2">.</span>
+        <span className="thinking-dot-bounce thinking-dot-3">.</span>
+      </span>
     </span>
   );
 }

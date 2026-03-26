@@ -1,23 +1,35 @@
 "use client";
 
-import { useRef } from 'react';
-import { cva } from 'class-variance-authority';
+import { useRef, useId } from 'react';
+import * as LabelPrimitive from '@radix-ui/react-label';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { ArrowUp, Square } from 'lucide-react';
 import { Button } from './button'; // direct sibling import — avoids circular dep with barrel
 
-const chatInputBoxVariants = cva([
-  'w-full flex flex-col gap-3',
-  'min-w-(--sizing-chat-min)',
-  'max-w-(--sizing-chat-max)',
-  'p-3',
-  'bg-(--bg-surface-base)',
-  'rounded-lg',
-  'shadow-(--shadow-border)',
-]);
+const chatInputBoxVariants = cva(
+  [
+    'w-full flex flex-col gap-3',
+    'min-w-(--sizing-chat-min)',
+    'max-w-(--sizing-chat-max)',
+    'p-3',
+    'bg-(--bg-surface-base)',
+    'rounded-lg',
+  ],
+  {
+    variants: {
+      surface: {
+        default:         '',
+        'shadow-border': 'shadow-(--shadow-border)',
+      },
+    },
+    defaultVariants: { surface: 'shadow-border' },
+  },
+);
 
 export interface ChatInputBoxProps
-  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onSubmit'> {
+  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onSubmit'>,
+    VariantProps<typeof chatInputBoxVariants> {
   onSubmit?: (value: string) => void;
   onStop?: () => void;
   containerClassName?: string;
@@ -39,10 +51,12 @@ export function ChatInputBox({
   submitLabel = 'Explore',
   stopLabel = 'Stop',
   size = 'md',
+  surface,
   ...props
 }: ChatInputBoxProps) {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaId = useId();
 
   function handleSubmit() {
     const val = typeof value === 'string' ? value : (textareaRef.current?.value ?? '');
@@ -57,10 +71,14 @@ export function ChatInputBox({
   }
 
   return (
-    <div className={cn(chatInputBoxVariants(), containerClassName)}>
+    <div className={cn(chatInputBoxVariants({ surface }), containerClassName)}>
+      <LabelPrimitive.Root htmlFor={textareaId} className="sr-only">
+        {placeholder}
+      </LabelPrimitive.Root>
       <div className="p-1">
         <textarea
           ref={textareaRef}
+          id={textareaId}
           value={value}
           onChange={onChange}
           onKeyDown={handleKeyDown}
@@ -81,18 +99,14 @@ export function ChatInputBox({
       <div className="flex justify-end">
         {onStop ? (
           <Button
-            variant="destructive"
-            surface="default"
-            trailingIcon={<Square />}
+            variant="destructive"            trailingIcon={<Square />}
             onClick={onStop}
           >
             {stopLabel}
           </Button>
         ) : (
           <Button
-            variant="primary"
-            surface="default"
-            trailingIcon={<ArrowUp />}
+            variant="primary"            trailingIcon={<ArrowUp />}
             disabled={disabled}
             onClick={handleSubmit}
           >

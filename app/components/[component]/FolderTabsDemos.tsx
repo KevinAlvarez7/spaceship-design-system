@@ -35,8 +35,8 @@ function WithActionsDemo() {
       onChange={setTab}
       activeActions={
         <>
-          <Button variant="secondary" size="sm" surface="default" trailingIcon={<RefreshCw />}>Refresh</Button>
-          <Button variant="secondary" size="sm" surface="default" trailingIcon={<ExternalLink />}>Open</Button>
+          <Button variant="secondary" size="sm" trailingIcon={<RefreshCw />}>Refresh</Button>
+          <Button variant="secondary" size="sm" trailingIcon={<ExternalLink />}>Open</Button>
         </>
       }
     >
@@ -51,9 +51,9 @@ function PerTabActionsDemo() {
   const [tab, setTab] = useState('code');
 
   const actions: Record<string, React.ReactNode> = {
-    code:    <><Button variant="secondary" size="sm" surface="default" trailingIcon={<Settings />}>Options</Button><Button variant="success" size="sm" surface="default" trailingIcon={<Download />}>Download</Button></>,
-    preview: <><Button variant="secondary" size="sm" surface="default" trailingIcon={<Settings />}>Options</Button><Button variant="success" size="sm" surface="default" trailingIcon={<ExternalLink />}>Open</Button></>,
-    docs:    <><Button variant="secondary" size="sm" surface="default" trailingIcon={<Settings />}>Options</Button><Button variant="success" size="sm" surface="default" trailingIcon={<ExternalLink />}>View</Button></>,
+    code:    <><Button variant="secondary" size="sm" trailingIcon={<Settings />}>Options</Button><Button variant="success" size="sm" trailingIcon={<Download />}>Download</Button></>,
+    preview: <><Button variant="secondary" size="sm" trailingIcon={<Settings />}>Options</Button><Button variant="success" size="sm" trailingIcon={<ExternalLink />}>Open</Button></>,
+    docs:    <><Button variant="secondary" size="sm" trailingIcon={<Settings />}>Options</Button><Button variant="success" size="sm" trailingIcon={<ExternalLink />}>View</Button></>,
   };
 
   return (

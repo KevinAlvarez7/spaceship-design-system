@@ -1,7 +1,9 @@
+import { Badge } from '@/components/shadcn/badge';
+
 export function PlaygroundBadge() {
   return (
-    <span className="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-2 py-0.5 text-xs font-medium text-violet-600">
+    <Badge className="px-2 font-medium border-violet-200 bg-violet-50 text-violet-600 hover:bg-violet-50">
       Playground
-    </span>
+    </Badge>
   );
 }

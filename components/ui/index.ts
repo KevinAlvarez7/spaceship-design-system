@@ -21,7 +21,10 @@ export { Tag, tagVariants } from './tag';
 export type { TagProps } from './tag';
 
 export { ClarificationCard, clarificationCardVariants } from './clarification-card';
-export type { ClarificationCardProps, ClarificationQuestion, ClarificationAnswers } from './clarification-card';
+export type { ClarificationCardProps, ClarificationQuestion, ClarificationAnswers, ClarificationSingleSelect, ClarificationMultiSelect, ClarificationRankPriorities, ClarificationOption, OptionMetadata, RiskLevel } from './clarification-card';
+
+export { ApprovalCard, approvalCardVariants } from './approval-card';
+export type { ApprovalCardProps, ApprovalPlan, PlanStep, RiskSummary } from './approval-card';
 
 export { TaskList, taskListVariants } from './task-list';
 export type { TaskListProps } from './task-list';
@@ -63,3 +66,13 @@ export { ShimmerDots } from './shimmer-text';
 export type { ShimmerDotsProps } from './shimmer-text';
 
 export { useSystemReducedMotion } from './use-reduced-motion';
+
+export {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  dropdownMenuItemVariants,
+} from './dropdown-menu';
+export type { DropdownMenuContentProps, DropdownMenuItemProps, DropdownMenuSeparatorProps } from './dropdown-menu';

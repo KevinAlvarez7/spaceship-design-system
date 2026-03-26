@@ -2,6 +2,15 @@
 
 import { cn } from '@/lib/utils';
 import type { ControlDef } from '@/lib/playground-config';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/shadcn/select';
+import { Switch } from '@/components/shadcn/switch';
+import { Input } from '@/components/shadcn/input';
 
 interface PropsPanelProps {
   controls: ControlDef[];
@@ -27,15 +36,19 @@ function SelectControl({
       <label className="text-xs font-medium text-zinc-500">
         {control.label ?? control.name}
       </label>
-      <select
+      <Select
         value={String(value ?? control.defaultValue)}
-        onChange={(e) => onChange(control.name, e.target.value)}
-        className="rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-sm text-zinc-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-1"
+        onValueChange={(v) => onChange(control.name, v)}
       >
-        {control.options.map((opt) => (
-          <option key={opt} value={opt}>{opt}</option>
-        ))}
-      </select>
+        <SelectTrigger className="h-8 rounded-md border-zinc-200 bg-white px-2.5 py-1.5 text-sm text-zinc-800 shadow-sm focus:ring-zinc-400">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {control.options.map((opt) => (
+            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }
@@ -55,22 +68,14 @@ function BooleanControl({
       <label className="text-xs font-medium text-zinc-500">
         {control.label ?? control.name}
       </label>
-      <button
-        role="switch"
-        aria-checked={checked}
-        onClick={() => onChange(control.name, !checked)}
+      <Switch
+        checked={checked}
+        onCheckedChange={(v) => onChange(control.name, v)}
         className={cn(
-          'relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors',
-          checked ? 'bg-zinc-800' : 'bg-zinc-200',
+          'h-5 w-9',
+          'data-[state=checked]:bg-zinc-800 data-[state=unchecked]:bg-zinc-200',
         )}
-      >
-        <span
-          className={cn(
-            'inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm transition-transform',
-            checked ? 'translate-x-[1.125rem]' : 'translate-x-0.5',
-          )}
-        />
-      </button>
+      />
     </div>
   );
 }
@@ -89,12 +94,12 @@ function TextControl({
       <label className="text-xs font-medium text-zinc-500">
         {control.label ?? control.name}
       </label>
-      <input
+      <Input
         type="text"
         value={String(value ?? control.defaultValue)}
         placeholder={control.placeholder}
         onChange={(e) => onChange(control.name, e.target.value)}
-        className="rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-sm text-zinc-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-1"
+        className="h-8 rounded-md border-zinc-200 bg-white px-2.5 py-1.5 text-sm text-zinc-800 shadow-sm focus-visible:ring-zinc-400"
       />
     </div>
   );

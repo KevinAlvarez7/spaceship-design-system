@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react';
+import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
@@ -63,6 +64,7 @@ export const tagVariants = cva(
 export interface TagProps
   extends React.HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof tagVariants> {
+  asChild?: boolean;
   leadingIcon?:  ReactNode;
   trailingIcon?: ReactNode;
   children?: ReactNode;
@@ -73,17 +75,19 @@ export function Tag({
   variant,
   size,
   surface,
+  asChild = false,
   leadingIcon,
   trailingIcon,
   children,
   ...props
 }: TagProps) {
   const sizeKey: SizeKey = size ?? 'md';
+  const Comp = asChild ? Slot : 'span';
   return (
-    <span className={cn(tagVariants({ variant, size, surface }), className)} {...props}>
-      <IconSlot icon={leadingIcon} sizeKey={sizeKey} />
+    <Comp className={cn(tagVariants({ variant, size, surface }), className)} {...props}>
+      {!asChild && <IconSlot icon={leadingIcon} sizeKey={sizeKey} />}
       {children}
-      <IconSlot icon={trailingIcon} sizeKey={sizeKey} />
-    </span>
+      {!asChild && <IconSlot icon={trailingIcon} sizeKey={sizeKey} />}
+    </Comp>
   );
 }

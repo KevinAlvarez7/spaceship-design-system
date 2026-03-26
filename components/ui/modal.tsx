@@ -1,7 +1,7 @@
 "use client";
 
-import { useSyncExternalStore, useEffect, useRef, type ReactNode } from 'react';
-import { createPortal } from 'react-dom';
+import { type ReactNode } from 'react';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { motion, AnimatePresence } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
@@ -9,11 +9,6 @@ import { springs } from '@/tokens';
 
 // ζ = 30 / (2 × √400) = 0.75 ✓
 const MODAL_SPRING = springs.interactive;
-
-// Detects client-side rendering without triggering setState-in-effect lint rule.
-function useIsClient() {
-  return useSyncExternalStore(() => () => {}, () => true, () => false);
-}
 
 const modalVariants = cva(
   [
@@ -26,7 +21,7 @@ const modalVariants = cva(
   {
     variants: {
       surface: {
-        default:       'shadow-(--shadow-border)',
+        default:         'shadow-(--shadow-border)',
         'shadow-border': 'shadow-(--shadow-border) transition-shadow duration-(--duration-base) ease-(--ease-in-out)',
       },
     },
@@ -54,27 +49,31 @@ export function ModalHeader({ className, ...props }: React.HTMLAttributes<HTMLDi
 
 export function ModalTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h2
-      className={cn(
-        'font-sans [font-size:var(--font-size-xl)] [font-weight:var(--font-weight-bold)] leading-(--line-height-lg)',
-        'text-(--text-primary)',
-        className
-      )}
-      {...props}
-    />
+    <DialogPrimitive.Title asChild>
+      <h2
+        className={cn(
+          'font-sans [font-size:var(--font-size-xl)] [font-weight:var(--font-weight-bold)] leading-(--line-height-lg)',
+          'text-(--text-primary)',
+          className
+        )}
+        {...props}
+      />
+    </DialogPrimitive.Title>
   );
 }
 
 export function ModalDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
-    <p
-      className={cn(
-        'font-sans [font-size:var(--font-size-base)] [font-weight:var(--font-weight-regular)] leading-(--line-height-base)',
-        'text-(--text-secondary)',
-        className
-      )}
-      {...props}
-    />
+    <DialogPrimitive.Description asChild>
+      <p
+        className={cn(
+          'font-sans [font-size:var(--font-size-base)] [font-weight:var(--font-weight-regular)] leading-(--line-height-base)',
+          'text-(--text-secondary)',
+          className
+        )}
+        {...props}
+      />
+    </DialogPrimitive.Description>
   );
 }
 
@@ -97,75 +96,55 @@ export function Modal({
   'aria-labelledby': labelledby,
   'aria-describedby': describedby,
 }: ModalProps) {
-  const isClient = useIsClient();
-  const dialogRef = useRef<HTMLDivElement>(null);
+  return (
+    <DialogPrimitive.Root
+      open={open}
+      onOpenChange={(v) => { if (!v) onClose(); }}
+    >
+      <DialogPrimitive.Portal forceMount>
+        <AnimatePresence>
+          {open && (
+            <>
+              {/* Backdrop */}
+              <DialogPrimitive.Overlay asChild forceMount>
+                <motion.div
+                  key="modal-backdrop"
+                  className="fixed inset-0 z-50 flex items-center justify-center px-3"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: 'easeOut' }}
+                >
+                  <div
+                    className="absolute inset-0 bg-(--overlay-medium)"
+                    aria-hidden="true"
+                  />
 
-  // Body scroll lock
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; };
-  }, [open]);
-
-  // Escape key to close
-  useEffect(() => {
-    if (!open) return;
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose();
-    }
-    document.addEventListener('keydown', handleKey);
-    return () => document.removeEventListener('keydown', handleKey);
-  }, [open, onClose]);
-
-  // Focus trap: move focus into dialog on open
-  useEffect(() => {
-    if (open && dialogRef.current) {
-      dialogRef.current.focus();
-    }
-  }, [open]);
-
-  if (!isClient) return null;
-
-  return createPortal(
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          key="modal-backdrop"
-          className="fixed inset-0 z-50 flex items-center justify-center px-3"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15, ease: 'easeOut' }}
-        >
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-(--overlay-medium)"
-            aria-hidden="true"
-            onClick={onClose}
-          />
-
-          {/* Dialog */}
-          <motion.div
-            role="dialog"
-            aria-modal={true}
-            aria-labelledby={labelledby}
-            aria-describedby={describedby}
-            tabIndex={-1}
-            ref={dialogRef}
-            className={cn('relative z-10', modalVariants({ surface }), className)}
-            style={{ willChange: 'transform' }}
-            initial={disableMotion ? {} : { scale: 0.95, y: 8 }}
-            animate={disableMotion ? {} : { scale: 1, y: 0 }}
-            exit={disableMotion ? {} : { scale: 0.95, y: 8 }}
-            transition={MODAL_SPRING}
-          >
-            {children}
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>,
-    document.body
+                  {/* Dialog panel */}
+                  <DialogPrimitive.Content
+                    forceMount
+                    aria-labelledby={labelledby}
+                    aria-describedby={describedby}
+                    className="relative z-10 w-full max-w-lg outline-none"
+                  >
+                    <motion.div
+                      className={cn(modalVariants({ surface }), className)}
+                      style={{ willChange: 'transform' }}
+                      initial={disableMotion ? {} : { scale: 0.95, y: 8 }}
+                      animate={disableMotion ? {} : { scale: 1, y: 0 }}
+                      exit={disableMotion ? {} : { scale: 0.95, y: 8 }}
+                      transition={MODAL_SPRING}
+                    >
+                      {children}
+                    </motion.div>
+                  </DialogPrimitive.Content>
+                </motion.div>
+              </DialogPrimitive.Overlay>
+            </>
+          )}
+        </AnimatePresence>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
 }
 

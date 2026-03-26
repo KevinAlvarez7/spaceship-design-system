@@ -39,6 +39,7 @@ node scripts/generate-tokens.mjs   # regenerate tokens from Figma export
 
 ## Component Conventions
 
+- **Radix primitives** — always build DS components on top of `@radix-ui/react-*` primitives when a matching primitive exists (Dialog, Popover, Select, Tabs, Checkbox, etc.). This ensures accessible keyboard handling, focus management, and ARIA semantics out of the box.
 - **Named exports only** — no default exports for DS components.
 - All DS imports through the barrel: `import { Button } from "@/components/ui"`.
 - Use **CVA** (`class-variance-authority`) for variants; `cn()` for class composition.

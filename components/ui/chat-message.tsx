@@ -2,6 +2,7 @@
 
 import ReactMarkdown from 'react-markdown';
 import { motion } from 'motion/react';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { cn } from '@/lib/utils';
 
 export interface ChatMessageProps {
@@ -33,6 +34,7 @@ export function ChatMessage({
       )}
     >
       <ReactMarkdown>{content}</ReactMarkdown>
+      {isStreaming && <VisuallyHidden>Message is being generated</VisuallyHidden>}
       {isStreaming && (
         disableMotion ? (
           <span className="inline-block w-0.5 h-5 bg-(--text-primary) ml-0.5 rounded-sm align-middle" />

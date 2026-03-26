@@ -40,8 +40,8 @@ const [tab, setTab] = useState('code');
   onChange={setTab}
   activeActions={
     <>
-      <Button variant="secondary" surface="default" size="icon-sm" leadingIcon={<RefreshCw />} />
-      <Button variant="secondary" surface="default" size="icon-sm" leadingIcon={<ExternalLink />} />
+      <Button variant="secondary" size="icon-sm" leadingIcon={<RefreshCw />} />
+      <Button variant="secondary" size="icon-sm" leadingIcon={<ExternalLink />} />
     </>
   }
 >

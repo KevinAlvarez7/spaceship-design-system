@@ -1,52 +1,64 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { LayoutGroup, motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import {
   ChatThread,
   ChatBubble,
   ChatMessage,
+  ChatInputBox,
   TaskList,
   Thinking,
 } from '@/components/ui';
 import type { ClarificationAnswers, ClarificationQuestion } from '@/components/ui';
+import type { ApprovalPlan } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { GridBackground } from '@/components/effects';
+import { GridBackground, SpaceshipLogoScene } from '@/components/effects';
 import { ArtifactSegmentedControl, ChatPanel } from '@/components/patterns';
+import type { Artifact, ArtifactStatus } from '@/components/patterns';
 import { springs } from '@/tokens';
 import {
-  USER_MESSAGE,
   ASSISTANT_INTRO,
   ASSISTANT_AFTER_STEP_1,
   ASSISTANT_AFTER_STEP_2,
-  ASSISTANT_AFTER_STEP_3,
+  ASSISTANT_AFTER_GATE,
+  ASSISTANT_AFTER_IMPL,
+  ASSISTANT_REJECTION_PROMPT,
+  ASSISTANT_AFTER_REVISION,
+  ASSISTANT_AFTER_APPROVE,
+  ASSISTANT_BUILD_COMPLETE,
   STEP_1_QUESTIONS,
   STEP_2_QUESTIONS,
-  STEP_3_QUESTIONS,
+  IMPL_QUESTIONS,
+  IMPLEMENTATION_PLAN,
+  IMPLEMENTATION_PLAN_REVISED,
   BRIEF_ARTIFACT,
   BRIEF_CONTENT_V2,
-  BRIEF_CONTENT_V3,
-  SECURITY_ARTIFACT,
+  IMPL_PLAN_ARTIFACT,
   PROTOTYPE_ARTIFACT,
   IMPLEMENTATION_TASKS,
 } from '@/app/_shared/clarification-chat.mock';
-import type { Artifact, ArtifactStatus } from '@/components/patterns';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type ThreadItem =
   | { kind: 'user-bubble'; id: string; content: string }
   | { kind: 'assistant-text'; id: string; content: string }
-  | { kind: 'typing'; id: string };
+  | { kind: 'typing'; id: string }
+  | { kind: 'task-list'; id: string; items: string[]; completedCount: number };
 
-type Phase = 'preamble' | 'step1' | 'transition' | 'step2' | 'step3' | 'building' | 'done';
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const INITIAL_ITEMS: ThreadItem[] = [
-  { kind: 'user-bubble', id: 'user-msg', content: USER_MESSAGE },
-];
+type Phase =
+  | 'homepage'
+  | 'thinking'
+  | 'step1'
+  | 'step2'
+  | 'gate'
+  | 'impl-questions'
+  | 'approval'
+  | 'approval-rejected'
+  | 'building'
+  | 'done';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -61,10 +73,9 @@ function buildAnswerMarkdown(questions: ClarificationQuestion[], answers: Clarif
   return parts.join('\n\n');
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
+/** Returns a random thinking delay between 7 000–12 000 ms. */
 function randomThinkMs() {
-  return (7 + Math.floor(Math.random() * 6)) * 1000; // 7 000–12 000 ms
+  return (7 + Math.floor(Math.random() * 6)) * 1000;
 }
 
 // ─── StreamingChatMessage ─────────────────────────────────────────────────────
@@ -90,16 +101,34 @@ function StreamingChatMessage({ content, onComplete }: {
 // ─── ClarificationChatDemoPage ────────────────────────────────────────────────
 
 export function ClarificationChatDemoPage() {
-  const [items, setItems]                 = useState<ThreadItem[]>(INITIAL_ITEMS);
-  const [phase, setPhase]                 = useState<Phase>('preamble');
-  const [artifacts, setArtifacts]         = useState<Artifact[]>([]);
+  const [phase, setPhase]                       = useState<Phase>('homepage');
+  const [items, setItems]                       = useState<ThreadItem[]>([]);
+  const [artifacts, setArtifacts]               = useState<Artifact[]>([]);
   const [activeArtifactId, setActiveArtifactId] = useState('');
-  const [taskProgress, setTaskProgress]   = useState(0);
-  const [inputValue, setInputValue]       = useState('');
-  const [streamingId, setStreamingId]     = useState<string | null>(null);
-  const clearStreamingId = useCallback(() => setStreamingId(null), []);
-  const timeouts  = useRef<NodeJS.Timeout[]>([]);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [taskProgress, setTaskProgress]         = useState(0);
+  const [inputValue, setInputValue]             = useState('');
+  const [streamingId, setStreamingId]           = useState<string | null>(null);
+  const [approvalPlan, setApprovalPlan]         = useState<ApprovalPlan>(IMPLEMENTATION_PLAN);
+  const clearStreamingId                        = useCallback(() => setStreamingId(null), []);
+  const timeouts                                = useRef<NodeJS.Timeout[]>([]);
+  const intervalRef                             = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  /** Schedules a callback and tracks the timeout for cleanup. */
+  function schedule(fn: () => void, delay: number) {
+    const id = setTimeout(fn, delay);
+    timeouts.current.push(id);
+  }
+
+  // Cleanup all pending timers on unmount
+  useEffect(() => {
+    const savedTimeouts = timeouts.current;
+    return () => {
+      savedTimeouts.forEach(clearTimeout);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
+  // ── Artifact helpers ──────────────────────────────────────────────────────
 
   function addArtifact(a: Artifact) {
     setArtifacts(prev => [...prev, a]);
@@ -114,17 +143,17 @@ export function ClarificationChatDemoPage() {
     setArtifacts(prev => prev.map(a => a.id === id ? { ...a, content } : a));
   }
 
-  // Preamble sequence: user bubble is visible immediately; assistant message
-  // arrives after a typing indicator delay, then step 1 card activates.
-  useEffect(() => {
-    function schedule(fn: () => void, delay: number) {
-      const id = setTimeout(fn, delay);
-      timeouts.current.push(id);
-    }
+  // ── Homepage submit ───────────────────────────────────────────────────────
 
+  function handleHomepageSubmit(value: string) {
+    if (!value.trim()) return;
+    setItems([{ kind: 'user-bubble', id: 'user-msg', content: value }]);
+    setPhase('thinking');
+
+    // Small delay lets the layout transition settle before the typing indicator
     schedule(() => {
       setItems(prev => [...prev, { kind: 'typing', id: 'preamble-typing' }]);
-    }, 0);
+    }, 350);
 
     const thinkDelay = randomThinkMs();
     schedule(() => {
@@ -133,246 +162,390 @@ export function ClarificationChatDemoPage() {
         { kind: 'assistant-text', id: 'preamble-intro', content: ASSISTANT_INTRO },
       ]);
       setStreamingId('preamble-intro');
-    }, thinkDelay);
+    }, 350 + thinkDelay);
 
-    schedule(() => {
-      setPhase('step1');
-    }, thinkDelay + 600);
+    schedule(() => setPhase('step1'), 350 + thinkDelay + 600);
+  }
 
-    return () => {
-      timeouts.current.forEach(clearTimeout);
-      timeouts.current = [];
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, []);
-
-  // ── Step submit handlers ──────────────────────────────────────────────────
+  // ── Step 1 — Problem clarification ───────────────────────────────────────
 
   function handleStep1Submit(answers: ClarificationAnswers) {
     const summary = buildAnswerMarkdown(STEP_1_QUESTIONS, answers);
-    setPhase('transition');
+    setPhase('thinking');
     setItems(prev => [
       ...prev,
       { kind: 'user-bubble', id: 'answer-1', content: summary },
-      { kind: 'typing',      id: 'typing-1' },
+      { kind: 'typing', id: 'typing-1' },
     ]);
 
-    const t1 = setTimeout(() => {
+    schedule(() => {
       setItems(prev => [
         ...prev.filter(i => i.id !== 'typing-1'),
         { kind: 'assistant-text', id: 'msg-after-1', content: ASSISTANT_AFTER_STEP_1 },
       ]);
       setStreamingId('msg-after-1');
       addArtifact(BRIEF_ARTIFACT);
-
-      const t2 = setTimeout(() => setPhase('step2'), 600);
-      timeouts.current.push(t2);
+      schedule(() => setPhase('step2'), 600);
     }, randomThinkMs());
-    timeouts.current.push(t1);
   }
+
+  // ── Step 2 — Solution clarification ──────────────────────────────────────
 
   function handleStep2Submit(answers: ClarificationAnswers) {
     const summary = buildAnswerMarkdown(STEP_2_QUESTIONS, answers);
-    setPhase('transition');
+    setPhase('thinking');
     setItems(prev => [
       ...prev,
       { kind: 'user-bubble', id: 'answer-2', content: summary },
-      { kind: 'typing',      id: 'typing-2' },
+      { kind: 'typing', id: 'typing-2' },
     ]);
 
-    const t1 = setTimeout(() => {
+    schedule(() => {
       setItems(prev => [
         ...prev.filter(i => i.id !== 'typing-2'),
         { kind: 'assistant-text', id: 'msg-after-2', content: ASSISTANT_AFTER_STEP_2 },
       ]);
       setStreamingId('msg-after-2');
       updateArtifactContent(BRIEF_ARTIFACT.id, BRIEF_CONTENT_V2);
-
-      const t2 = setTimeout(() => setPhase('step3'), 600);
-      timeouts.current.push(t2);
+      updateArtifactStatus(BRIEF_ARTIFACT.id, 'complete');
+      schedule(() => setPhase('gate'), 600);
     }, randomThinkMs());
-    timeouts.current.push(t1);
   }
 
-  function handleStep3Submit(answers: ClarificationAnswers) {
-    const summary = buildAnswerMarkdown(STEP_3_QUESTIONS, answers);
-    setPhase('transition');
+  // ── Gate — user confirms moving to implementation ─────────────────────────
+
+  function handleGateSubmit(value: string) {
+    if (!value.trim()) return;
+    setInputValue('');
+    setPhase('thinking');
     setItems(prev => [
       ...prev,
-      { kind: 'user-bubble', id: 'answer-3', content: summary },
-      { kind: 'typing',      id: 'typing-3' },
+      { kind: 'user-bubble', id: 'gate-reply', content: value },
+      { kind: 'typing', id: 'typing-gate' },
     ]);
 
-    const t1 = setTimeout(() => {
+    schedule(() => {
       setItems(prev => [
-        ...prev.filter(i => i.id !== 'typing-3'),
-        { kind: 'assistant-text', id: 'msg-after-3', content: ASSISTANT_AFTER_STEP_3 },
+        ...prev.filter(i => i.id !== 'typing-gate'),
+        { kind: 'assistant-text', id: 'msg-after-gate', content: ASSISTANT_AFTER_GATE },
       ]);
-      setStreamingId('msg-after-3');
-      updateArtifactContent(BRIEF_ARTIFACT.id, BRIEF_CONTENT_V3);
-      updateArtifactStatus(BRIEF_ARTIFACT.id, 'complete');
-
-      // Stagger: Security Review appears 1.5s after Brief V3 update, then build starts
-      const t2 = setTimeout(() => {
-        addArtifact(SECURITY_ARTIFACT);
-
-        const t3 = setTimeout(() => {
-          setPhase('building');
-          let progress = 0;
-
-          intervalRef.current = setInterval(() => {
-            progress += 1;
-            setTaskProgress(progress);
-
-            if (progress >= IMPLEMENTATION_TASKS.length) {
-              clearInterval(intervalRef.current!);
-              intervalRef.current = null;
-              setItems(prev => [
-                ...prev,
-                { kind: 'assistant-text', id: 'done-msg', content: 'Your prototype is ready for user testing. Share the link with your test participants when you\'re ready to run your sessions.' },
-              ]);
-              updateArtifactStatus(SECURITY_ARTIFACT.id, 'complete');
-              // Delay phase flip so user sees all tasks checked before TaskList fades out
-              const t4 = setTimeout(() => {
-                setPhase('done');
-                addArtifact(PROTOTYPE_ARTIFACT);
-              }, 1000);
-              timeouts.current.push(t4);
-            }
-          }, 1500);
-        }, 600);
-        timeouts.current.push(t3);
-      }, 1500);
-      timeouts.current.push(t2);
+      setStreamingId('msg-after-gate');
+      schedule(() => setPhase('impl-questions'), 600);
     }, randomThinkMs());
-    timeouts.current.push(t1);
   }
+
+  // ── Implementation questions ──────────────────────────────────────────────
+
+  function handleImplSubmit(answers: ClarificationAnswers) {
+    const summary = buildAnswerMarkdown(IMPL_QUESTIONS, answers);
+    setPhase('thinking');
+    setItems(prev => [
+      ...prev,
+      { kind: 'user-bubble', id: 'answer-impl', content: summary },
+      { kind: 'typing', id: 'typing-impl' },
+    ]);
+
+    schedule(() => {
+      setItems(prev => [
+        ...prev.filter(i => i.id !== 'typing-impl'),
+        { kind: 'assistant-text', id: 'msg-after-impl', content: ASSISTANT_AFTER_IMPL },
+      ]);
+      setStreamingId('msg-after-impl');
+      schedule(() => {
+        addArtifact({ ...IMPL_PLAN_ARTIFACT });
+        setPhase('approval');
+      }, 600);
+    }, randomThinkMs());
+  }
+
+  // ── Approval ──────────────────────────────────────────────────────────────
+
+  function handleApprove() {
+    updateArtifactStatus(IMPL_PLAN_ARTIFACT.id, 'complete');
+    setItems(prev => [
+      ...prev,
+      { kind: 'assistant-text', id: 'msg-approved', content: ASSISTANT_AFTER_APPROVE },
+    ]);
+    setStreamingId('msg-approved');
+    setPhase('thinking');
+    schedule(() => setPhase('building'), 600);
+  }
+
+  function handleReject() {
+    setPhase('approval-rejected');
+    setItems(prev => [
+      ...prev,
+      { kind: 'assistant-text', id: 'msg-rejected', content: ASSISTANT_REJECTION_PROMPT },
+    ]);
+    setStreamingId('msg-rejected');
+  }
+
+  function handleRevisionSubmit(value: string) {
+    if (!value.trim()) return;
+    setInputValue('');
+    const msgId = `msg-revised-${Date.now()}`;
+    setPhase('thinking');
+    setItems(prev => [
+      ...prev,
+      { kind: 'user-bubble', id: `revision-${Date.now()}`, content: value },
+      { kind: 'typing', id: 'typing-revision' },
+    ]);
+
+    schedule(() => {
+      setItems(prev => [
+        ...prev.filter(i => i.id !== 'typing-revision'),
+        { kind: 'assistant-text', id: msgId, content: ASSISTANT_AFTER_REVISION },
+      ]);
+      setStreamingId(msgId);
+      setApprovalPlan(IMPLEMENTATION_PLAN_REVISED);
+      schedule(() => setPhase('approval'), 600);
+    }, randomThinkMs());
+  }
+
+  // ── Building phase — task ticker ──────────────────────────────────────────
+
+  useEffect(() => {
+    if (phase !== 'building') return;
+
+    let progress = 0;
+    intervalRef.current = setInterval(() => {
+      progress += 1;
+      setTaskProgress(progress);
+
+      if (progress >= IMPLEMENTATION_TASKS.length) {
+        clearInterval(intervalRef.current!);
+        intervalRef.current = null;
+
+        // Move TaskList into the thread, then show summary and prototype
+        const doneMsgId = 'done-msg';
+        setItems(prev => [
+          ...prev,
+          {
+            kind: 'task-list',
+            id: 'completed-tasks',
+            items: IMPLEMENTATION_TASKS,
+            completedCount: IMPLEMENTATION_TASKS.length,
+          },
+          { kind: 'assistant-text', id: doneMsgId, content: ASSISTANT_BUILD_COMPLETE },
+        ]);
+        setStreamingId(doneMsgId);
+
+        schedule(() => {
+          setPhase('done');
+          addArtifact(PROTOTYPE_ARTIFACT);
+        }, 1000);
+      }
+    }, 1500);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [phase]);
+
+  // ── Footer state derivation ───────────────────────────────────────────────
+
+  const clarificationProp =
+    phase === 'step1'         ? { questions: STEP_1_QUESTIONS, onSubmit: handleStep1Submit, surface: 'shadow-border' as const } :
+    phase === 'step2'         ? { questions: STEP_2_QUESTIONS, onSubmit: handleStep2Submit, surface: 'shadow-border' as const } :
+    phase === 'impl-questions'? { questions: IMPL_QUESTIONS,   onSubmit: handleImplSubmit,  surface: 'shadow-border' as const } :
+    undefined;
+
+  const approvalProp =
+    phase === 'approval' ? {
+      plan: approvalPlan,
+      onApprove: handleApprove,
+      onReject: handleReject,
+      surface: 'shadow-border' as const,
+    } : undefined;
+
+  const inputDisabled = phase !== 'gate' && phase !== 'approval-rejected' && phase !== 'done';
+  const inputPlaceholder =
+    phase === 'gate'              ? 'Reply to continue...' :
+    phase === 'approval-rejected' ? 'What would you like me to revise?' :
+    'What would you like to change?';
+  const inputSubmit =
+    phase === 'gate'              ? handleGateSubmit :
+    phase === 'approval-rejected' ? handleRevisionSubmit :
+    () => {};
 
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="relative flex flex-1 overflow-hidden size-full">
-      <GridBackground />
+    <LayoutGroup>
+      <div className="relative flex flex-1 overflow-hidden size-full">
+        <GridBackground />
 
-      <div className="relative z-10 flex flex-1 flex-col size-full">
-        {/* Main split */}
-        <main className="flex flex-1 min-h-0 gap-6">
-          {/* Chat side */}
-          <div className={cn('flex flex-col min-h-0', artifacts.length > 0 ? 'w-(--sizing-chat-default) shrink-0' : 'flex-1')}>
-          <ChatPanel
-            title="New conversation"
-            onTitleChange={() => {}}
-            input={{
-              size: 'sm',
-              submitLabel: 'Send',
-              placeholder: 'What would you like to change?',
-              value: inputValue,
-              onChange: e => setInputValue(e.target.value),
-              onSubmit: () => {},
-              disabled: phase !== 'done',
-              containerClassName: phase === 'building' ? 'rounded-t-none' : undefined,
-            }}
-            clarification={
-              phase === 'step1' ? { questions: STEP_1_QUESTIONS, onSubmit: handleStep1Submit, surface: 'shadow-border' } :
-              phase === 'step2' ? { questions: STEP_2_QUESTIONS, onSubmit: handleStep2Submit, surface: 'shadow-border' } :
-              phase === 'step3' ? { questions: STEP_3_QUESTIONS, onSubmit: handleStep3Submit, surface: 'shadow-border' } :
-              undefined
-            }
-            footerAddon={phase === 'building' ? (
+        <div className="relative z-10 flex flex-1 size-full">
+          <AnimatePresence mode="popLayout">
+
+            {phase === 'homepage' ? (
+
+              // ── Homepage hero ─────────────────────────────────────────────
               <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={springs.interactive}
+                key="homepage"
+                className="absolute inset-0 flex items-center justify-center"
+                exit={{ opacity: 0, y: -16 }}
+                transition={{ duration: 0.25 }}
               >
-                <TaskList
-                  items={IMPLEMENTATION_TASKS}
-                  completedCount={taskProgress}
-                  isActive
-                  updatedAt="Updated 2m ago"
-                  surface="shadow-border"
-                  className="rounded-b-none"
-                />
+                <div className="flex flex-col items-center gap-4 w-full max-w-(--sizing-chat-max) px-4">
+                  <SpaceshipLogoScene width={110} interactive maxDisplacement={60} fleeRadius={200} />
+                  <h1 className="font-serif text-(length:--font-size-4xl) font-bold leading-(--line-height-4xl) text-(--text-primary) text-center">
+                    What ideas do you want to explore?
+                  </h1>
+                  <motion.div layoutId="chat-input" className="w-full" transition={springs.gentle}>
+                    <ChatInputBox
+                      size="md"
+                      placeholder="Explore any problems, prototype any ideas..."
+                      onSubmit={handleHomepageSubmit}
+                    />
+                  </motion.div>
+                </div>
               </motion.div>
-            ) : undefined}
-          >
-            <ChatThread className="flex-1 min-h-0">
-              {items.map(item => {
-                if (item.kind === 'assistant-text') {
-                  return (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={springs.interactive}
+
+            ) : (
+
+              // ── Chat layout ───────────────────────────────────────────────
+              <motion.div
+                key="chat"
+                className="flex flex-1 size-full flex-col"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.25 }}
+              >
+                <main className="flex flex-1 min-h-0 gap-6">
+
+                  {/* ── Chat column ── */}
+                  <div className={cn(
+                    'flex flex-col min-h-0',
+                    artifacts.length > 0 ? 'w-(--sizing-chat-default) shrink-0' : 'flex-1',
+                  )}>
+                    <ChatPanel
+                      title="New conversation"
+                      onTitleChange={() => {}}
+                      input={{
+                        size: 'sm',
+                        submitLabel: 'Send',
+                        placeholder: inputPlaceholder,
+                        value: inputValue,
+                        onChange: e => setInputValue(e.target.value),
+                        onSubmit: inputSubmit,
+                        disabled: inputDisabled,
+                        containerClassName: phase === 'building' ? 'rounded-t-none' : undefined,
+                      }}
+                      clarification={clarificationProp}
+                      approval={approvalProp}
+                      footerAddon={phase === 'building' ? (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={springs.interactive}
+                        >
+                          <TaskList
+                            items={IMPLEMENTATION_TASKS}
+                            completedCount={taskProgress}
+                            isActive
+                            updatedAt="Updated just now"
+                            surface="shadow-border"
+                            className="rounded-b-none"
+                          />
+                        </motion.div>
+                      ) : undefined}
                     >
-                      {item.id === streamingId ? (
-                        <StreamingChatMessage
-                          content={item.content}
-                          onComplete={clearStreamingId}
+                      <ChatThread className="flex-1 min-h-0">
+                        {items.map(item => {
+                          if (item.kind === 'assistant-text') {
+                            return (
+                              <motion.div
+                                key={item.id}
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={springs.interactive}
+                              >
+                                {item.id === streamingId ? (
+                                  <StreamingChatMessage content={item.content} onComplete={clearStreamingId} />
+                                ) : (
+                                  <ChatMessage content={item.content} />
+                                )}
+                              </motion.div>
+                            );
+                          }
+                          if (item.kind === 'user-bubble') {
+                            return (
+                              <motion.div
+                                key={item.id}
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={springs.interactive}
+                              >
+                                <ChatBubble>
+                                  <div className="[&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:font-semibold">
+                                    <ReactMarkdown>{item.content}</ReactMarkdown>
+                                  </div>
+                                </ChatBubble>
+                              </motion.div>
+                            );
+                          }
+                          if (item.kind === 'typing') {
+                            return (
+                              <motion.div
+                                key={item.id}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                <Thinking textScramble />
+                              </motion.div>
+                            );
+                          }
+                          if (item.kind === 'task-list') {
+                            return (
+                              <motion.div
+                                key={item.id}
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={springs.interactive}
+                              >
+                                <TaskList
+                                  items={item.items}
+                                  completedCount={item.completedCount}
+                                  defaultExpanded={false}
+                                  surface="shadow-border"
+                                />
+                              </motion.div>
+                            );
+                          }
+                          return null;
+                        })}
+                      </ChatThread>
+                    </ChatPanel>
+                  </div>
+
+                  {/* ── Artifact panel — slides in on first artifact ── */}
+                  <AnimatePresence>
+                    {artifacts.length > 0 && (
+                      <motion.div
+                        className="flex flex-col flex-1 min-w-0 min-h-0"
+                        initial={{ opacity: 0, x: 24 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 24 }}
+                        transition={springs.interactive}
+                      >
+                        <ArtifactSegmentedControl
+                          artifacts={artifacts}
+                          activeId={activeArtifactId}
+                          onSelect={setActiveArtifactId}
                         />
-                      ) : (
-                        <ChatMessage content={item.content} />
-                      )}
-                    </motion.div>
-                  );
-                }
-                if (item.kind === 'user-bubble') {
-                  return (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={springs.interactive}
-                    >
-                      <ChatBubble>
-                        <div className="[&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:[font-weight:var(--font-weight-semibold)]">
-                          <ReactMarkdown>{item.content}</ReactMarkdown>
-                        </div>
-                      </ChatBubble>
-                    </motion.div>
-                  );
-                }
-                if (item.kind === 'typing') {
-                  return (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Thinking textScramble />
-                    </motion.div>
-                  );
-                }
-                return null;
-              })}
-            </ChatThread>
-          </ChatPanel>
-          </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
-          {/* Artifact side — slides in when first artifact is generated */}
-          <AnimatePresence>
-            {artifacts.length > 0 && (
-              <motion.div
-                className="flex flex-col flex-1 min-w-0 min-h-0"
-                initial={{ opacity: 0, x: 24 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 24 }}
-                transition={springs.interactive}
-              >
-                <ArtifactSegmentedControl
-                  artifacts={artifacts}
-                  activeId={activeArtifactId}
-                  onSelect={setActiveArtifactId}
-                />
+                </main>
               </motion.div>
+
             )}
           </AnimatePresence>
-        </main>
+        </div>
       </div>
-    </div>
+    </LayoutGroup>
   );
 }

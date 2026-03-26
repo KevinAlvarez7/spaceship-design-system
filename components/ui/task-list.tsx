@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle2, Loader2, ChevronDown, ChevronRight, ClipboardCheck } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
+import * as ProgressPrimitive from '@radix-ui/react-progress';
 import { cn } from '@/lib/utils';
 import { springs } from '@/tokens';
 
@@ -61,58 +63,66 @@ export function TaskList({
       className={cn(taskListVariants({ surface }), className)}
       {...props}
     >
-      {/* ── Header ── */}
-      <button
-        type="button"
-        onClick={() => setExpanded(v => !v)}
-        className="relative flex items-center justify-between px-4 py-3 overflow-hidden bg-(--bg-surface-base) border-b border-(--bg-surface-secondary) cursor-pointer w-full text-left"
-      >
-        {/* Progress fill — absolute, behind content; scaleX from left (compositor-only) */}
-        <span
-          className="absolute inset-y-0 left-0 w-full bg-(--bg-surface-success-base) transition-transform duration-500 ease-out overflow-hidden origin-left"
-          style={{ transform: `scaleX(${progressPct / 100})` }}
-          aria-hidden
-        >
-          {!disableMotion && progressPct > 0 && (
-            <motion.span
-              className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent)]"
-              animate={{ x: ['-100%', '100%'] }}
-              transition={{ duration: 1.5, ease: 'linear', repeat: Infinity, repeatDelay: 0.75 }}
-              style={{ willChange: 'transform' }}
-            />
-          )}
-        </span>
-
-        {/* Left: icon + count */}
-        <span className="relative z-10 flex items-center gap-2">
-          <ClipboardCheck className="h-5 w-5 shrink-0 text-(--text-primary)" />
-          <span className="font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-primary)">
-            {completedCount}/{items.length} tasks completed
-          </span>
-        </span>
-
-        {/* Right: timestamp + chevron */}
-        <span className="relative z-10 flex items-center gap-2 shrink-0">
-          {updatedAt && (
-            <span className="font-sans [font-size:var(--font-size-xs)] [font-weight:var(--font-weight-semibold)] text-(--text-tertiary)">
-              {updatedAt}
-            </span>
-          )}
-          <ChevronIcon className="h-4 w-4 text-(--text-tertiary)" />
-        </span>
-      </button>
-
-      {/* ── Body ── */}
-      <AnimatePresence initial={false}>
-        {expanded && (
-          <motion.div
-            key="body"
-            initial={disableMotion ? false : { opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
-            animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
-            exit={disableMotion ? undefined : { opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
-            transition={springs.interactive}
-            className="bg-(--bg-surface-primary)"
+      <CollapsiblePrimitive.Root open={expanded} onOpenChange={setExpanded}>
+        {/* ── Header ── */}
+        <CollapsiblePrimitive.Trigger asChild>
+          <button
+            type="button"
+            className="relative flex items-center justify-between px-4 py-3 overflow-hidden bg-(--bg-surface-base) border-b border-(--bg-surface-secondary) cursor-pointer w-full text-left"
           >
+            {/* Progress fill — absolute, behind content; scaleX from left (compositor-only) */}
+            <ProgressPrimitive.Root
+              value={progressPct}
+              max={100}
+              className="absolute inset-y-0 left-0 w-full overflow-hidden"
+            >
+              <ProgressPrimitive.Indicator
+                className="h-full bg-(--bg-surface-success-base) transition-transform duration-500 ease-out origin-left"
+                style={{ transform: `scaleX(${progressPct / 100})` }}
+              >
+                {!disableMotion && progressPct > 0 && (
+                  <motion.span
+                    className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent)]"
+                    animate={{ x: ['-100%', '100%'] }}
+                    transition={{ duration: 1.5, ease: 'linear', repeat: Infinity, repeatDelay: 0.75 }}
+                    style={{ willChange: 'transform' }}
+                  />
+                )}
+              </ProgressPrimitive.Indicator>
+            </ProgressPrimitive.Root>
+
+            {/* Left: icon + count */}
+            <span className="relative z-10 flex items-center gap-2">
+              <ClipboardCheck className="h-5 w-5 shrink-0 text-(--text-primary)" />
+              <span className="font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-primary)">
+                {completedCount}/{items.length} tasks completed
+              </span>
+            </span>
+
+            {/* Right: timestamp + chevron */}
+            <span className="relative z-10 flex items-center gap-2 shrink-0">
+              {updatedAt && (
+                <span className="font-sans [font-size:var(--font-size-xs)] [font-weight:var(--font-weight-semibold)] text-(--text-tertiary)">
+                  {updatedAt}
+                </span>
+              )}
+              <ChevronIcon className="h-4 w-4 text-(--text-tertiary)" />
+            </span>
+          </button>
+        </CollapsiblePrimitive.Trigger>
+
+        {/* ── Body ── */}
+        <CollapsiblePrimitive.Content forceMount>
+          <AnimatePresence initial={false}>
+            {expanded && (
+              <motion.div
+                key="body"
+                initial={disableMotion ? false : { opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
+                animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
+                exit={disableMotion ? undefined : { opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
+                transition={springs.interactive}
+                className="bg-(--bg-surface-primary)"
+              >
             <ol className="flex flex-col gap-3 px-4 py-4 list-none">
               {items.map((task, i) => {
                 const isCompleted  = i < completedCount;
@@ -167,9 +177,11 @@ export function TaskList({
                 );
               })}
             </ol>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </CollapsiblePrimitive.Content>
+      </CollapsiblePrimitive.Root>
     </div>
   );
 }

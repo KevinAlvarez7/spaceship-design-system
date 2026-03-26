@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode, useRef, useEffect, Children } from 'react';
+import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import { cn } from '@/lib/utils';
 
 export interface ChatThreadProps {
@@ -24,16 +25,17 @@ export function ChatThread({ children, className }: ChatThreadProps) {
   }, [lastChildKey]);
 
   return (
-    <div
-      className={cn(
-        'flex flex-col gap-3',
-        'overflow-y-auto',
-        'px-4 pb-3 pt-5',
-        className
-      )}
-    >
-      {children}
-      <div ref={bottomRef} aria-hidden="true" />
-    </div>
+    <ScrollAreaPrimitive.Root className={cn('overflow-hidden', className)}>
+      <ScrollAreaPrimitive.Viewport className="h-full w-full flex flex-col gap-3 px-4 pb-3 pt-5">
+        {children}
+        <div ref={bottomRef} aria-hidden="true" />
+      </ScrollAreaPrimitive.Viewport>
+      <ScrollAreaPrimitive.Scrollbar
+        orientation="vertical"
+        className="flex w-2 touch-none select-none transition-colors px-0.5 py-2"
+      >
+        <ScrollAreaPrimitive.Thumb className="relative flex-1 rounded-full bg-(--bg-surface-tertiary)" />
+      </ScrollAreaPrimitive.Scrollbar>
+    </ScrollAreaPrimitive.Root>
   );
 }

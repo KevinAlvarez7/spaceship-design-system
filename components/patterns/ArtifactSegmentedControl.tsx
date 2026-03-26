@@ -63,11 +63,11 @@ export function ArtifactSegmentedControl({
 
   const activeActions = activeArtifact?.type === 'prototype' ? (
     <>
-      <Button variant="secondary" surface="default" size="icon-sm" leadingIcon={<RefreshCw />} onClick={onRefresh} />
-      <Button variant="success" surface="default" size="sm" trailingIcon={<Share2 />} onClick={onOpenInNewTab}>Share</Button>
+      <Button variant="secondary" size="icon-sm" leadingIcon={<RefreshCw />} onClick={onRefresh} />
+      <Button variant="success" size="sm" trailingIcon={<Share2 />} onClick={onOpenInNewTab}>Share</Button>
     </>
   ) : (
-    <Button variant="secondary" surface="default" size="icon-sm" leadingIcon={<Copy />} />
+    <Button variant="secondary" size="icon-sm" leadingIcon={<Copy />} />
   );
 
   return (

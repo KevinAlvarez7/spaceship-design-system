@@ -1,7 +1,8 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { CheckCircle2, AlertCircle, Loader2, GraduationCap, TriangleAlert, XCircle } from 'lucide-react';
+import { Dialog, DialogContent } from '@/components/shadcn/dialog';
 import {
   graduateComponent,
   verifyGraduation,
@@ -28,29 +29,7 @@ interface GraduateDialogProps {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function GraduateDialog({ open, params, onClose }: GraduateDialogProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const [state, setState] = useState<DialogState>({ phase: 'confirm' });
-
-  // Control native <dialog> imperatively
-  // State reset (back to 'confirm') is handled externally via key prop — no setState needed here.
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (open) {
-      if (!dialog.open) dialog.showModal();
-    } else {
-      if (dialog.open) dialog.close();
-    }
-  }, [open]);
-
-  // Sync native dialog close (Escape key) back to parent
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    const handleClose = () => onClose();
-    dialog.addEventListener('close', handleClose);
-    return () => dialog.removeEventListener('close', handleClose);
-  }, [onClose]);
 
   async function handleGraduate() {
     setState({ phase: 'loading' });
@@ -82,14 +61,8 @@ export function GraduateDialog({ open, params, onClose }: GraduateDialogProps) {
   );
 
   return (
-    <dialog
-      ref={dialogRef}
-      className="m-auto w-full max-w-lg rounded-xl border border-zinc-200 bg-white p-0 shadow-2xl backdrop:bg-black/40"
-      onClick={(e) => {
-        // Close on backdrop click (target is the <dialog> element itself)
-        if (e.target === dialogRef.current) onClose();
-      }}
-    >
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogContent className="p-0 gap-0 rounded-xl border-zinc-200 shadow-2xl [&>button:last-child]:hidden">
       <div className="p-6">
         {/* ── Confirm ─────────────────────────────────────────────────────── */}
         {state.phase === 'confirm' && (
@@ -327,6 +300,7 @@ export function GraduateDialog({ open, params, onClose }: GraduateDialogProps) {
           </>
         )}
       </div>
-    </dialog>
+      </DialogContent>
+    </Dialog>
   );
 }

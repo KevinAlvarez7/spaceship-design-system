@@ -5,8 +5,8 @@ export { ShareableLink } from './ShareableLink';
 export { ArtifactSegmentedControl } from './ArtifactSegmentedControl';
 export { ArtifactContentRenderer } from './ArtifactContentRenderer';
 export { ChatPanel } from './ChatPanel';
-export { FooterSwitch } from './FooterSwitch';
-export type { FooterSwitchProps } from './FooterSwitch';
+export { ChatInputSlot } from './ChatInputSlot';
+export type { ChatInputSlotProps } from './ChatInputSlot';
 export type {
   Artifact,
   ArtifactType,

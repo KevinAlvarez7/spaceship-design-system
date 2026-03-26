@@ -1,6 +1,8 @@
 'use client';
 
 import { createContext, useContext, useState, type ReactNode } from 'react';
+import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
+import * as SeparatorPrimitive from '@radix-ui/react-separator';
 import { motion } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Check } from 'lucide-react';
@@ -49,12 +51,14 @@ export interface CheckboxGroupProps
   disableMotion?: boolean;
   children: ReactNode;
   className?: string;
+  'aria-label'?: string;
 }
 
 export interface CheckboxItemProps {
   value: string;
   disabled?: boolean;
   children: ReactNode;
+  className?: string;
 }
 
 // ─── CheckboxGroup ────────────────────────────────────────────────────────────
@@ -68,6 +72,7 @@ export function CheckboxGroup({
   surface,
   children,
   className,
+  'aria-label': ariaLabel,
 }: CheckboxGroupProps) {
   const [internalValue, setInternalValue] = useState<string[]>(defaultValue);
   const value = controlledValue !== undefined ? controlledValue : internalValue;
@@ -85,10 +90,9 @@ export function CheckboxGroup({
       <div
         className={cn(checkboxGroupVariants({ surface }), className)}
         role="group"
+        aria-label={ariaLabel}
       >
-        {dividers
-          ? splitWithDividers(children)
-          : children}
+        {dividers ? splitWithDividers(children) : children}
       </div>
     </CheckboxGroupContext.Provider>
   );
@@ -96,23 +100,22 @@ export function CheckboxGroup({
 
 // ─── CheckboxItem ─────────────────────────────────────────────────────────────
 
-export function CheckboxItem({ value, disabled = false, children }: CheckboxItemProps) {
+export function CheckboxItem({ value, disabled = false, children, className }: CheckboxItemProps) {
   const { value: groupValue, onToggle, disableMotion } = useCheckboxGroupContext();
   const isSelected = groupValue.includes(value);
 
   return (
-    <button
-      type="button"
-      role="checkbox"
-      aria-checked={isSelected}
+    <CheckboxPrimitive.Root
+      checked={isSelected}
+      onCheckedChange={() => onToggle(value)}
       disabled={disabled}
-      onClick={() => !disabled && onToggle(value)}
       className={cn(
         'flex items-center gap-3 w-full px-4 py-3 text-left rounded-lg',
         'transition-colors duration-(--duration-fast) ease-(--ease-in-out)',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--border-input-focus)',
         'disabled:pointer-events-none disabled:opacity-50',
         'hover:bg-(--bg-surface-secondary)',
+        className,
       )}
     >
       {/* Checkbox indicator */}
@@ -125,8 +128,8 @@ export function CheckboxItem({ value, disabled = false, children }: CheckboxItem
             : 'bg-(--bg-surface-base) shadow-(--shadow-border)',
         )}
       >
-        {isSelected && (
-          disableMotion ? (
+        <CheckboxPrimitive.Indicator asChild>
+          {disableMotion ? (
             <Check className="h-3 w-3 text-(--text-inverse)" strokeWidth={3} />
           ) : (
             <motion.span
@@ -138,19 +141,19 @@ export function CheckboxItem({ value, disabled = false, children }: CheckboxItem
             >
               <Check className="h-3 w-3 text-(--text-inverse)" strokeWidth={3} />
             </motion.span>
-          )
-        )}
+          )}
+        </CheckboxPrimitive.Indicator>
       </span>
 
       {children}
-    </button>
+    </CheckboxPrimitive.Root>
   );
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function Divider() {
-  return <div className="mx-4 h-px bg-(--bg-surface-secondary)" />;
+  return <SeparatorPrimitive.Root className="mx-4 h-px bg-(--bg-surface-secondary)" />;
 }
 
 function splitWithDividers(children: ReactNode): ReactNode {

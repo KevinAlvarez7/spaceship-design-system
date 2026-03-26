@@ -1,20 +1,20 @@
 'use client';
 
 import React, { createContext, useContext, useState, type ReactNode } from 'react';
+import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { motion, LayoutGroup, AnimatePresence } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
-
-const SPRING = { type: 'spring', stiffness: 200, damping: 24 } as const;
+import { springs, staggers } from '@/tokens';
 
 /** Container orchestrates stagger timing for child action buttons. */
 const actionsContainerVariants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.04, delayChildren: 0.02 },
+    transition: { staggerChildren: staggers.actions.staggerChildren, delayChildren: staggers.actions.delayChildren },
   },
   exit: {
-    transition: { staggerChildren: 0.03, staggerDirection: -1 },
+    transition: { staggerChildren: staggers.actions.exitStagger, staggerDirection: -1 },
   },
 };
 
@@ -29,7 +29,6 @@ const actionButtonVariants = {
 
 type FolderTabsContextValue = {
   value: string;
-  onChange: (value: string) => void;
   disableMotion: boolean;
   activeActions: ReactNode;
 };
@@ -96,7 +95,6 @@ export function FolderTabs({
   defaultValue = '',
   onChange,
   disableMotion = false,
-  layoutId: _layoutId,
   surface,
   activeActions,
   children,
@@ -111,15 +109,19 @@ export function FolderTabs({
   }
 
   return (
-    <FolderTabsContext.Provider value={{ value, onChange: handleChange, disableMotion, activeActions }}>
-      <LayoutGroup>
-        <div
-          role="tablist"
-          className={cn(folderTabsVariants({ surface }), className)}
-        >
-          {children}
-        </div>
-      </LayoutGroup>
+    <FolderTabsContext.Provider value={{ value, disableMotion, activeActions }}>
+      <TabsPrimitive.Root
+        value={value}
+        onValueChange={handleChange}
+      >
+        <LayoutGroup>
+          <TabsPrimitive.List
+            className={cn(folderTabsVariants({ surface }), className)}
+          >
+            {children}
+          </TabsPrimitive.List>
+        </LayoutGroup>
+      </TabsPrimitive.Root>
     </FolderTabsContext.Provider>
   );
 }
@@ -133,7 +135,7 @@ export function FolderTab({
   children,
   className,
 }: FolderTabProps) {
-  const { value: groupValue, onChange, disableMotion, activeActions } = useFolderTabsContext();
+  const { value: groupValue, disableMotion, activeActions } = useFolderTabsContext();
   const isActive = groupValue === value;
 
   const wrapperClasses = cn(
@@ -183,7 +185,7 @@ export function FolderTab({
             <motion.span
               key={index}
               variants={actionButtonVariants}
-              transition={SPRING}
+              transition={springs.layout}
               style={{ willChange: 'transform' }}
             >
               {child}
@@ -194,21 +196,18 @@ export function FolderTab({
     </AnimatePresence>
   );
 
+  // The wrapper div handles layout animation and contains both the Radix Trigger
+  // (the clickable button) and the actionsContent slot (rendered alongside, not inside).
   const content = (
     <>
-      <button
-        type="button"
-        role="tab"
-        aria-selected={isActive}
-        disabled={disabled}
-        onClick={() => !disabled && onChange(value)}
-        className={buttonClasses}
-      >
-        <motion.span layout="position" className="flex items-center gap-1.5 px-2">
-          <IconSlot icon={leadingIcon} />
-          {children}
-        </motion.span>
-      </button>
+      <TabsPrimitive.Trigger value={value} disabled={disabled} asChild>
+        <button type="button" className={buttonClasses}>
+          <motion.span layout="position" className="flex items-center gap-1.5 px-2">
+            <IconSlot icon={leadingIcon} />
+            {children}
+          </motion.span>
+        </button>
+      </TabsPrimitive.Trigger>
       {actionsContent}
     </>
   );
@@ -220,7 +219,7 @@ export function FolderTab({
   return (
     <motion.div
       layout
-      transition={{ layout: SPRING }}
+      transition={{ layout: springs.layout }}
       className={cn(wrapperClasses, isActive && 'flex-1')}
       style={{ willChange: 'transform' }}
     >

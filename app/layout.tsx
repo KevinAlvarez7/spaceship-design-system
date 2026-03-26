@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Zilla_Slab, Outfit, JetBrains_Mono } from 'next/font/google';
 import { ViewerShell } from '@/components/viewer/ViewerShell';
+import { buildNav } from '@/lib/viewer-registry';
+import { discoverComponentEntries } from '@/lib/discover-components';
 
 const zillaSlab = Zilla_Slab({
   subsets: ['latin'],
@@ -30,10 +32,11 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const nav = buildNav(discoverComponentEntries());
   return (
     <html lang="en" className={`${zillaSlab.variable} ${outfit.variable} ${jetbrainsMono.variable}`}>
       <body suppressHydrationWarning className="flex h-screen overflow-hidden bg-white">
-        <ViewerShell>{children}</ViewerShell>
+        <ViewerShell nav={nav}>{children}</ViewerShell>
       </body>
     </html>
   );

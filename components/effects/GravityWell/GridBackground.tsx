@@ -34,7 +34,7 @@ function resolveColor(value: string, element: Element): string {
 
 // ── Color ring helpers ────────────────────────────────────────────────────────
 
-/** Linear interpolation between two values. */
+
 function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;
 }
@@ -89,7 +89,7 @@ function toRgba(r: number, g: number, b: number, a: number): string {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function GridBackground({
-  background = '#ffffff',
+  background = 'var(--bg-surface-base)',
   dotColor = 'var(--effect-gravity-dot, rgba(161, 161, 170, 0.32))',
   staticGridColor = 'rgba(147, 197, 230, 0.38)',
   showDots = false,

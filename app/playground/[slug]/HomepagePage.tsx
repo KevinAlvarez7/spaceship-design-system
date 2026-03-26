@@ -24,20 +24,8 @@ export function HomepagePage() {
 
         {/* Grid background — static canvas, always underneath */}
         <div className="absolute inset-0">
-          <GridBackground background="var(--bg-surface-base)" />
+          <GridBackground />
         </div>
-
-        {/* Full-rectangle fade cover — opacity 0→1, no visible circle shape */}
-        <AnimatePresence>
-          {phase === 'chat' && (
-            <motion.div
-              className="absolute inset-0 bg-(--bg-surface-primary)"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-            />
-          )}
-        </AnimatePresence>
 
         {/* Content trees — ChatInputBox shared via layoutId */}
         <AnimatePresence mode="popLayout">
@@ -70,17 +58,17 @@ export function HomepagePage() {
           ) : (
             <motion.div
               key="chat"
-              className="absolute inset-0 flex flex-col items-center p-4 gap-2"
+              className="absolute inset-0 flex flex-col items-center justify-end p-4 gap-2"
             >
-              <motion.p
-                className="w-(--sizing-chat-default) [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-secondary) shrink-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3, delay: 0.35 }}
-              >
-                New Chat
-              </motion.p>
-              <div className="flex flex-col flex-1 w-(--sizing-chat-default) min-h-0 overflow-y-auto gap-3 py-2">
+              <div className="flex flex-col w-(--sizing-chat-default) min-h-0 overflow-y-auto gap-3 py-2">
+                <motion.p
+                  className="[font-size:var(--font-size-sm)] font-semibold text-(--text-secondary)"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, delay: 0.35 }}
+                >
+                  New Chat
+                </motion.p>
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -92,7 +80,7 @@ export function HomepagePage() {
               <div className="w-(--sizing-chat-default) shrink-0">
                 <motion.div layoutId="chat-input" transition={springs.gentle}>
                   <ChatInputBox
-                    size="md"
+                    size="sm"
                     placeholder="Continue the conversation..."
                   />
                 </motion.div>

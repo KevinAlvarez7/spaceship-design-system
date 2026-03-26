@@ -25,18 +25,14 @@ export function PreviewLink({
         </p>
         <div className="flex items-center gap-3">
           <Button
-            variant="secondary"
-            surface="default"
-            size="sm"
+            variant="secondary"            size="sm"
             trailingIcon={<RefreshCw />}
             onClick={onRefresh}
           >
             Refresh
           </Button>
           <Button
-            variant="secondary"
-            surface="default"
-            size="sm"
+            variant="secondary"            size="sm"
             trailingIcon={<ExternalLink />}
             onClick={onOpenInNewTab}
           >

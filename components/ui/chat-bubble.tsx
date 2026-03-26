@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode } from 'react';
+import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
@@ -27,16 +28,18 @@ const chatBubbleVariants = cva(
 );
 
 export interface ChatBubbleProps extends VariantProps<typeof chatBubbleVariants> {
+  asChild?: boolean;
   children: ReactNode;
   className?: string;
 }
 
-export function ChatBubble({ children, surface, className }: ChatBubbleProps) {
+export function ChatBubble({ children, surface, className, asChild = false }: ChatBubbleProps) {
+  const Comp = asChild ? Slot : 'div';
   return (
     <div className="flex w-full justify-end pl-16">
-      <div className={cn(chatBubbleVariants({ surface }), className)}>
+      <Comp className={cn(chatBubbleVariants({ surface }), className)}>
         {children}
-      </div>
+      </Comp>
     </div>
   );
 }

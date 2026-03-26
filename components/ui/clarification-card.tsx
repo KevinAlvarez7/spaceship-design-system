@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
+import * as SeparatorPrimitive from '@radix-ui/react-separator';
 import { cva, type VariantProps } from 'class-variance-authority';
 import {
   ChevronLeft,
@@ -15,11 +16,22 @@ import { Button } from './button';
 import { RadioGroup, RadioItem } from './radio-group';
 import { CheckboxGroup, CheckboxItem } from './checkbox-group';
 import { SortableList } from './sortable-list';
+import { Tag } from './tag';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type ClarificationSingleSelect = { type: 'single'; label: string; options: string[]; freeText?: boolean };
-export type ClarificationMultiSelect  = { type: 'multi';  label: string; options: string[]; freeText?: boolean };
+export type RiskLevel = 'safe' | 'low' | 'medium' | 'high';
+
+export interface OptionMetadata {
+  timeEstimate?: string;
+  riskLevel?: RiskLevel;
+}
+
+/** A clarification option — either a plain string or an object with metadata. */
+export type ClarificationOption = string | { label: string; meta?: OptionMetadata };
+
+export type ClarificationSingleSelect = { type: 'single'; label: string; options: ClarificationOption[]; freeText?: boolean };
+export type ClarificationMultiSelect  = { type: 'multi';  label: string; options: ClarificationOption[]; freeText?: boolean };
 export type ClarificationRankPriorities = { type: 'rank'; label: string; items: string[] };
 export type ClarificationQuestion =
   | ClarificationSingleSelect
@@ -30,7 +42,7 @@ export type ClarificationAnswers = Record<number, string | string[]>;
 // ─── CVA ──────────────────────────────────────────────────────────────────────
 
 export const clarificationCardVariants = cva(
-  ['flex flex-col', 'w-full', 'min-w-(--sizing-chat-min)', 'max-w-(--sizing-chat-max)', 'font-sans', 'bg-(--bg-surface-base)', 'rounded-xl overflow-hidden'],
+  ['flex flex-col', 'w-full', 'min-w-(--sizing-chat-min)', 'max-w-(--sizing-chat-max)', 'font-sans', 'bg-(--bg-surface-base)', 'rounded-lg overflow-hidden'],
   {
     variants: {
       surface: {
@@ -53,7 +65,39 @@ export interface ClarificationCardProps
   className?: string;
 }
 
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const RISK_TAG_VARIANT: Record<RiskLevel, 'success' | 'warning' | 'error'> = {
+  safe:   'success',
+  low:    'success',
+  medium: 'warning',
+  high:   'error',
+};
+
 // ─── Internal helpers ─────────────────────────────────────────────────────────
+
+/** Extracts the display label from a ClarificationOption (string or object). */
+function getOptionLabel(opt: ClarificationOption): string {
+  return typeof opt === 'string' ? opt : opt.label;
+}
+
+/** Renders inline metadata badges (time estimate + risk level) for rich options. */
+function OptionMeta({ opt }: { opt: ClarificationOption }) {
+  if (typeof opt === 'string' || !opt.meta) return null;
+  const { timeEstimate, riskLevel } = opt.meta;
+  return (
+    <span className="flex items-center gap-1 shrink-0">
+      {timeEstimate && (
+        <Tag variant="neutral" size="sm">{timeEstimate}</Tag>
+      )}
+      {riskLevel && (
+        <Tag variant={RISK_TAG_VARIANT[riskLevel]} size="sm">
+          {riskLevel === 'safe' ? 'Safe' : riskLevel === 'low' ? 'Low risk' : riskLevel === 'medium' ? 'Medium risk' : 'High risk'}
+        </Tag>
+      )}
+    </span>
+  );
+}
 
 function getRankItems(
   answers: ClarificationAnswers,
@@ -90,55 +134,6 @@ function NumberBadge({ n }: { n: number }) {
   );
 }
 
-// ─── Collapsed summary ────────────────────────────────────────────────────────
-
-function CollapsedSummary({
-  questions,
-  answers,
-  disableMotion,
-}: {
-  questions: ClarificationQuestion[];
-  answers: ClarificationAnswers;
-  disableMotion: boolean;
-}) {
-  const content = (
-    <div className="flex flex-col gap-3 px-4 py-4">
-      {questions.map((q, i) => {
-        const ans = answers[i];
-        const displayValue =
-          ans === undefined
-            ? '(skipped)'
-            : Array.isArray(ans)
-            ? ans.join(', ')
-            : ans;
-        return (
-          <div key={i} className="flex flex-col gap-0.5">
-            <span className="[font-size:var(--font-size-xs)] text-(--text-tertiary)">
-              {q.label}
-            </span>
-            <span className="[font-size:var(--font-size-sm)] text-(--text-primary)">
-              {displayValue}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-
-  if (disableMotion) return content;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.97 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={springs.interactive}
-      style={{ willChange: 'transform' }}
-    >
-      {content}
-    </motion.div>
-  );
-}
-
 // ─── ClarificationCard ────────────────────────────────────────────────────────
 
 export function ClarificationCard({
@@ -151,9 +146,7 @@ export function ClarificationCard({
 }: ClarificationCardProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<ClarificationAnswers>({});
-  const [submitted, setSubmitted] = useState(false);
   const [maxVisited, setMaxVisited] = useState(0);
-  const [direction, setDirection] = useState<1 | -1>(1);
   const [freeTextValue, setFreeTextValue] = useState('');
 
   const total = questions.length;
@@ -168,7 +161,6 @@ export function ClarificationCard({
     if (currentIndex < total - 1) {
       advance(1);
     } else {
-      setSubmitted(true);
       onSubmit?.(nextAnswers);
     }
   }
@@ -184,7 +176,6 @@ export function ClarificationCard({
   // ── Navigation ─────────────────────────────────────────────────────────────
 
   function advance(dir: 1 | -1) {
-    setDirection(dir);
     const next = currentIndex + dir;
     setCurrentIndex(next);
     setFreeTextValue('');
@@ -195,7 +186,6 @@ export function ClarificationCard({
     if (currentIndex < total - 1) {
       advance(1);
     } else {
-      setSubmitted(true);
       onSubmit?.(answers);
     }
   }
@@ -204,7 +194,6 @@ export function ClarificationCard({
     if (currentIndex < total - 1) {
       advance(1);
     } else {
-      setSubmitted(true);
       onSubmit?.(answers);
     }
   }
@@ -230,18 +219,22 @@ export function ClarificationCard({
           className="rounded-none"
           disableMotion={disableMotion}
         >
-          {question.options.map((option, i) => (
-            <RadioItem key={option} value={option}>
-              <NumberBadge n={i + 1} />
-              <span className="flex-1 [font-size:var(--font-size-sm)] text-(--text-primary)">
-                {option}
-              </span>
-              <ArrowRight
-                className="h-4 w-4 text-(--text-tertiary) shrink-0 opacity-0 group-hover/radio:opacity-100 transition-opacity duration-(--duration-fast)"
-                strokeWidth={2}
-              />
-            </RadioItem>
-          ))}
+          {question.options.map((option, i) => {
+            const label = getOptionLabel(option);
+            return (
+              <RadioItem key={label} value={label}>
+                <NumberBadge n={i + 1} />
+                <span className="flex-1 [font-size:var(--font-size-sm)] text-(--text-primary)">
+                  {label}
+                </span>
+                <OptionMeta opt={option} />
+                <ArrowRight
+                  className="h-4 w-4 text-(--text-tertiary) shrink-0 opacity-0 group-hover/radio:opacity-100 transition-opacity duration-(--duration-fast)"
+                  strokeWidth={2}
+                />
+              </RadioItem>
+            );
+          })}
         </RadioGroup>
       );
     }
@@ -258,20 +251,25 @@ export function ClarificationCard({
             className="rounded-none"
             disableMotion={disableMotion}
           >
-            {question.options.map(option => (
-              <CheckboxItem key={option} value={option}>
-                <span className="flex-1 [font-size:var(--font-size-sm)] text-(--text-primary)">
-                  {option}
-                </span>
-              </CheckboxItem>
-            ))}
+            {question.options.map(option => {
+              const label = getOptionLabel(option);
+              return (
+                <CheckboxItem key={label} value={label}>
+                  <span className="flex-1 [font-size:var(--font-size-sm)] text-(--text-primary)">
+                    {label}
+                  </span>
+                  <OptionMeta opt={option} />
+                </CheckboxItem>
+              );
+            })}
           </CheckboxGroup>
           {question.freeText && (
             <>
-              <div className="mx-4 h-px bg-(--bg-surface-secondary)" />
+              <SeparatorPrimitive.Root className="mx-4 h-px bg-(--bg-surface-secondary)" />
               <div className="flex items-center gap-3 w-full px-4 py-2 rounded-lg">
                 <input
                   type="text"
+                  aria-label="Add your own option"
                   placeholder="Add your own..."
                   value={freeTextValue}
                   onChange={e => setFreeTextValue(e.target.value)}
@@ -305,7 +303,7 @@ export function ClarificationCard({
               </div>
             </>
           )}
-          <div className="h-px bg-(--bg-surface-tertiary)" />
+          <SeparatorPrimitive.Root className="h-px bg-(--bg-surface-tertiary)" />
           <div className="p-2">
             <span className="[font-size:var(--font-size-xs)] text-(--text-tertiary)">
               {count === 0 ? 'None selected' : `${count} selected`}
@@ -333,7 +331,7 @@ export function ClarificationCard({
               </>
             )}
           />
-          <div className="h-px bg-(--bg-surface-tertiary)" />
+          <SeparatorPrimitive.Root className="h-px bg-(--bg-surface-tertiary)" />
           <div className="p-2">
             <span className="[font-size:var(--font-size-xs)] text-(--text-tertiary)">
               Drag to re-order your priorities
@@ -345,28 +343,6 @@ export function ClarificationCard({
 
     return null;
   }
-
-  // ── Submitted state ────────────────────────────────────────────────────────
-
-  if (submitted) {
-    return (
-      <div className={cn(clarificationCardVariants({ surface }), className)}>
-        <CollapsedSummary
-          questions={questions}
-          answers={answers}
-          disableMotion={disableMotion}
-        />
-      </div>
-    );
-  }
-
-  // ── Motion variants ────────────────────────────────────────────────────────
-
-  const slideVariants = {
-    enter:  (dir: number) => ({ opacity: 0, x: dir * 16 }),
-    center:                  { opacity: 1, x: 0 },
-    exit:   (dir: number) => ({ opacity: 0, x: dir * -16 }),
-  };
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -395,27 +371,11 @@ export function ClarificationCard({
       {/* Question content — layout FLIP for height morphing between questions (B-tier) */}
       <motion.div
         layout
-        transition={{ layout: disableMotion ? { duration: 0 } : springs.interactive }}
+        transition={{ layout: disableMotion ? { duration: 0 } : springs.gentle }}
         className="relative overflow-hidden"
       >
         <div className="p-2">
-          {disableMotion ? (
-            renderQuestion()
-          ) : (
-            <AnimatePresence mode="sync" custom={direction}>
-              <motion.div
-                key={currentIndex}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={springs.interactive}
-              >
-                {renderQuestion()}
-              </motion.div>
-            </AnimatePresence>
-          )}
+          {renderQuestion()}
         </div>
       </motion.div>
 
@@ -424,6 +384,7 @@ export function ClarificationCard({
         <div className="flex items-center gap-2 px-4 py-3">
           <input
             type="text"
+            aria-label="Type your answer"
             placeholder="Type your answer..."
             value={freeTextValue}
             onChange={e => setFreeTextValue(e.target.value)}

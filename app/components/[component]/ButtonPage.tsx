@@ -7,7 +7,7 @@ import { Plus, ChevronRight, Search, Trash2, ArrowRight, Mail, X, Settings, Down
 const PROPS: PropRow[] = [
   { name: 'variant',       type: '"primary" | "secondary" | "ghost" | "success" | "destructive"', default: '"primary"',  description: 'Visual style' },
   { name: 'size',          type: '"sm" | "md" | "lg" | "icon-sm" | "icon-md" | "icon-lg"', default: '"md"', description: 'Padding scale (sm/md/lg) or square icon-only size (icon-sm/icon-md/icon-lg).' },
-  { name: 'surface',       type: '"default" | "shadow"',                          default: '"default"',   description: 'Surface treatment: flat or shadow ring' },
+  { name: 'surface',       type: '"flat" | "shadow"',                             default: '"flat"',      description: 'Surface treatment. shadow adds a box-shadow ring — use on grid/dot surfaces and in chat interfaces. flat has no decorative border.' },
   { name: 'icon',          type: 'ReactNode',                                     default: '—',           description: 'Icon for icon-only buttons (size="icon-lg" or "icon-sm"). Exclusive with leadingIcon/trailingIcon.' },
   { name: 'leadingIcon',   type: 'ReactNode',                                     default: '—',           description: 'Icon rendered before children. Auto-sized to match button size.' },
   { name: 'trailingIcon',  type: 'ReactNode',                                     default: '—',           description: 'Icon rendered after children. Auto-sized to match button size.' },
@@ -120,19 +120,31 @@ export function ButtonPage() {
       </section>
 
       <section>
+        <h2 className="text-base font-semibold text-zinc-800 mb-3">Secondary Surface Comparison</h2>
+        <p className="text-sm text-zinc-500 mb-3">Secondary flat is transparent at rest — hover reveals a neutral-100 fill. Secondary shadow carries a white fill with a box-shadow ring. Both are valid de-emphasised action treatments; choose based on the surface they sit on.</p>
+        <Preview label='secondary flat (default) — transparent at rest, hover to see fill'>
+          <Button variant="secondary">Cancel</Button>
+          <Button variant="primary">Continue</Button>
+        </Preview>
+        <Preview label='secondary shadow — white fill + ring'>
+          <Button variant="secondary" surface="shadow">Cancel</Button>
+          <Button variant="primary"   surface="shadow">Continue</Button>
+        </Preview>
+      </section>
+
+      <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Shadow Surface</h2>
+        <p className="text-sm text-zinc-500 mb-3">Box-shadow ring used in chat interfaces and on grid/dot surfaces. Secondary shadow gets a white fill; primary stays brand-colored. Ghost never uses shadow.</p>
         <Preview label='surface="shadow"'>
           <Button variant="primary"     surface="shadow">Primary</Button>
           <Button variant="secondary"   surface="shadow">Secondary</Button>
-          <Button variant="ghost"       surface="shadow">Ghost</Button>
           <Button variant="success"     surface="shadow">Success</Button>
           <Button variant="destructive" surface="shadow">Destructive</Button>
         </Preview>
         <Preview label='surface="shadow" with icons'>
-          <Button variant="primary"    surface="shadow" leadingIcon={<Plus />}>New</Button>
-          <Button variant="secondary"  surface="shadow" trailingIcon={<ArrowRight />}>Continue</Button>
-          <Button size="icon-lg"          surface="shadow" variant="ghost"    icon={<Settings />} aria-label="Settings" />
-          <Button size="icon-lg"          surface="shadow" variant="primary"  icon={<Download />} aria-label="Download" />
+          <Button variant="primary"   surface="shadow" leadingIcon={<Plus />}>New</Button>
+          <Button variant="secondary" surface="shadow" trailingIcon={<ArrowRight />}>Continue</Button>
+          <Button size="icon-lg" surface="shadow" variant="primary" icon={<Download />} aria-label="Download" />
         </Preview>
       </section>
 

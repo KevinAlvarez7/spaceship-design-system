@@ -1,6 +1,8 @@
 'use client';
 
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
+import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
+import * as SeparatorPrimitive from '@radix-ui/react-separator';
 import { motion } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
@@ -9,8 +11,6 @@ import { springs } from '@/tokens';
 // ─── Context ──────────────────────────────────────────────────────────────────
 
 type RadioGroupContextValue = {
-  value: string;
-  onChange: (value: string) => void;
   disableMotion: boolean;
   indicator: 'radio' | 'none';
 };
@@ -50,18 +50,20 @@ export interface RadioGroupProps
   indicator?: 'radio' | 'none';
   children: ReactNode;
   className?: string;
+  'aria-label'?: string;
 }
 
 export interface RadioItemProps {
   value: string;
   disabled?: boolean;
   children: ReactNode;
+  className?: string;
 }
 
 // ─── RadioGroup ───────────────────────────────────────────────────────────────
 
 export function RadioGroup({
-  value: controlledValue,
+  value,
   defaultValue = '',
   onChange,
   dividers = true,
@@ -70,49 +72,41 @@ export function RadioGroup({
   surface,
   children,
   className,
+  'aria-label': ariaLabel,
 }: RadioGroupProps) {
-  const [internalValue, setInternalValue] = useState(defaultValue);
-  const value = controlledValue !== undefined ? controlledValue : internalValue;
-
-  function handleChange(next: string) {
-    if (controlledValue === undefined) setInternalValue(next);
-    onChange?.(next);
-  }
-
   return (
-    <RadioGroupContext.Provider value={{ value, onChange: handleChange, disableMotion, indicator }}>
-      <div
+    <RadioGroupContext.Provider value={{ disableMotion, indicator }}>
+      <RadioGroupPrimitive.Root
+        value={value}
+        defaultValue={defaultValue}
+        onValueChange={onChange}
+        aria-label={ariaLabel}
         className={cn(radioGroupVariants({ surface }), className)}
-        role="radiogroup"
       >
-        {dividers
-          ? splitWithDividers(children)
-          : children}
-      </div>
+        {dividers ? splitWithDividers(children) : children}
+      </RadioGroupPrimitive.Root>
     </RadioGroupContext.Provider>
   );
 }
 
 // ─── RadioItem ────────────────────────────────────────────────────────────────
 
-export function RadioItem({ value, disabled = false, children }: RadioItemProps) {
-  const { value: groupValue, onChange, disableMotion, indicator } = useRadioGroupContext();
-  const isSelected = groupValue === value;
+export function RadioItem({ value, disabled = false, children, className }: RadioItemProps) {
+  const { disableMotion, indicator } = useRadioGroupContext();
 
   return (
-    <button
-      type="button"
-      role="radio"
-      aria-checked={isSelected}
+    <RadioGroupPrimitive.Item
+      value={value}
       disabled={disabled}
-      onClick={() => !disabled && onChange(value)}
       className={cn(
         'group/radio',
         'flex items-center gap-3 w-full px-4 py-3 text-left rounded-lg',
         'transition-colors duration-(--duration-fast) ease-(--ease-in-out)',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--border-input-focus)',
         'disabled:pointer-events-none disabled:opacity-50',
-        isSelected ? 'bg-(--bg-surface-secondary)' : 'hover:bg-(--bg-surface-secondary)',
+        'data-[state=checked]:bg-(--bg-surface-secondary)',
+        'data-[state=unchecked]:hover:bg-(--bg-surface-secondary)',
+        className,
       )}
     >
       {/* Radio indicator */}
@@ -121,13 +115,12 @@ export function RadioItem({ value, disabled = false, children }: RadioItemProps)
           className={cn(
             'flex items-center justify-center shrink-0',
             'w-5 h-5 rounded-full',
-            isSelected
-              ? 'bg-(--bg-interactive-primary-default)'
-              : 'bg-(--bg-surface-base) shadow-(--shadow-border)',
+            'group-data-[state=checked]/radio:bg-(--bg-interactive-primary-default)',
+            'group-data-[state=unchecked]/radio:bg-(--bg-surface-base) group-data-[state=unchecked]/radio:shadow-(--shadow-border)',
           )}
         >
-          {isSelected && (
-            disableMotion ? (
+          <RadioGroupPrimitive.Indicator asChild>
+            {disableMotion ? (
               <span className="w-2 h-2 rounded-full bg-(--text-inverse)" />
             ) : (
               <motion.span
@@ -137,20 +130,20 @@ export function RadioItem({ value, disabled = false, children }: RadioItemProps)
                 transition={springs.interactive}
                 style={{ willChange: 'transform' }}
               />
-            )
-          )}
+            )}
+          </RadioGroupPrimitive.Indicator>
         </span>
       )}
 
       {children}
-    </button>
+    </RadioGroupPrimitive.Item>
   );
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function Divider() {
-  return <div className="mx-4 h-px bg-(--bg-surface-secondary)" />;
+  return <SeparatorPrimitive.Root className="mx-4 h-px bg-(--bg-surface-secondary)" />;
 }
 
 function splitWithDividers(children: ReactNode): ReactNode {

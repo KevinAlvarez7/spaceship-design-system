@@ -1,6 +1,7 @@
 'use client';
 
 import { GripVertical } from 'lucide-react';
+import { RadioGroup, RadioItem, CheckboxGroup, CheckboxItem } from '@/components/ui';
 import {
   DndContext,
   closestCenter,
@@ -181,18 +182,31 @@ export function SingleSelect({
       <p className="[font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-primary)">
         {question.label}
       </p>
-      <div className="flex flex-wrap gap-2">
+      <RadioGroup
+        value={value ?? ''}
+        onChange={onChange}
+        indicator="none"
+        dividers={false}
+        surface="default"
+        className="flex flex-row flex-wrap gap-2 bg-transparent rounded-none overflow-visible"
+      >
         {question.options.map(opt => (
-          <button
+          <RadioItem
             key={opt}
-            type="button"
-            onClick={() => onChange(opt)}
-            className={cn(PILL_BASE, value === opt ? PILL_SELECTED : PILL_UNSELECTED)}
+            value={opt}
+            className={cn(
+              PILL_BASE,
+              'w-auto',
+              PILL_UNSELECTED,
+              'data-[state=checked]:bg-(--bg-interactive-primary-default)',
+              'data-[state=checked]:text-(--text-inverse)',
+              'data-[state=checked]:hover:bg-(--bg-interactive-primary-default)',
+            )}
           >
             {opt}
-          </button>
+          </RadioItem>
         ))}
-      </div>
+      </RadioGroup>
     </div>
   );
 }
@@ -208,27 +222,32 @@ export function MultiSelect({
   value: string[];
   onChange: (v: string[]) => void;
 }) {
-  function toggle(opt: string) {
-    onChange(value.includes(opt) ? value.filter(v => v !== opt) : [...value, opt]);
-  }
-
   return (
     <div className="flex flex-col gap-2">
       <p className="[font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-primary)">
         {question.label}
       </p>
-      <div className="flex flex-wrap gap-2">
+      <CheckboxGroup
+        value={value}
+        onChange={onChange}
+        dividers={false}
+        surface="default"
+        className="flex flex-row flex-wrap gap-2 bg-transparent rounded-none overflow-visible"
+      >
         {question.options.map(opt => (
-          <button
+          <CheckboxItem
             key={opt}
-            type="button"
-            onClick={() => toggle(opt)}
-            className={cn(PILL_BASE, value.includes(opt) ? PILL_SELECTED : PILL_UNSELECTED)}
+            value={opt}
+            className={cn(
+              PILL_BASE,
+              'w-auto',
+              value.includes(opt) ? PILL_SELECTED : PILL_UNSELECTED,
+            )}
           >
             {opt}
-          </button>
+          </CheckboxItem>
         ))}
-      </div>
+      </CheckboxGroup>
     </div>
   );
 }

@@ -52,21 +52,7 @@ export const PAGE_REGISTRY: PageEntry[] = [
   // Typography (standalone page)
   { slug: 'specimens', title: 'Specimens', section: 'Typography', route: 'typography', layout: 'standard' },
 
-  // Components
-  { slug: 'button',           title: 'Button',         section: 'Components', route: 'components', layout: 'standard', graduatedFrom: { playground: 'pg-button', version: 'v1' } },
-  { slug: 'chat-input-box',   title: 'Chat Input Box', section: 'Components', route: 'components', layout: 'standard' },
-  { slug: 'chat-bubble',      title: 'Chat Bubble',    section: 'Components', route: 'components', layout: 'standard' },
-  { slug: 'chat-message',     title: 'Chat Message',   section: 'Components', route: 'components', layout: 'standard' },
-  { slug: 'chat-thread',      title: 'Chat Thread',    section: 'Components', route: 'components', layout: 'standard' },
-  { slug: 'modal',            title: 'Modal',          section: 'Components', route: 'components', layout: 'standard' },
-  { slug: 'tag',              title: 'Tag',            section: 'Components', route: 'components', layout: 'standard' },
-  { slug: 'tab-bar',          title: 'Tab Bar',        section: 'Components', route: 'components', layout: 'standard' },
-  { slug: 'task-list',        title: 'Task List',      section: 'Components', route: 'components', layout: 'standard' },
-  { slug: 'folder-tabs',      title: 'Folder Tabs',    section: 'Components', route: 'components', layout: 'standard' },
-  { slug: 'thinking-dots',    title: 'Thinking Dots',  section: 'Components', route: 'components', layout: 'standard' },
-  { slug: 'thinking',         title: 'Thinking',       section: 'Components', route: 'components', layout: 'standard' },
-
-  // Patterns (confirmed)
+  // Patterns (confirmed) — Components section is auto-discovered at server time
   { slug: 'chat',                       title: 'Chat',                  section: 'Patterns', route: 'patterns', layout: 'standard' },
   { slug: 'preview-panel',              title: 'Preview Panel',         section: 'Patterns', route: 'patterns', layout: 'standard' },
   { slug: 'preview-panel-header',       title: 'Preview Panel Header',  section: 'Patterns', route: 'patterns', layout: 'standard' },
@@ -74,7 +60,7 @@ export const PAGE_REGISTRY: PageEntry[] = [
   { slug: 'shareable-link',             title: 'Shareable Link',        section: 'Patterns', route: 'patterns', layout: 'standard' },
   { slug: 'clarification-card',         title: 'Clarification Card',    section: 'Patterns', route: 'patterns', layout: 'standard' },
   { slug: 'artifact-segmented-control', title: 'Artifact Panel',        section: 'Patterns', route: 'patterns', layout: 'standard' },
-  { slug: 'chat-panel',                 title: 'Chat Panel',            section: 'Patterns', route: 'patterns', layout: 'standard' },
+  { slug: 'chat-panel',                 title: 'Chat Panel',            section: 'Patterns', route: 'patterns', layout: 'bare' },
 
   // Playground Components
   { slug: 'pg-button',        title: 'Button',        section: 'Playground Components', route: 'playground', layout: 'standard', status: 'playground', interactive: true },
@@ -159,12 +145,15 @@ const PLAYGROUND_SECTIONS = new Set<SidebarSection>([
   'Playground Pages',
 ]);
 
-/** Produces the sidebar nav array from PAGE_REGISTRY. */
-export function buildNav(): NavItem[] {
+/** Produces the sidebar nav array from PAGE_REGISTRY plus auto-discovered component entries. */
+export function buildNav(componentEntries: PageEntry[] = []): NavItem[] {
   const sections: NavItem[] = [];
 
   for (const section of SECTION_ORDER) {
-    const entries = PAGE_REGISTRY.filter(e => e.section === section);
+    const staticEntries = PAGE_REGISTRY.filter(e => e.section === section);
+    const entries = section === 'Components'
+      ? [...componentEntries]
+      : staticEntries;
     if (entries.length === 0) continue;
 
     const isPlayground = PLAYGROUND_SECTIONS.has(section);

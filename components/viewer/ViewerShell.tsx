@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/viewer/Sidebar';
+import { TooltipProvider } from '@/components/shadcn/tooltip';
+import type { NavItem } from '@/lib/viewer-registry';
 
 const STORAGE_KEY = 'ds-sidebar-collapsed';
 
-export function ViewerShell({ children }: { children: React.ReactNode }) {
+export function ViewerShell({ nav, children }: { nav: NavItem[]; children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
@@ -22,9 +24,9 @@ export function ViewerShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <>
-      <Sidebar collapsed={collapsed} onToggle={toggle} />
+    <TooltipProvider delayDuration={500}>
+      <Sidebar nav={nav} collapsed={collapsed} onToggle={toggle} />
       <div className="flex flex-1 flex-col overflow-hidden">{children}</div>
-    </>
+    </TooltipProvider>
   );
 }

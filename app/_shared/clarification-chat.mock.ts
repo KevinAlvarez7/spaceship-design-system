@@ -1,5 +1,6 @@
 import type { Artifact } from '@/components/patterns/artifact-types';
 import type { ClarificationQuestion } from '@/components/ui';
+import type { ApprovalPlan } from '@/components/ui';
 
 // ─── User message ─────────────────────────────────────────────────────────────
 
@@ -15,10 +16,27 @@ export const ASSISTANT_AFTER_STEP_1 =
   `That's a clear, well-grounded problem. Let me now help you figure out what the right solution looks like.`;
 
 export const ASSISTANT_AFTER_STEP_2 =
-  `This is shaping up to be a focused, two-sided booking system — admin staff on one side posting jobs, relief teachers on the other accepting them. I'm updating your Project Brief now.`;
+  `This is shaping up to be a focused, two-sided booking system — admin staff on one side posting jobs, relief teachers on the other accepting them. Your Project Brief is complete.
 
-export const ASSISTANT_AFTER_STEP_3 =
-  `Perfect. I'm generating a Security Review based on your answers and starting the build now. I'll run through each task as I complete it.`;
+Shall I move on to the implementation plan?`;
+
+export const ASSISTANT_AFTER_GATE =
+  `Great. Let me ask a few implementation questions so I can generate a plan with accurate time estimates and risk assessments.`;
+
+export const ASSISTANT_AFTER_IMPL =
+  `Based on your answers, I've generated an implementation plan below. Review the steps, timings, and risk levels — then approve or request changes.`;
+
+export const ASSISTANT_REJECTION_PROMPT =
+  `No problem — what would you like me to revise in the plan?`;
+
+export const ASSISTANT_AFTER_REVISION =
+  `I've updated the plan based on your feedback. Here's the revised version — let me know if this works.`;
+
+export const ASSISTANT_AFTER_APPROVE =
+  `Implementation plan approved. Starting the build now — I'll run through each task as I complete it.`;
+
+export const ASSISTANT_BUILD_COMPLETE =
+  `Your prototype is ready for user testing. All 8 tasks completed — booking flow, notifications, confirmation screens, and sample data are all in place. Share the link with your test participants when you're ready to run sessions.`;
 
 // ─── Step 1 — Problem clarification (5 questions) ────────────────────────────
 
@@ -137,49 +155,90 @@ export const STEP_2_QUESTIONS: ClarificationQuestion[] = [
   },
 ];
 
-// ─── Step 3 — Implementation confirmation (4 questions) ──────────────────────
+// ─── Implementation questions (with timings + risk metadata) ─────────────────
 
-export const STEP_3_QUESTIONS: ClarificationQuestion[] = [
+export const IMPL_QUESTIONS: ClarificationQuestion[] = [
   {
-    type: 'rank',
-    label: 'For the prototype, what should I prioritise building?',
-    items: [
-      'The admin job posting flow',
-      'The relief teacher notification and accept/decline flow',
-      'The confirmation screen both parties see after booking',
-      'The availability calendar for relief teachers',
+    type: 'single',
+    label: 'How should users sign in?',
+    options: [
+      { label: 'Singpass / NDI integration',        meta: { timeEstimate: '+2 weeks', riskLevel: 'low'    } },
+      { label: 'Email and password (custom auth)',   meta: { timeEstimate: '+1 week',  riskLevel: 'medium' } },
+      { label: 'No auth — mock users for prototype', meta: { timeEstimate: '+1 day',   riskLevel: 'safe'   } },
     ],
   },
   {
     type: 'single',
-    label: 'What device should the prototype be optimised for?',
+    label: 'How should relief teachers be notified of new jobs?',
     options: [
-      'Mobile — most users will be on their phones',
-      'Desktop — admin staff use school computers',
-      'Both — needs to work across devices',
+      { label: 'Push notifications (FCM / APNs)',  meta: { timeEstimate: '+1 week',  riskLevel: 'medium' } },
+      { label: 'SMS via WOG SMS Service',          meta: { timeEstimate: '+1 week',  riskLevel: 'medium' } },
+      { label: 'In-app notifications only',        meta: { timeEstimate: '+2 days',  riskLevel: 'safe'   } },
+      { label: 'Email notifications',              meta: { timeEstimate: '+3 days',  riskLevel: 'low'    } },
     ],
   },
   {
     type: 'multi',
-    label: 'What should the prototype include for the testing session?',
+    label: 'Which data integrations are needed?',
     options: [
-      'Sample data — pre-filled relief teachers, schools, and subjects',
-      'A realistic job posting scenario with a fake absent teacher',
-      'A view showing what the relief teacher sees on their phone',
-      'A confirmation screen with full job details',
-      'An error state — what happens if no teacher accepts within 30 minutes',
+      { label: 'MOE school staff directory',          meta: { timeEstimate: '+1 week',  riskLevel: 'medium' } },
+      { label: 'Relief teacher registry',             meta: { timeEstimate: '+3 days',  riskLevel: 'low'    } },
+      { label: 'Payroll export (CSV)',                meta: { timeEstimate: '+2 days',  riskLevel: 'low'    } },
+      { label: 'Mock data only — no live integration', meta: { timeEstimate: '+1 day',   riskLevel: 'safe'   } },
     ],
   },
   {
     type: 'single',
-    label: 'Are you ready to proceed?',
+    label: 'Where should the prototype be hosted?',
     options: [
-      'Yes — build the prototype',
-      'I want to adjust the Project Brief first',
-      'Start with just the admin flow for now',
+      { label: 'GCC (Government Commercial Cloud)', meta: { timeEstimate: '+2 weeks', riskLevel: 'low'  } },
+      { label: 'GovTech SGTS',                      meta: { timeEstimate: '+3 weeks', riskLevel: 'low'  } },
+      { label: 'Spaceship sandbox (prototype only)', meta: { timeEstimate: '+1 day',   riskLevel: 'safe' } },
     ],
   },
 ];
+
+// ─── Implementation plan (for ApprovalCard) ───────────────────────────────────
+
+export const IMPLEMENTATION_PLAN: ApprovalPlan = {
+  title: 'Relief Teacher Booking System',
+  totalEstimate: '4 weeks',
+  steps: [
+    { title: 'Project setup and routing',                  timeEstimate: '1 day',   riskLevel: 'safe'   },
+    { title: 'Admin job posting form',                     timeEstimate: '3 days',  riskLevel: 'safe'   },
+    { title: 'Relief teacher notification view',           timeEstimate: '3 days',  riskLevel: 'low'    },
+    { title: 'One-tap accept / decline flow',              timeEstimate: '2 days',  riskLevel: 'safe'   },
+    { title: 'Booking confirmation screen',                timeEstimate: '2 days',  riskLevel: 'safe'   },
+    { title: 'Double-booking prevention logic',            timeEstimate: '2 days',  riskLevel: 'low'    },
+    { title: 'Sample data — teachers, schools, subjects',  timeEstimate: '1 day',   riskLevel: 'safe'   },
+    { title: 'End-to-end flow integration and QA',         timeEstimate: '2 days',  riskLevel: 'low'    },
+  ],
+  riskSummary: {
+    overallRisk: 'low',
+    notes: [
+      'No external services connected — all data is mock',
+      'Prototype handles information up to Restricted / Sensitive Normal',
+      'Singpass integration deferred to POC phase',
+      'Push notifications deferred — in-app only for prototype',
+    ],
+  },
+};
+
+export const IMPLEMENTATION_PLAN_REVISED: ApprovalPlan = {
+  ...IMPLEMENTATION_PLAN,
+  steps: [
+    { title: 'Project setup and routing',                  timeEstimate: '1 day',   riskLevel: 'safe'   },
+    { title: 'Admin job posting form',                     timeEstimate: '3 days',  riskLevel: 'safe'   },
+    { title: 'Relief teacher notification view',           timeEstimate: '3 days',  riskLevel: 'low'    },
+    { title: 'One-tap accept / decline flow',              timeEstimate: '2 days',  riskLevel: 'safe'   },
+    { title: 'Booking confirmation screen',                timeEstimate: '2 days',  riskLevel: 'safe'   },
+    { title: 'Availability calendar for relief teachers',  timeEstimate: '3 days',  riskLevel: 'low'    },
+    { title: 'Double-booking prevention logic',            timeEstimate: '2 days',  riskLevel: 'low'    },
+    { title: 'Sample data — teachers, schools, subjects',  timeEstimate: '1 day',   riskLevel: 'safe'   },
+    { title: 'End-to-end flow integration and QA',         timeEstimate: '2 days',  riskLevel: 'low'    },
+  ],
+  totalEstimate: '~5 weeks',
+};
 
 // ─── Project Brief artifact ───────────────────────────────────────────────────
 
@@ -213,46 +272,7 @@ A **mobile-first, two-sided booking system** that replaces the current WhatsApp 
 - **Automatic notifications** — Available relief teachers in the pool are notified immediately.
 - **One-tap confirmation** — Relief teachers accept or decline with a single tap. The first to accept locks the job.
 - **Double-booking prevention** — Once a teacher accepts, they are automatically marked unavailable for that slot across all schools.
-- **Confirmation to both parties** — Both admin staff and the relief teacher receive a confirmation with full job details.`;
-
-export const BRIEF_CONTENT_V3 = `${BRIEF_CONTENT_V2}
-
-## Build Plan
-
-### Phase 1 — POC (4 weeks)
-Validate the core booking flow works end to end. Success: 5 admin staff and 10 relief teachers complete the full flow without confusion or errors.
-
-### Phase 2 — POV (6 weeks)
-Test with a full school cluster and measure operational impact. Success: Average booking time drops below 10 minutes; zero double-bookings.
-
-### Phase 3 — MVP (8 weeks)
-Stable, supported product ready for broader rollout. Success: Adopted by at least 2 clusters with no critical issues in first 4 weeks.
-
-## Testing Plan
-
-### Hypothesis
-We believe school admin staff will be able to post a relief job and receive a confirmed teacher in **under 5 minutes** using the prototype, because the current process has no structure and the bottleneck is coordination — not availability.
-
-### Success Criteria
-- **80%** of test users complete the end-to-end flow without assistance
-- Median time from job posting to confirmation is under **5 minutes**
-- All participants report they would use this over the current WhatsApp process
-
-### Method
-Moderated usability testing with 5 admin staff and 8 relief teachers across 2 pilot schools.
-
-## What We're Asking For
-
-Funding and **4 weeks** to build and test a proof-of-concept for a digital relief teacher booking system across 2 pilot schools.
-
-## Validation Results
-
-We've built a working prototype and tested it with **5 admin staff** and **8 relief teachers** across 2 schools.
-
-### Results
-- **82%** of users completed the full booking flow without assistance
-- Median booking time was **4 minutes 20 seconds** vs current **45 minutes**
-- All test users said they would use this over the current process
+- **Confirmation to both parties** — Both admin staff and the relief teacher receive a confirmation with full job details.
 
 ## What Success Looks Like
 
@@ -270,89 +290,41 @@ export const BRIEF_ARTIFACT: Artifact = {
   content: BRIEF_CONTENT_V1,
 };
 
-// ─── Security Review artifact ─────────────────────────────────────────────────
+// ─── Implementation plan artifact ────────────────────────────────────────────
 
-export const SECURITY_ARTIFACT: Artifact = {
-  id: 'security',
-  type: 'security',
-  title: 'Security Review',
+export const IMPL_PLAN_CONTENT = `## Implementation Plan
+
+**Relief Teacher Booking System** · Est. 4 weeks
+
+### Build Steps
+
+| # | Task | Estimate | Risk |
+|---|------|----------|------|
+| 1 | Project setup and routing | 1 day | Safe |
+| 2 | Admin job posting form | 3 days | Safe |
+| 3 | Relief teacher notification view | 3 days | Low |
+| 4 | One-tap accept / decline flow | 2 days | Safe |
+| 5 | Booking confirmation screen | 2 days | Safe |
+| 6 | Double-booking prevention logic | 2 days | Low |
+| 7 | Sample data — teachers, schools, subjects | 1 day | Safe |
+| 8 | End-to-end flow integration and QA | 2 days | Low |
+
+### Security Overview
+
+**Overall risk: Low**
+
+- No external services connected — all data is mock
+- Prototype handles information up to Restricted / Sensitive Normal
+- Singpass integration deferred to POC phase
+- Push notifications deferred — in-app only for prototype`;
+
+export const IMPL_PLAN_ARTIFACT: Artifact = {
+  id: 'impl-plan',
+  type: 'implementation',
+  title: 'Implementation Plan',
   status: 'in-progress',
   updatedAt: 'just now',
-  content: `# Security Review
-**Relief Teacher Booking System**
-Generated by Spaceship · Ministry of Education · March 2026
-
----
-
-## Current Status
-
-> ✅ **No external services are connected.** This prototype operates entirely within Spaceship's self-contained environment. All data is mock data generated for testing purposes only. No real personal data is stored, transmitted, or processed.
->
-> This prototype handles information up to **Restricted / Sensitive Normal (R/SN)** classification. It is not cleared for Confidential, Secret, or above. Do not enter data above R/SN into this prototype at any stage.
-
----
-
-## ⚠️ External Services Warning
-
-The services listed below are **not implemented** in this prototype and have not been requested or configured by Spaceship.
-
-**If you prompt Spaceship to build, connect, or integrate any service of this type, it will be automatically flagged in this document and in your Project Brief. Please proceed at your own risk.**
-
-| Service Type | Examples | Status |
-|---|---|---|
-| Authentication / identity providers | Singpass, Auth0, Okta, Firebase Auth | Not implemented |
-| Push notification services | Firebase Cloud Messaging (FCM), Apple Push Notification Service (APNs), OneSignal | Not implemented |
-| SMS gateways | Twilio, Vonage, Infobip, AWS SNS | Not implemented |
-| Email delivery services | SendGrid, Mailgun, AWS SES, Postmark | Not implemented |
-| Cloud storage | AWS S3, Google Cloud Storage, Azure Blob Storage, Supabase Storage | Not implemented |
-| Analytics and tracking | Google Analytics, Mixpanel, Amplitude, Segment | Not implemented |
-| Error monitoring | Sentry, Datadog, New Relic, LogRocket | Not implemented |
-| Payment services | Stripe, PayPal, Adyen, Braintree | Not implemented |
-| AI / LLM APIs | OpenAI, Google Gemini, Cohere, Hugging Face | Not implemented |
-| CRM / productivity | Salesforce, HubSpot, Notion, Airtable | Not implemented |
-
----
-
-## Third-Party Integrations (if requested in future)
-
-If any of the above services are added, they will be logged here with a risk assessment before being permitted to proceed.
-
-| Service | Purpose | Data Sent Out | Risk Level | Notes |
-|---|---|---|---|---|
-| Singpass / NDI | User authentication | NRIC token to NDI servers for verification | Low | Approved WOG platform. Follow NDI developer guidelines. IM8 compliant. |
-| Push notification service (FCM / APNs) | Notify relief teachers of new jobs | Device token + message payload (includes school name, date, time) | Medium | Send a generic notification only. Load job details in-app. Sensitive scheduling data must not leave the MOE environment. Requires IM8 review before production. |
-| WOG SMS Service (GovTech) | SMS fallback for teachers without the app | Teacher mobile number + job summary | Medium | Use GovTech's approved WOG SMS service only. Do not use commercial SMS gateways (Twilio, Vonage, etc.) without explicit data governance approval. |
-
----
-
-## Data Classification
-
-| Data Type | Contents | Classification | Requirement |
-|---|---|---|---|
-| Relief teacher personal details | Name, NRIC, mobile number, availability schedule | R/SN — PII | Store within MOE-approved infrastructure only. Deletable on request per PDPA obligations. |
-| Booking and assignment records | Teacher name, school, date, subject assigned | Internal | Retain for payroll reconciliation. Access limited to authorised admin staff and school leaders. |
-| Admin staff activity log | Who posted which job, at what time | Internal audit trail | Retain minimum 12 months. Not accessible to relief teachers. |
-
----
-
-## Internal Risks
-
-| Risk | Impact | Mitigation | Risk Level |
-|---|---|---|---|
-| Relief teacher's phone is lost or shared | Another person accepts or declines jobs on their behalf | Session timeout after 15 minutes. Singpass re-authentication required to accept a job. | Low |
-| Admin staff post a job with incorrect details | Relief teacher arrives at wrong school or teaches wrong subject | Confirmation screen before posting. 15-minute edit window. Cancellation triggers immediate notification to assigned teacher. | Low |
-| System unavailable when teacher calls in sick | Admin staff fall back to WhatsApp, defeating the purpose | Target 99.5% uptime. Graceful error messaging. Offline mode not required for POC — review for MVP. | Medium |
-
----
-
-## Clearance by Stage
-
-| Stage | Clearance Status |
-|---|---|
-| Prototype user testing | ✅ Clear — no real data, no external connections |
-| POC live deployment | ⚠️ Requires IM8 system classification and basic security review |
-| POV with real users | ⚠️ Requires Singpass integration approval and PDPA data handling plan |
-| MVP production | 🔴 Requires full IM8 compliance review and GovTech security sign-off |`,
+  content: IMPL_PLAN_CONTENT,
 };
 
 // ─── Prototype artifact ───────────────────────────────────────────────────────
@@ -372,7 +344,7 @@ export const IMPLEMENTATION_TASKS = [
   'Setting up project structure and routing',
   'Building the admin job posting form',
   'Building the relief teacher notification view',
-  'Building the one-tap accept/decline flow',
+  'Building the one-tap accept / decline flow',
   'Building the booking confirmation screen',
   'Loading sample data — teachers, schools, subjects',
   'Connecting all screens into a complete flow',

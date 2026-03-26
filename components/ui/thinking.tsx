@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useId, type ReactNode } from 'react';
 import { motion, useAnimationFrame, useAnimate } from 'motion/react';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { springs } from '@/tokens';
@@ -375,7 +376,7 @@ export function ThinkingDots({
   );
 
   if (disableMotion) {
-    return <span className={wrapperClass}>{svg}</span>;
+    return <span className={wrapperClass}><VisuallyHidden>Loading</VisuallyHidden>{svg}</span>;
   }
 
   return (
@@ -385,6 +386,7 @@ export function ThinkingDots({
       animate={{ opacity: 1 }}
       transition={springs.gentle}
     >
+      <VisuallyHidden>Loading</VisuallyHidden>
       {svg}
     </motion.span>
   );
@@ -574,7 +576,7 @@ export function ThinkingShip({
   );
 
   if (disableMotion) {
-    return <span className={wrapperClass}>{svg}</span>;
+    return <span className={wrapperClass}><VisuallyHidden>Loading</VisuallyHidden>{svg}</span>;
   }
 
   return (
@@ -584,6 +586,7 @@ export function ThinkingShip({
       animate={{ opacity: 1 }}
       transition={springs.gentle}
     >
+      <VisuallyHidden>Loading</VisuallyHidden>
       {svg}
     </motion.span>
   );
@@ -753,7 +756,7 @@ export function ThinkingSaucer({
   );
 
   if (disableMotion) {
-    return <span className={wrapperClass}>{svg}</span>;
+    return <span className={wrapperClass}><VisuallyHidden>Loading</VisuallyHidden>{svg}</span>;
   }
 
   return (
@@ -763,6 +766,7 @@ export function ThinkingSaucer({
       style={{ willChange: 'transform' }}
       initial={{ opacity: 0, x: 0, y: -BOB.y, rotate: SWAY.neutral }}
     >
+      <VisuallyHidden>Loading</VisuallyHidden>
       {svg}
     </motion.span>
   );

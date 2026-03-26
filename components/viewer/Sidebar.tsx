@@ -4,14 +4,19 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { ChevronRight, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import { useState } from 'react';
 import { ExperimentBadge } from '@/components/viewer/ExperimentBadge';
 import { PlaygroundBadge } from '@/components/viewer/PlaygroundBadge';
-import { buildNav, type NavItem } from '@/lib/viewer-registry';
-
-const NAV = buildNav();
+import type { NavItem } from '@/lib/viewer-registry';
+import { ScrollArea } from '@/components/shadcn/scroll-area';
+import { Separator } from '@/components/shadcn/separator';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/shadcn/collapsible';
 
 interface SidebarProps {
+  nav: NavItem[];
   collapsed?: boolean;
   onToggle?: () => void;
 }
@@ -40,32 +45,34 @@ function NavLink({ item }: { item: NavItem }) {
 }
 
 function NavSection({ item }: { item: NavItem }) {
-  const [open, setOpen] = useState(true);
   // Strip "Playground " prefix for cleaner display in the sidebar
   const displayLabel = item.label.replace('Playground ', '');
 
   return (
-    <div>
-      <button
-        onClick={() => setOpen(o => !o)}
-        className={cn(
-          'flex w-full items-center justify-between px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors',
-          item.playground
-            ? 'text-violet-400 hover:text-violet-600'
-            : 'text-zinc-400 hover:text-zinc-600'
-        )}
-      >
-        {displayLabel}
-        <ChevronRight className={cn('h-3 w-3 transition-transform', open && 'rotate-90')} />
-      </button>
-      {open && item.children && (
-        <div className="mt-1 space-y-0.5">
-          {item.children.map(child => (
-            <NavLink key={child.href} item={child} />
-          ))}
-        </div>
+    <Collapsible defaultOpen>
+      <CollapsibleTrigger asChild>
+        <button
+          className={cn(
+            'group flex w-full items-center justify-between px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors',
+            item.playground
+              ? 'text-violet-400 hover:text-violet-600'
+              : 'text-zinc-400 hover:text-zinc-600'
+          )}
+        >
+          {displayLabel}
+          <ChevronRight className="h-3 w-3 transition-transform group-data-[state=open]:rotate-90" />
+        </button>
+      </CollapsibleTrigger>
+      {item.children && (
+        <CollapsibleContent>
+          <div className="mt-1 space-y-0.5">
+            {item.children.map(child => (
+              <NavLink key={child.href} item={child} />
+            ))}
+          </div>
+        </CollapsibleContent>
       )}
-    </div>
+    </Collapsible>
   );
 }
 
@@ -75,12 +82,12 @@ function GroupDivider({ label }: { label: string }) {
       <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-300">
         {label}
       </span>
-      <div className="flex-1 h-px bg-zinc-100" />
+      <Separator className="flex-1 bg-zinc-100" />
     </div>
   );
 }
 
-export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
+export function Sidebar({ nav, collapsed = false, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
@@ -111,21 +118,23 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         )}
       </div>
       {!collapsed && (
-        <nav className="flex-1 overflow-y-auto p-3 space-y-4">
-          {NAV.map((section, i) => {
-            const prevSection = NAV[i - 1];
-            const isFirstConfirmed = section.label === 'Components';
-            const isFirstPlayground = section.playground && !prevSection?.playground;
+        <ScrollArea className="flex-1">
+          <nav className="p-3 space-y-4">
+            {nav.map((section, i) => {
+              const prevSection = nav[i - 1];
+              const isFirstConfirmed = section.label === 'Components';
+              const isFirstPlayground = section.playground && !prevSection?.playground;
 
-            return (
-              <div key={section.label}>
-                {isFirstConfirmed && <GroupDivider label="Confirmed" />}
-                {isFirstPlayground && <GroupDivider label="Playground" />}
-                <NavSection item={section} />
-              </div>
-            );
-          })}
-        </nav>
+              return (
+                <div key={section.label}>
+                  {isFirstConfirmed && <GroupDivider label="Confirmed" />}
+                  {isFirstPlayground && <GroupDivider label="Playground" />}
+                  <NavSection item={section} />
+                </div>
+              );
+            })}
+          </nav>
+        </ScrollArea>
       )}
     </aside>
   );
