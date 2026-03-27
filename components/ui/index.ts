@@ -24,7 +24,7 @@ export { ClarificationCard, clarificationCardVariants } from './clarification-ca
 export type { ClarificationCardProps, ClarificationQuestion, ClarificationAnswers, ClarificationSingleSelect, ClarificationMultiSelect, ClarificationRankPriorities, ClarificationOption, OptionMetadata, RiskLevel } from './clarification-card';
 
 export { ApprovalCard, approvalCardVariants } from './approval-card';
-export type { ApprovalCardProps, ApprovalPlan, PlanStep, RiskSummary } from './approval-card';
+export type { ApprovalCardProps } from './approval-card';
 
 export { TaskList, taskListVariants } from './task-list';
 export type { TaskListProps } from './task-list';

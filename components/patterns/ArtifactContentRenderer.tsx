@@ -1,6 +1,7 @@
 'use client';
 
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Eye, Smartphone } from 'lucide-react';
 import { type Artifact } from './artifact-types';
 
@@ -64,17 +65,18 @@ export function ArtifactContentRenderer({ artifact }: ArtifactContentRendererPro
           '[&_h3]:[font-size:var(--font-size-base)] [&_h3]:[font-weight:var(--font-weight-semibold)] [&_h3]:text-(--text-primary) [&_h3]:mt-5 [&_h3]:mb-2',
           '[&_p]:[font-size:var(--font-size-sm)] [&_p]:[line-height:var(--line-height-sm)] [&_p]:text-(--text-secondary) [&_p]:mb-3 [&_p:last-child]:mb-0',
           '[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_ul]:mb-3',
-          '[&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1 [&_ol]:mb-3',
+          '[&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-2 [&_ol]:mb-3',
           '[&_li]:[font-size:var(--font-size-sm)] [&_li]:text-(--text-secondary)',
           '[&_strong]:[font-weight:var(--font-weight-semibold)] [&_strong]:text-(--text-primary)',
           '[&_hr]:my-6 [&_hr]:border-(--border-default)',
+          '[&_code]:font-mono [&_code]:text-[0.85em] [&_code]:bg-(--bg-surface-secondary) [&_code]:text-(--text-primary) [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded',
           '[&_table]:w-full [&_table]:mb-3 [&_table]:border-collapse',
           '[&_th]:[font-size:var(--font-size-sm)] [&_th]:[font-weight:var(--font-weight-semibold)] [&_th]:text-(--text-primary) [&_th]:text-left [&_th]:px-3 [&_th]:py-2 [&_th]:border-b [&_th]:border-(--border-default)',
           '[&_td]:[font-size:var(--font-size-sm)] [&_td]:text-(--text-secondary) [&_td]:px-3 [&_td]:py-2 [&_td]:border-b [&_td]:border-(--border-default)',
           '[&_blockquote]:pl-4 [&_blockquote]:border-l-2 [&_blockquote]:border-(--border-default) [&_blockquote]:text-(--text-secondary) [&_blockquote]:my-4',
         ].join(' ')}
       >
-        <ReactMarkdown>{artifact.content}</ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{artifact.content}</ReactMarkdown>
       </div>
     </div>
   );

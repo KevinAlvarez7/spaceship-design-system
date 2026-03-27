@@ -162,38 +162,50 @@ export const IMPL_QUESTIONS: ClarificationQuestion[] = [
     type: 'single',
     label: 'How should users sign in?',
     options: [
-      { label: 'Singpass / NDI integration',        meta: { timeEstimate: '+2 weeks', riskLevel: 'low'    } },
-      { label: 'Email and password (custom auth)',   meta: { timeEstimate: '+1 week',  riskLevel: 'medium' } },
-      { label: 'No auth — mock users for prototype', meta: { timeEstimate: '+1 day',   riskLevel: 'safe'   } },
+      { label: 'SGID (OGP sign-in with Singpass)',  meta: { timeEstimate: '+~3 min',  riskLevel: 'safe'   } },
+      { label: 'Postman OTP (email / SMS login)',    meta: { timeEstimate: '+~2 min',  riskLevel: 'safe'   } },
+      { label: 'Email and password (custom auth)',   meta: { timeEstimate: '+~2 min',  riskLevel: 'medium' } },
+      { label: 'No auth — mock users for prototype', meta: { timeEstimate: '+~30 sec', riskLevel: 'safe'   } },
     ],
   },
   {
     type: 'single',
     label: 'How should relief teachers be notified of new jobs?',
     options: [
-      { label: 'Push notifications (FCM / APNs)',  meta: { timeEstimate: '+1 week',  riskLevel: 'medium' } },
-      { label: 'SMS via WOG SMS Service',          meta: { timeEstimate: '+1 week',  riskLevel: 'medium' } },
-      { label: 'In-app notifications only',        meta: { timeEstimate: '+2 days',  riskLevel: 'safe'   } },
-      { label: 'Email notifications',              meta: { timeEstimate: '+3 days',  riskLevel: 'low'    } },
+      { label: 'Postman (OGP notification service)', meta: { timeEstimate: '+~2 min', riskLevel: 'safe'   } },
+      { label: 'Push notifications (FCM / APNs)',    meta: { timeEstimate: '+~3 min', riskLevel: 'unsafe' } },
+      { label: 'SMS via external provider',          meta: { timeEstimate: '+~3 min', riskLevel: 'unsafe' } },
+      { label: 'In-app notifications only',          meta: { timeEstimate: '+~1 min', riskLevel: 'safe'   } },
     ],
   },
   {
     type: 'multi',
     label: 'Which data integrations are needed?',
     options: [
-      { label: 'MOE school staff directory',          meta: { timeEstimate: '+1 week',  riskLevel: 'medium' } },
-      { label: 'Relief teacher registry',             meta: { timeEstimate: '+3 days',  riskLevel: 'low'    } },
-      { label: 'Payroll export (CSV)',                meta: { timeEstimate: '+2 days',  riskLevel: 'low'    } },
-      { label: 'Mock data only — no live integration', meta: { timeEstimate: '+1 day',   riskLevel: 'safe'   } },
+      { label: 'MOE school staff directory',           meta: { timeEstimate: '+~5 min',  riskLevel: 'medium' } },
+      { label: 'Relief teacher registry',              meta: { timeEstimate: '+~3 min',  riskLevel: 'safe'   } },
+      { label: 'Payroll export (CSV)',                 meta: { timeEstimate: '+~2 min',  riskLevel: 'safe'   } },
+      { label: 'Mock data only — no live integration', meta: { timeEstimate: '+~30 sec', riskLevel: 'safe'   } },
     ],
   },
   {
     type: 'single',
     label: 'Where should the prototype be hosted?',
     options: [
-      { label: 'GCC (Government Commercial Cloud)', meta: { timeEstimate: '+2 weeks', riskLevel: 'low'  } },
-      { label: 'GovTech SGTS',                      meta: { timeEstimate: '+3 weeks', riskLevel: 'low'  } },
-      { label: 'Spaceship sandbox (prototype only)', meta: { timeEstimate: '+1 day',   riskLevel: 'safe' } },
+      { label: 'GCC (Government Commercial Cloud)',  meta: { timeEstimate: '+~5 min',  riskLevel: 'safe' } },
+      { label: 'GovTech SGTS',                       meta: { timeEstimate: '+~8 min',  riskLevel: 'safe' } },
+      { label: 'Spaceship sandbox (prototype only)', meta: { timeEstimate: '+~30 sec', riskLevel: 'safe' } },
+    ],
+  },
+  {
+    type: 'multi',
+    label: 'Which OGP tools should be integrated?',
+    options: [
+      { label: 'FormSG (form builder)',        meta: { timeEstimate: '+~2 min', riskLevel: 'safe' } },
+      { label: 'Isomer (static site hosting)', meta: { timeEstimate: '+~2 min', riskLevel: 'safe' } },
+      { label: 'GoGov (link shortener)',       meta: { timeEstimate: '+~1 min', riskLevel: 'safe' } },
+      { label: 'PairSearch (search engine)',   meta: { timeEstimate: '+~2 min', riskLevel: 'safe' } },
+      { label: 'None — custom build only',     meta: { timeEstimate: '—',       riskLevel: 'safe' } },
     ],
   },
 ];
@@ -202,24 +214,24 @@ export const IMPL_QUESTIONS: ClarificationQuestion[] = [
 
 export const IMPLEMENTATION_PLAN: ApprovalPlan = {
   title: 'Relief Teacher Booking System',
-  totalEstimate: '4 weeks',
+  totalEstimate: '~15 min',
   steps: [
-    { title: 'Project setup and routing',                  timeEstimate: '1 day',   riskLevel: 'safe'   },
-    { title: 'Admin job posting form',                     timeEstimate: '3 days',  riskLevel: 'safe'   },
-    { title: 'Relief teacher notification view',           timeEstimate: '3 days',  riskLevel: 'low'    },
-    { title: 'One-tap accept / decline flow',              timeEstimate: '2 days',  riskLevel: 'safe'   },
-    { title: 'Booking confirmation screen',                timeEstimate: '2 days',  riskLevel: 'safe'   },
-    { title: 'Double-booking prevention logic',            timeEstimate: '2 days',  riskLevel: 'low'    },
-    { title: 'Sample data — teachers, schools, subjects',  timeEstimate: '1 day',   riskLevel: 'safe'   },
-    { title: 'End-to-end flow integration and QA',         timeEstimate: '2 days',  riskLevel: 'low'    },
+    { title: 'Project setup and routing',                  timeEstimate: '~1 min',  riskLevel: 'safe'   },
+    { title: 'Admin job posting form',                     timeEstimate: '~3 min',  riskLevel: 'safe'   },
+    { title: 'Relief teacher notification view',           timeEstimate: '~3 min',  riskLevel: 'low'    },
+    { title: 'One-tap accept / decline flow',              timeEstimate: '~2 min',  riskLevel: 'safe'   },
+    { title: 'Booking confirmation screen',                timeEstimate: '~2 min',  riskLevel: 'safe'   },
+    { title: 'Double-booking prevention logic',            timeEstimate: '~2 min',  riskLevel: 'low'    },
+    { title: 'Sample data — teachers, schools, subjects',  timeEstimate: '~1 min',  riskLevel: 'safe'   },
+    { title: 'End-to-end flow integration and QA',         timeEstimate: '~2 min',  riskLevel: 'low'    },
   ],
   riskSummary: {
     overallRisk: 'low',
     notes: [
-      'No external services connected — all data is mock',
+      'No external non-government services connected — all data stays within government infrastructure',
       'Prototype handles information up to Restricted / Sensitive Normal',
-      'Singpass integration deferred to POC phase',
-      'Push notifications deferred — in-app only for prototype',
+      'Singpass integration via SGID — no external auth dependency',
+      'Notifications via OGP Postman — no data sent to external providers',
     ],
   },
 };
@@ -227,17 +239,17 @@ export const IMPLEMENTATION_PLAN: ApprovalPlan = {
 export const IMPLEMENTATION_PLAN_REVISED: ApprovalPlan = {
   ...IMPLEMENTATION_PLAN,
   steps: [
-    { title: 'Project setup and routing',                  timeEstimate: '1 day',   riskLevel: 'safe'   },
-    { title: 'Admin job posting form',                     timeEstimate: '3 days',  riskLevel: 'safe'   },
-    { title: 'Relief teacher notification view',           timeEstimate: '3 days',  riskLevel: 'low'    },
-    { title: 'One-tap accept / decline flow',              timeEstimate: '2 days',  riskLevel: 'safe'   },
-    { title: 'Booking confirmation screen',                timeEstimate: '2 days',  riskLevel: 'safe'   },
-    { title: 'Availability calendar for relief teachers',  timeEstimate: '3 days',  riskLevel: 'low'    },
-    { title: 'Double-booking prevention logic',            timeEstimate: '2 days',  riskLevel: 'low'    },
-    { title: 'Sample data — teachers, schools, subjects',  timeEstimate: '1 day',   riskLevel: 'safe'   },
-    { title: 'End-to-end flow integration and QA',         timeEstimate: '2 days',  riskLevel: 'low'    },
+    { title: 'Project setup and routing',                  timeEstimate: '~1 min',  riskLevel: 'safe'   },
+    { title: 'Admin job posting form',                     timeEstimate: '~3 min',  riskLevel: 'safe'   },
+    { title: 'Relief teacher notification view',           timeEstimate: '~3 min',  riskLevel: 'low'    },
+    { title: 'One-tap accept / decline flow',              timeEstimate: '~2 min',  riskLevel: 'safe'   },
+    { title: 'Booking confirmation screen',                timeEstimate: '~2 min',  riskLevel: 'safe'   },
+    { title: 'Availability calendar for relief teachers',  timeEstimate: '~3 min',  riskLevel: 'low'    },
+    { title: 'Double-booking prevention logic',            timeEstimate: '~2 min',  riskLevel: 'low'    },
+    { title: 'Sample data — teachers, schools, subjects',  timeEstimate: '~1 min',  riskLevel: 'safe'   },
+    { title: 'End-to-end flow integration and QA',         timeEstimate: '~2 min',  riskLevel: 'low'    },
   ],
-  totalEstimate: '~5 weeks',
+  totalEstimate: '~20 min',
 };
 
 // ─── Project Brief artifact ───────────────────────────────────────────────────
@@ -294,29 +306,83 @@ export const BRIEF_ARTIFACT: Artifact = {
 
 export const IMPL_PLAN_CONTENT = `## Implementation Plan
 
-**Relief Teacher Booking System** · Est. 4 weeks
+**Relief Teacher Booking System** — Estimated build time: ~15 minutes
 
-### Build Steps
+### What we're building
 
-| # | Task | Estimate | Risk |
-|---|------|----------|------|
-| 1 | Project setup and routing | 1 day | Safe |
-| 2 | Admin job posting form | 3 days | Safe |
-| 3 | Relief teacher notification view | 3 days | Low |
-| 4 | One-tap accept / decline flow | 2 days | Safe |
-| 5 | Booking confirmation screen | 2 days | Safe |
-| 6 | Double-booking prevention logic | 2 days | Low |
-| 7 | Sample data — teachers, schools, subjects | 1 day | Safe |
-| 8 | End-to-end flow integration and QA | 2 days | Low |
+A mobile-first, two-sided booking system that replaces the current WhatsApp-based process. Admin staff post relief jobs; available teachers receive instant notifications and confirm with a single tap. Double-bookings are prevented automatically.
 
-### Security Overview
+---
+
+### Build sequence
+
+1. **Project setup and routing** (~1 min) — Scaffold the \`Next.js\` app, configure page routing for the admin and teacher views, and set up \`Supabase\` for the database.
+
+2. **Admin job posting form** (~3 min) — Build the form for school admin staff to post a relief job with date, time, school, subject, and notes. Validates required fields and submits to the database.
+
+3. **Relief teacher notification view** (~3 min) — Build the notification feed where relief teachers see incoming job offers. Pulls open jobs from \`Supabase\` in real time via \`OGP Postman\`.
+
+4. **One-tap accept / decline flow** (~2 min) — Wire up the accept and decline actions. The first teacher to accept locks the job; subsequent taps return a "job already filled" message.
+
+5. **Booking confirmation screen** (~2 min) — Build the confirmation screen shown to both admin staff and the relief teacher after a job is accepted, including full job details and contact info.
+
+6. **Double-booking prevention logic** (~2 min) — Add a database-level constraint and UI check to prevent a teacher from accepting two overlapping jobs. Uses \`Supabase\` row-level locking.
+
+7. **Sample data — teachers, schools, subjects** (~1 min) — Seed the database with mock relief teachers, school names, and subject lists so the prototype is immediately demoable.
+
+8. **End-to-end flow integration and QA** (~2 min) — Connect all screens into a complete flow, run through the full booking cycle, and fix any state or navigation issues.
+
+---
+
+### Security overview
 
 **Overall risk: Low**
 
-- No external services connected — all data is mock
+- No external non-government services connected — all data stays within government infrastructure
 - Prototype handles information up to Restricted / Sensitive Normal
-- Singpass integration deferred to POC phase
-- Push notifications deferred — in-app only for prototype`;
+- Singpass integration via \`SGID\` — no external auth dependency
+- Notifications via \`OGP Postman\` — no data leaves government infrastructure`;
+
+export const IMPL_PLAN_CONTENT_REVISED = `## Implementation Plan (Revised)
+
+**Relief Teacher Booking System** — Estimated build time: ~20 minutes
+
+### What we're building
+
+A mobile-first, two-sided booking system that replaces the current WhatsApp-based process. This revision adds an availability calendar so relief teachers can set and manage their own schedule, reducing unwanted notifications and improving response rates.
+
+---
+
+### Build sequence
+
+1. **Project setup and routing** (~1 min) — Scaffold the \`Next.js\` app, configure page routing for the admin and teacher views, and set up \`Supabase\` for the database.
+
+2. **Admin job posting form** (~3 min) — Build the form for school admin staff to post a relief job with date, time, school, subject, and notes. Validates required fields and submits to the database.
+
+3. **Relief teacher notification view** (~3 min) — Build the notification feed where relief teachers see incoming job offers. Pulls open jobs from \`Supabase\` in real time via \`OGP Postman\`.
+
+4. **One-tap accept / decline flow** (~2 min) — Wire up the accept and decline actions. The first teacher to accept locks the job; subsequent taps return a "job already filled" message.
+
+5. **Booking confirmation screen** (~2 min) — Build the confirmation screen shown to both admin staff and the relief teacher after a job is accepted, including full job details and contact info.
+
+6. **Availability calendar for relief teachers** (~3 min) — Add a weekly calendar view where relief teachers can mark themselves available or unavailable by date. Notifications are only sent for matching dates.
+
+7. **Double-booking prevention logic** (~2 min) — Add a database-level constraint and UI check to prevent a teacher from accepting two overlapping jobs. Uses \`Supabase\` row-level locking.
+
+8. **Sample data — teachers, schools, subjects** (~1 min) — Seed the database with mock relief teachers, school names, and subject lists so the prototype is immediately demoable.
+
+9. **End-to-end flow integration and QA** (~2 min) — Connect all screens into a complete flow, run through the full booking cycle, and fix any state or navigation issues.
+
+---
+
+### Security overview
+
+**Overall risk: Low**
+
+- No external non-government services connected — all data stays within government infrastructure
+- Prototype handles information up to Restricted / Sensitive Normal
+- Singpass integration via \`SGID\` — no external auth dependency
+- Notifications via \`OGP Postman\` — no data leaves government infrastructure`;
 
 export const IMPL_PLAN_ARTIFACT: Artifact = {
   id: 'impl-plan',

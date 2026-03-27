@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { LayoutGroup, motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import {
   ChatThread,
   ChatBubble,
@@ -12,7 +13,6 @@ import {
   Thinking,
 } from '@/components/ui';
 import type { ClarificationAnswers, ClarificationQuestion } from '@/components/ui';
-import type { ApprovalPlan } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { GridBackground, SpaceshipLogoScene } from '@/components/effects';
 import { ArtifactSegmentedControl, ChatPanel } from '@/components/patterns';
@@ -31,11 +31,11 @@ import {
   STEP_1_QUESTIONS,
   STEP_2_QUESTIONS,
   IMPL_QUESTIONS,
-  IMPLEMENTATION_PLAN,
-  IMPLEMENTATION_PLAN_REVISED,
   BRIEF_ARTIFACT,
   BRIEF_CONTENT_V2,
   IMPL_PLAN_ARTIFACT,
+  IMPL_PLAN_CONTENT,
+  IMPL_PLAN_CONTENT_REVISED,
   PROTOTYPE_ARTIFACT,
   IMPLEMENTATION_TASKS,
 } from '@/app/_shared/clarification-chat.mock';
@@ -108,7 +108,7 @@ export function ClarificationChatDemoPage() {
   const [taskProgress, setTaskProgress]         = useState(0);
   const [inputValue, setInputValue]             = useState('');
   const [streamingId, setStreamingId]           = useState<string | null>(null);
-  const [approvalPlan, setApprovalPlan]         = useState<ApprovalPlan>(IMPLEMENTATION_PLAN);
+  const [approvalContent, setApprovalContent]   = useState(IMPL_PLAN_CONTENT);
   const clearStreamingId                        = useCallback(() => setStreamingId(null), []);
   const timeouts                                = useRef<NodeJS.Timeout[]>([]);
   const intervalRef                             = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -251,17 +251,14 @@ export function ClarificationChatDemoPage() {
         { kind: 'assistant-text', id: 'msg-after-impl', content: ASSISTANT_AFTER_IMPL },
       ]);
       setStreamingId('msg-after-impl');
-      schedule(() => {
-        addArtifact({ ...IMPL_PLAN_ARTIFACT });
-        setPhase('approval');
-      }, 600);
+      schedule(() => setPhase('approval'), 600);
     }, randomThinkMs());
   }
 
   // ── Approval ──────────────────────────────────────────────────────────────
 
   function handleApprove() {
-    updateArtifactStatus(IMPL_PLAN_ARTIFACT.id, 'complete');
+    addArtifact({ ...IMPL_PLAN_ARTIFACT, status: 'complete' });
     setItems(prev => [
       ...prev,
       { kind: 'assistant-text', id: 'msg-approved', content: ASSISTANT_AFTER_APPROVE },
@@ -297,7 +294,7 @@ export function ClarificationChatDemoPage() {
         { kind: 'assistant-text', id: msgId, content: ASSISTANT_AFTER_REVISION },
       ]);
       setStreamingId(msgId);
-      setApprovalPlan(IMPLEMENTATION_PLAN_REVISED);
+      setApprovalContent(IMPL_PLAN_CONTENT_REVISED);
       schedule(() => setPhase('approval'), 600);
     }, randomThinkMs());
   }
@@ -352,7 +349,25 @@ export function ClarificationChatDemoPage() {
 
   const approvalProp =
     phase === 'approval' ? {
-      plan: approvalPlan,
+      content: (
+        <div className={[
+          'flex flex-col w-full font-(family-name:--font-family-mono)',
+          '[&_h2]:[font-size:var(--font-size-base)] [&_h2]:font-bold [&_h2]:text-(--text-primary) [&_h2]:mb-3 [&_h2:first-child]:mt-0',
+          '[&_h3]:[font-size:var(--font-size-sm)] [&_h3]:font-semibold [&_h3]:text-(--text-primary) [&_h3]:mt-4 [&_h3]:mb-2',
+          '[&_p]:[font-size:var(--font-size-sm)] [&_p]:leading-(--line-height-sm) [&_p]:text-(--text-secondary) [&_p]:mb-2 [&_p:last-child]:mb-0',
+          '[&_ul]:list-disc [&_ul]:pl-4 [&_ul]:space-y-1 [&_ul]:mb-2',
+          '[&_ol]:list-decimal [&_ol]:pl-4 [&_ol]:space-y-2 [&_ol]:mb-2',
+          '[&_li]:[font-size:var(--font-size-sm)] [&_li]:text-(--text-secondary)',
+          '[&_strong]:font-semibold [&_strong]:text-(--text-primary)',
+          '[&_code]:font-mono [&_code]:text-[0.85em] [&_code]:bg-(--bg-surface-secondary) [&_code]:text-(--text-primary) [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded',
+          '[&_hr]:my-4 [&_hr]:border-(--border-default)',
+          '[&_table]:w-full [&_table]:mb-2 [&_table]:border-collapse',
+          '[&_th]:[font-size:var(--font-size-xs)] [&_th]:font-semibold [&_th]:text-(--text-primary) [&_th]:text-left [&_th]:px-2 [&_th]:py-1.5 [&_th]:border-b [&_th]:border-(--border-default)',
+          '[&_td]:[font-size:var(--font-size-xs)] [&_td]:text-(--text-secondary) [&_td]:px-2 [&_td]:py-1.5 [&_td]:border-b [&_td]:border-(--border-default)',
+        ].join(' ')}>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{approvalContent}</ReactMarkdown>
+        </div>
+      ),
       onApprove: handleApprove,
       onReject: handleReject,
       surface: 'shadow-border' as const,

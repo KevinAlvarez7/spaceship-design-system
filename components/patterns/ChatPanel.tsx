@@ -4,7 +4,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EditableTitle } from '@/components/patterns/EditableTitle';
 import { ChatInputBox, ClarificationCard, ApprovalCard } from '@/components/ui';
-import type { ChatInputBoxProps, ClarificationQuestion, ClarificationAnswers, ApprovalPlan } from '@/components/ui';
+import type { ChatInputBoxProps, ClarificationQuestion, ClarificationAnswers } from '@/components/ui';
 import { cn } from '@/lib/utils';
 
 interface ChatPanelProps {
@@ -33,7 +33,7 @@ interface ChatPanelProps {
    * the overlay is active.
    */
   approval?: {
-    plan: ApprovalPlan;
+    content: React.ReactNode;
     onApprove: () => void;
     onReject: () => void;
     surface?: 'default' | 'shadow-border';
@@ -119,12 +119,13 @@ export function ChatPanel({
             />
             <div className="relative">
               <ApprovalCard
-                plan={approval.plan}
                 onApprove={approval.onApprove}
                 onReject={approval.onReject}
                 surface={approval.surface}
                 disableMotion={disableMotion}
-              />
+              >
+                {approval.content}
+              </ApprovalCard>
             </div>
           </motion.div>
         )}

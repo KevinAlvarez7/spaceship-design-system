@@ -20,7 +20,7 @@ import { Tag } from './tag';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type RiskLevel = 'safe' | 'low' | 'medium' | 'high';
+export type RiskLevel = 'safe' | 'low' | 'medium' | 'unsafe';
 
 export interface OptionMetadata {
   timeEstimate?: string;
@@ -71,7 +71,7 @@ const RISK_TAG_VARIANT: Record<RiskLevel, 'success' | 'warning' | 'error'> = {
   safe:   'success',
   low:    'success',
   medium: 'warning',
-  high:   'error',
+  unsafe: 'error',
 };
 
 // ─── Internal helpers ─────────────────────────────────────────────────────────
@@ -92,7 +92,7 @@ function OptionMeta({ opt }: { opt: ClarificationOption }) {
       )}
       {riskLevel && (
         <Tag variant={RISK_TAG_VARIANT[riskLevel]} size="sm">
-          {riskLevel === 'safe' ? 'Safe' : riskLevel === 'low' ? 'Low risk' : riskLevel === 'medium' ? 'Medium risk' : 'High risk'}
+          {riskLevel === 'safe' ? 'Safe' : riskLevel === 'low' ? 'Low risk' : riskLevel === 'medium' ? 'Medium risk' : 'Unsafe'}
         </Tag>
       )}
     </span>
