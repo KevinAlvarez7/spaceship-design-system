@@ -1,10 +1,6 @@
 'use client';
 
 import type React from 'react';
-import { Button as ButtonV1 } from '@/components/playground/button/v1';
-import { Button as ButtonV2 } from '@/components/playground/button/v2';
-import { Tag } from '@/components/ui';
-import { ThinkingDots } from '@/components/ui';
 
 // ─── Control types ────────────────────────────────────────────────────────────
 
@@ -75,80 +71,4 @@ export function normalizeVersions(config: PlaygroundComponentConfig): Playground
 
 // ─── Config registry ──────────────────────────────────────────────────────────
 
-export const PLAYGROUND_CONFIGS: Record<string, PlaygroundComponentConfig> = {
-  'pg-button': {
-    title: 'Button',
-    componentName: 'Button',
-    importPath: '@/components/ui',
-    versions: [
-      {
-        label: 'v1',
-        description: 'Radial fill, 5 variants',
-        component: ButtonV1,
-        sourcePath: 'components/playground/button/v1.tsx',
-        editableChildren: true,
-        defaultChildren: 'Button',
-        controls: [
-          { name: 'variant',       type: 'select',  options: ['primary', 'secondary', 'ghost', 'success', 'destructive'], defaultValue: 'primary' },
-          { name: 'size',          type: 'select',  options: ['sm', 'md', 'icon-sm', 'icon'],                            defaultValue: 'sm' },
-          { name: 'surface',       type: 'select',  options: ['default', 'shadow'],                                       defaultValue: 'default' },
-          { name: 'disabled',      type: 'boolean', defaultValue: false },
-          { name: 'disableMotion', type: 'boolean', defaultValue: false, label: 'Disable Motion' },
-        ],
-      },
-      {
-        label: 'v2',
-        description: 'Pill shape, scale-only motion',
-        component: ButtonV2,
-        sourcePath: 'components/playground/button/v2.tsx',
-        editableChildren: true,
-        defaultChildren: 'Button',
-        controls: [
-          { name: 'variant',       type: 'select',  options: ['primary', 'ghost', 'destructive'], defaultValue: 'primary' },
-          { name: 'size',          type: 'select',  options: ['sm', 'md'],                        defaultValue: 'sm' },
-          { name: 'surface',       type: 'select',  options: ['default', 'shadow'],               defaultValue: 'default' },
-          { name: 'disabled',      type: 'boolean', defaultValue: false },
-          { name: 'disableMotion', type: 'boolean', defaultValue: false, label: 'Disable Motion' },
-        ],
-      },
-    ],
-  },
-
-  'pg-tag': {
-    title: 'Tag',
-    componentName: 'Tag',
-    importPath: '@/components/ui',
-    versions: [
-      {
-        label: 'v1',
-        component: Tag,
-        editableChildren: true,
-        defaultChildren: 'Tag',
-        controls: [
-          { name: 'variant', type: 'select',  options: ['neutral', 'success', 'warning', 'error', 'info'], defaultValue: 'neutral' },
-          { name: 'size',    type: 'select',  options: ['sm', 'md'],                                        defaultValue: 'md' },
-          { name: 'surface', type: 'select',  options: ['default', 'shadow-border'],                        defaultValue: 'default' },
-        ],
-      },
-    ],
-  },
-
-  'pg-thinking-dots': {
-    title: 'Thinking Dots',
-    componentName: 'ThinkingDots',
-    importPath: '@/components/ui',
-    versions: [
-      {
-        label: 'v1',
-        component: ThinkingDots,
-        controls: [
-          { name: 'size',          type: 'select',  options: ['sm', 'md', 'lg'],                                                                       defaultValue: 'md' },
-          { name: 'surface',       type: 'select',  options: ['default', 'shadow-border'],                                                             defaultValue: 'default' },
-          { name: 'pattern',       type: 'select',  options: ['diagonal', 'radial', 'radial-pull', 'horizontal', 'random', 'breathe', 'breathe-x'],   defaultValue: 'diagonal' },
-          { name: 'variant',       type: 'select',  options: ['rainbow', 'subtle'],                                                                     defaultValue: 'rainbow' },
-          { name: 'disableMotion', type: 'boolean', defaultValue: false, label: 'Disable Motion' },
-        ],
-      },
-    ],
-  },
-};
+export const PLAYGROUND_CONFIGS: Record<string, PlaygroundComponentConfig> = {};

@@ -38,7 +38,7 @@ const DEFAULT_CONFIG: EditorConfig = {
   lineWidth: 0.4,
   dotColor: 'var(--neutral-400)',
   gridColor: 'rgba(147, 197, 230, 0.38)',
-  background: '#ffffff',
+  background: 'var(--bg-surface-paper)',
   majorEvery: 0,
   majorLineWidth: 1.0,
   majorGridColor: 'var(--neutral-400)',

@@ -16,7 +16,9 @@ const EXCLUDE_PREFIXES = ['use-'];
  * (e.g. ThinkingDots lives in thinking.tsx but has its own viewer page).
  */
 const EXTRA_ENTRIES: PageEntry[] = [
-  { slug: 'thinking-dots', title: 'Thinking Dots', section: 'Components', route: 'components', layout: 'standard' },
+  { slug: 'thinking-dots',  title: 'Thinking Dots',  section: 'Components', route: 'components', layout: 'standard' },
+  { slug: 'gravity-assist', title: 'Gravity Assist', section: 'Components', route: 'components', layout: 'standard' },
+  { slug: 'grid-background', title: 'Grid Background', section: 'Components', route: 'components', layout: 'standard' },
 ];
 
 // ─── Metadata overrides ───────────────────────────────────────────────────────

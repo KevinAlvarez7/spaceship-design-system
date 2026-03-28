@@ -145,6 +145,7 @@
   --bg-surface-secondary: var(--secondary-100);
   --bg-surface-tertiary: var(--secondary-200);
   --bg-surface-base: var(--white);
+  --bg-surface-paper: #ffffff;
   --bg-surface-fade: #fcfcfc;
   --bg-interactive-primary-default: var(--primary-500);
   --bg-interactive-primary-hover: var(--primary-600);
@@ -303,6 +304,7 @@
 
   /* Backgrounds */
   --bg-surface-base:      var(--neutral-950);
+  --bg-surface-paper:     var(--neutral-900);
   --bg-surface-fade:      var(--neutral-900);
   --bg-surface-primary:   var(--neutral-900);
   --bg-surface-secondary: var(--neutral-800);

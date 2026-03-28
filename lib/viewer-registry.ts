@@ -8,17 +8,13 @@ export type SidebarSection =
   | 'Components'
   | 'Patterns'
   // Playground (exploration)
-  | 'Playground Components'
-  | 'Playground Patterns'
-  | 'Playground Effects'
-  | 'Playground Pages';
+  | 'Playground';
 
 export type RouteGroup =
   | 'tokens'
   | 'assets'
   | 'typography'
   | 'components'
-  | 'effects'
   | 'patterns'
   | 'playground';
 
@@ -62,20 +58,11 @@ export const PAGE_REGISTRY: PageEntry[] = [
   { slug: 'artifact-segmented-control', title: 'Artifact Panel',        section: 'Patterns', route: 'patterns', layout: 'standard' },
   { slug: 'chat-panel',                 title: 'Chat Panel',            section: 'Patterns', route: 'patterns', layout: 'bare' },
 
-  // Playground Components
-  { slug: 'pg-button',        title: 'Button',        section: 'Playground Components', route: 'playground', layout: 'standard', status: 'playground', interactive: true },
-  { slug: 'pg-tag',           title: 'Tag',           section: 'Playground Components', route: 'playground', layout: 'standard', status: 'playground', interactive: true },
-  { slug: 'pg-thinking-dots', title: 'Thinking Dots', section: 'Playground Components', route: 'playground', layout: 'standard', status: 'playground', interactive: true },
-
-  // Playground Effects (moved from Effects section)
-  { slug: 'gravity-assist',  title: 'Gravity Assist',  section: 'Playground Effects', route: 'playground', layout: 'standard', status: 'playground' },
-  { slug: 'grid-background', title: 'Grid Background', section: 'Playground Effects', route: 'playground', layout: 'standard', status: 'playground' },
-
-  // Playground Pages (moved from Pages section)
-  { slug: 'homepage',            title: 'Homepage',            section: 'Playground Pages', route: 'playground', layout: 'bare', status: 'playground' },
-  { slug: 'prototype-workspace', title: 'Prototype Workspace', section: 'Playground Pages', route: 'playground', layout: 'bare', status: 'playground' },
-  { slug: 'artifact-navigation', title: 'Artifact Navigation', section: 'Playground Pages', route: 'playground', layout: 'bare', status: 'playground' },
-  { slug: 'clarification-chat',  title: 'Clarification Chat',  section: 'Playground Pages', route: 'playground', layout: 'bare', status: 'playground' },
+  // Playground (full-page flow demos only)
+  { slug: 'homepage',            title: 'Homepage',            section: 'Playground', route: 'playground', layout: 'bare', status: 'playground' },
+  { slug: 'prototype-workspace', title: 'Prototype Workspace', section: 'Playground', route: 'playground', layout: 'bare', status: 'playground' },
+  { slug: 'artifact-navigation', title: 'Artifact Navigation', section: 'Playground', route: 'playground', layout: 'bare', status: 'playground' },
+  { slug: 'clarification-chat',  title: 'Clarification Chat',  section: 'Playground', route: 'playground', layout: 'bare', status: 'playground' },
 ];
 
 export const SECTION_ORDER: SidebarSection[] = [
@@ -87,10 +74,7 @@ export const SECTION_ORDER: SidebarSection[] = [
   'Components',
   'Patterns',
   // Playground
-  'Playground Components',
-  'Playground Patterns',
-  'Playground Effects',
-  'Playground Pages',
+  'Playground',
 ];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -118,7 +102,6 @@ const ROUTE_DISPLAY: Record<RouteGroup, string> = {
   assets:     'Assets',
   typography: 'Typography',
   components: 'Components',
-  effects:    'Effects',
   patterns:   'Patterns',
   playground: 'Playground',
 };
@@ -138,12 +121,7 @@ export type NavItem = {
   children?: NavItem[];
 };
 
-const PLAYGROUND_SECTIONS = new Set<SidebarSection>([
-  'Playground Components',
-  'Playground Patterns',
-  'Playground Effects',
-  'Playground Pages',
-]);
+const PLAYGROUND_SECTIONS = new Set<SidebarSection>(['Playground']);
 
 /** Produces the sidebar nav array from PAGE_REGISTRY plus auto-discovered component entries. */
 export function buildNav(componentEntries: PageEntry[] = []): NavItem[] {

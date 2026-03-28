@@ -19,15 +19,16 @@ export function ChatThread({ children, className, bare }: ChatThreadProps) {
   const lastChildKey = (lastChild && typeof lastChild === 'object' && 'key' in lastChild ? lastChild.key : null) ?? childArray.length;
 
   useEffect(() => {
+    if (bare) return; // bare mode: ChatPanel owns scrolling
     if (!hasMountedRef.current) {
       hasMountedRef.current = true;
       return;
     }
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [lastChildKey]);
+  }, [lastChildKey, bare]);
 
   const content = (
-    <div className="flex flex-col gap-3 px-4 pb-3 pt-5">
+    <div className="flex flex-col gap-6 px-8 pb-3 pt-5">
       {children}
       <div ref={bottomRef} aria-hidden="true" />
     </div>

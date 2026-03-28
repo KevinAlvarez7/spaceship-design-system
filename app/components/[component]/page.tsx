@@ -14,6 +14,12 @@ import { ThinkingPage } from './ThinkingPage';
 import { TaskListPage } from './TaskListPage';
 import { DropdownMenuPage } from './DropdownMenuPage';
 import { ApprovalCardPage } from './ApprovalCardPage';
+import { RadioGroupPage }  from './RadioGroupPage';
+import { CheckboxGroupPage } from './CheckboxGroupPage';
+import { SortableListPage } from './SortableListPage';
+import { ShimmerTextPage } from './ShimmerTextPage';
+import { GravityAssistPage } from '../../playground/[slug]/GravityAssistPage';
+import { GridBackgroundPage } from '../../playground/[slug]/GridBackgroundPage';
 import { buildTopbarTitle } from '@/lib/viewer-registry';
 import { discoverComponentEntries, getComponentEntry } from '@/lib/discover-components';
 
@@ -32,6 +38,12 @@ const COMPONENTS: Record<string, React.ComponentType> = {
   'task-list':      TaskListPage,
   'dropdown-menu':  DropdownMenuPage,
   'approval-card':  ApprovalCardPage,
+  'radio-group':    RadioGroupPage,
+  'checkbox-group': CheckboxGroupPage,
+  'sortable-list':  SortableListPage,
+  'shimmer-text':   ShimmerTextPage,
+  'gravity-assist': GravityAssistPage,
+  'grid-background': GridBackgroundPage,
 };
 
 function StubPage({ title }: { title: string }) {

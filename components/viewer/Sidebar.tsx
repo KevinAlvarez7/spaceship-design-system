@@ -45,8 +45,7 @@ function NavLink({ item }: { item: NavItem }) {
 }
 
 function NavSection({ item }: { item: NavItem }) {
-  // Strip "Playground " prefix for cleaner display in the sidebar
-  const displayLabel = item.label.replace('Playground ', '');
+  const displayLabel = item.label;
 
   return (
     <Collapsible defaultOpen>

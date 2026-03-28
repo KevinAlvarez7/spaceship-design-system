@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'motion/react';
+import useMeasure from 'react-use-measure';
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
 import { cva, type VariantProps } from 'class-variance-authority';
 import {
@@ -144,6 +145,7 @@ export function ClarificationCard({
   surface,
   className,
 }: ClarificationCardProps) {
+  const [measureRef, { height }] = useMeasure();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<ClarificationAnswers>({});
   const [maxVisited, setMaxVisited] = useState(0);
@@ -368,14 +370,16 @@ export function ClarificationCard({
         )}
       </div>
 
-      {/* Question content — layout FLIP for height morphing between questions (B-tier) */}
+      {/* Question content — explicit height animation via useMeasure */}
       <motion.div
-        layout
-        transition={{ layout: disableMotion ? { duration: 0 } : springs.gentle }}
-        className="relative overflow-hidden"
+        animate={{ height: height || 'auto' }}
+        transition={disableMotion ? { duration: 0 } : springs.gentle}
+        className="overflow-hidden"
       >
-        <div className="p-2">
-          {renderQuestion()}
+        <div ref={measureRef}>
+          <div className="p-2">
+            {renderQuestion()}
+          </div>
         </div>
       </motion.div>
 

@@ -427,7 +427,7 @@ export function ClarificationChatDemoPage() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.25 }}
               >
-                <main className="flex flex-1 min-h-0 gap-6">
+                <main className="flex flex-1 min-h-0">
 
                   {/* ── Chat column ── */}
                   <div className={cn(

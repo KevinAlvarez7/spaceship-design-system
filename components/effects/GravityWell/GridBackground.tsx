@@ -19,6 +19,8 @@ export interface GridBackgroundProps {
   majorLineWidth?: number;
   /** Color for major grid lines. Defaults to staticGridColor when unset. */
   majorGridColor?: string;
+  /** Overlay a subtle warm-toned noise texture to mimic paper grain. */
+  paperTexture?: boolean;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -89,7 +91,7 @@ function toRgba(r: number, g: number, b: number, a: number): string {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function GridBackground({
-  background = 'var(--bg-surface-base)',
+  background = 'var(--bg-surface-paper)',
   dotColor = 'var(--effect-gravity-dot, rgba(161, 161, 170, 0.32))',
   staticGridColor = 'rgba(147, 197, 230, 0.38)',
   showDots = false,
@@ -101,6 +103,7 @@ export function GridBackground({
   majorEvery = 0,
   majorLineWidth = 1.0,
   majorGridColor,
+  paperTexture = true,
   className,
   style,
 }: GridBackgroundProps) {
@@ -128,6 +131,19 @@ export function GridBackground({
       if (bg && bg !== 'transparent') {
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, W, H);
+      }
+
+      // ── Paper texture noise ───────────────────────────────────────────────
+      if (paperTexture) {
+        const imageData = ctx.getImageData(0, 0, W, H);
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          const n = (Math.random() - 0.5) * 14;
+          data[i]     = Math.min(255, Math.max(0, data[i]     + n));
+          data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + n));
+          data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + n));
+        }
+        ctx.putImageData(imageData, 0, 0);
       }
 
       // Pre-parse the color ring once per draw (resolve CSS vars first)
@@ -275,7 +291,7 @@ export function GridBackground({
       ro.disconnect();
       mo.disconnect();
     };
-  }, [background, dotColor, staticGridColor, showDots, showStaticGrid, step, dotRadius, lineWidth, colorRing, majorEvery, majorLineWidth, majorGridColor]);
+  }, [background, dotColor, staticGridColor, showDots, showStaticGrid, step, dotRadius, lineWidth, colorRing, majorEvery, majorLineWidth, majorGridColor, paperTexture]);
 
   return (
     <canvas
