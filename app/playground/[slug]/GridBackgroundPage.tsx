@@ -361,7 +361,7 @@ function ChatPanelOverlay() {
           onStop: isStreaming ? handleStop : undefined,
         }}
       >
-        <ChatThread className="flex-1 min-h-0">
+        <ChatThread bare className="flex-1 min-h-0">
           {messages.map((msg, i) =>
             msg.role === 'user'
               ? <ChatBubble key={i}>{msg.content}</ChatBubble>

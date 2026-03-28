@@ -116,8 +116,8 @@ const buttonVariants = cva(
           '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-sm',
         ],
         lg: [
-          'py-3 px-4 gap-2',
-          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-md',
+          'py-2.5 px-3.5 gap-2',
+          '[font-size:var(--font-size-base)] leading-(--line-height-sm) rounded-md',
         ],
         'icon-sm': 'h-8 w-8 p-0 rounded',
         'icon-md': 'h-9 w-9 p-0 rounded-sm',
@@ -156,7 +156,7 @@ const SPRING_TRANSITION = springs.interactive;
 // Text buttons: sm=14px, md=16px, lg=20px.
 // Icon-only buttons: sm=14px, md=16px, lg=20px.
 const ICON_CLASSES: Record<SizeKey, string> = {
-  sm:        '[&>svg]:h-3.5 [&>svg]:w-3.5 [&>svg]:[stroke-width:2.5]',
+  sm:        '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:[stroke-width:2.5]',
   md:        '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:[stroke-width:2.75]',
   lg:        '[&>svg]:h-5 [&>svg]:w-5 [&>svg]:[stroke-width:3]',
   'icon-sm': '[&>svg]:h-3.5 [&>svg]:w-3.5 [&>svg]:[stroke-width:2.5]',

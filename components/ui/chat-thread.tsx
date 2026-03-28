@@ -7,9 +7,11 @@ import { cn } from '@/lib/utils';
 export interface ChatThreadProps {
   children: ReactNode;
   className?: string;
+  /** When true, skips the internal Radix ScrollArea. Use inside ChatPanel, which provides its own scroll container. */
+  bare?: boolean;
 }
 
-export function ChatThread({ children, className }: ChatThreadProps) {
+export function ChatThread({ children, className, bare }: ChatThreadProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const hasMountedRef = useRef(false);
   const childArray = Children.toArray(children);
@@ -24,11 +26,21 @@ export function ChatThread({ children, className }: ChatThreadProps) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [lastChildKey]);
 
+  const content = (
+    <div className="flex flex-col gap-3 px-4 pb-3 pt-5">
+      {children}
+      <div ref={bottomRef} aria-hidden="true" />
+    </div>
+  );
+
+  if (bare) {
+    return <div className={className}>{content}</div>;
+  }
+
   return (
     <ScrollAreaPrimitive.Root className={cn('overflow-hidden', className)}>
-      <ScrollAreaPrimitive.Viewport className="h-full w-full flex flex-col gap-3 px-4 pb-3 pt-5">
-        {children}
-        <div ref={bottomRef} aria-hidden="true" />
+      <ScrollAreaPrimitive.Viewport className="h-full w-full">
+        {content}
       </ScrollAreaPrimitive.Viewport>
       <ScrollAreaPrimitive.Scrollbar
         orientation="vertical"

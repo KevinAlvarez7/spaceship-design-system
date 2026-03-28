@@ -466,7 +466,7 @@ export function ClarificationChatDemoPage() {
                         </motion.div>
                       ) : undefined}
                     >
-                      <ChatThread className="flex-1 min-h-0">
+                      <ChatThread bare className="flex-1 min-h-0">
                         {items.map(item => {
                           if (item.kind === 'assistant-text') {
                             return (

@@ -77,11 +77,7 @@ export function EditableTitle({
 
   return (
     <>
-      <div className={cn(
-        'flex items-center gap-3 py-3',
-        'bg-gradient-to-b from-(--bg-surface-fade) to-transparent',
-        className,
-      )}>
+      <div className={cn('flex items-center gap-3 py-3', className)}>
 
         {/* Left: Sidebar toggle */}
         <Button

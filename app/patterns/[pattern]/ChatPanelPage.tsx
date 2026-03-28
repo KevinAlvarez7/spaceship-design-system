@@ -96,7 +96,7 @@ function ClarificationFlowDemo() {
         onSubmit: () => {},
       } : undefined}
     >
-      <ChatThread className="flex-1 min-h-0">
+      <ChatThread bare className="flex-1 min-h-0">
         <ChatMessage content="Hi! Before we get started, I have a couple of quick questions." />
       </ChatThread>
     </ChatPanel>
@@ -125,7 +125,7 @@ function ChatDemo() {
         onStop: isStreaming ? handleStop : undefined,
       }}
     >
-      <ChatThread className="flex-1 min-h-0">
+      <ChatThread bare className="flex-1 min-h-0">
         {messages.map((msg, i) =>
           msg.role === 'user'
             ? <ChatBubble key={i}>{msg.content}</ChatBubble>
@@ -152,7 +152,7 @@ function MinimalDemo() {
         onSubmit: () => {},
       }}
     >
-      <ChatThread className="flex-1 min-h-0">
+      <ChatThread bare className="flex-1 min-h-0">
         <ChatMessage content="This panel has no header — the title lives at page level. Use this when the chat is one panel inside a larger layout." />
       </ChatThread>
     </ChatPanel>
