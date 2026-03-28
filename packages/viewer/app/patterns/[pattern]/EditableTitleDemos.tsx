@@ -1,0 +1,36 @@
+'use client';
+
+import { useState } from 'react';
+import { EditableTitle } from '@spaceship/design-system';
+
+export function EditableTitleDemos() {
+  const [title, setTitle] = useState('Spaceship Vibe Prototype');
+
+  return (
+    <div className="flex flex-col gap-10">
+      {/* Default */}
+      <div className="flex flex-col gap-3">
+        <p className="[font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-secondary)">
+          Default
+        </p>
+        <EditableTitle
+          title={title}
+          onTitleChange={setTitle}
+          onMenuClick={() => {}}
+        />
+      </div>
+
+      {/* Error state */}
+      <div className="flex flex-col gap-3">
+        <p className="[font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-secondary)">
+          Error state
+        </p>
+        <EditableTitle
+          title="Spaceship Vibe Prototype"
+          onMenuClick={() => {}}
+          error="Name already taken"
+        />
+      </div>
+    </div>
+  );
+}

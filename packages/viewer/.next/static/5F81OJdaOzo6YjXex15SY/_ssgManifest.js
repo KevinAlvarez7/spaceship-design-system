@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fassets\u002F[category]","\u002Fcomponents\u002F[component]","\u002Feffects\u002F[effect]","\u002Fpatterns\u002F[pattern]","\u002Fplayground\u002F[slug]","\u002Ftokens\u002F[category]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()

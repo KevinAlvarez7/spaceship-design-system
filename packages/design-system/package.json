@@ -1,0 +1,17 @@
+{
+  "name": "@spaceship/design-system",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./tokens/*": "./tokens/*",
+    "./registry": "./registry/index.ts",
+    "./lib/*": "./lib/*"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

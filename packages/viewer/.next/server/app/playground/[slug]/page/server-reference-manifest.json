@@ -1,0 +1,35 @@
+{
+  "node": {
+    "40bdc4c73a8e807577fbda55bc7b53e7b4fea4ecff": {
+      "workers": {
+        "app/playground/[slug]/page": {
+          "moduleId": 1953,
+          "async": false,
+          "exportedName": "graduateComponent",
+          "filename": ".worktrees/monorepo-restructure/packages/viewer/app/actions/graduate.ts"
+        }
+      },
+      "layer": {
+        "app/playground/[slug]/page": "action-browser"
+      },
+      "exportedName": "graduateComponent",
+      "filename": ".worktrees/monorepo-restructure/packages/viewer/app/actions/graduate.ts"
+    },
+    "009f71c9c67a3102b46f203055bb3d797ba40fcd29": {
+      "workers": {
+        "app/playground/[slug]/page": {
+          "moduleId": 1953,
+          "async": false,
+          "exportedName": "verifyGraduation",
+          "filename": ".worktrees/monorepo-restructure/packages/viewer/app/actions/graduate.ts"
+        }
+      },
+      "layer": {
+        "app/playground/[slug]/page": "action-browser"
+      },
+      "exportedName": "verifyGraduation",
+      "filename": ".worktrees/monorepo-restructure/packages/viewer/app/actions/graduate.ts"
+    }
+  },
+  "edge": {}
+}

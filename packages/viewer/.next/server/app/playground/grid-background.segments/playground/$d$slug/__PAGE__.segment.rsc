@@ -1,0 +1,7 @@
+1:"$Sreact.fragment"
+2:I[77027,["/_next/static/chunks/ccf8a1323bd88747.js","/_next/static/chunks/af7361913d9895e8.js","/_next/static/chunks/92dc0de4992c31ec.js","/_next/static/chunks/e7541df96b058dcd.js","/_next/static/chunks/ebd2fdd23bfece15.js","/_next/static/chunks/146a31e39299e1a9.js"],"Topbar"]
+3:I[82975,["/_next/static/chunks/ccf8a1323bd88747.js","/_next/static/chunks/af7361913d9895e8.js","/_next/static/chunks/92dc0de4992c31ec.js","/_next/static/chunks/e7541df96b058dcd.js","/_next/static/chunks/ebd2fdd23bfece15.js","/_next/static/chunks/146a31e39299e1a9.js"],"GridBackgroundPage"]
+4:I[14114,["/_next/static/chunks/07c97d105ae97b8c.js","/_next/static/chunks/5e563149883edf93.js"],"OutletBoundary"]
+5:"$Sreact.suspense"
+0:{"buildId":"5F81OJdaOzo6YjXex15SY","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"flex flex-1 flex-col overflow-hidden","children":[["$","$L2",null,{"title":"Playground / Grid Background"}],["$","main",null,{"className":"flex-1 overflow-y-auto","children":["$","$L3",null,{}]}]]}],[["$","script","script-0",{"src":"/_next/static/chunks/e7541df96b058dcd.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/ebd2fdd23bfece15.js","async":true}],["$","script","script-2",{"src":"/_next/static/chunks/146a31e39299e1a9.js","async":true}]],["$","$L4",null,{"children":["$","$5",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]]}],"loading":null,"isPartial":false}
+6:null

@@ -1,0 +1,17 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/apple-icon.png/route": "/apple-icon.png",
+  "/assets/[category]/page": "/assets/[category]",
+  "/components/[component]/page": "/components/[component]",
+  "/effects/[effect]/page": "/effects/[effect]",
+  "/favicon.ico/route": "/favicon.ico",
+  "/icon.svg/route": "/icon.svg",
+  "/page": "/",
+  "/patterns/[pattern]/page": "/patterns/[pattern]",
+  "/patterns/page": "/patterns",
+  "/playground/[slug]/page": "/playground/[slug]",
+  "/playground/page": "/playground",
+  "/tokens/[category]/page": "/tokens/[category]",
+  "/typography/page": "/typography"
+}

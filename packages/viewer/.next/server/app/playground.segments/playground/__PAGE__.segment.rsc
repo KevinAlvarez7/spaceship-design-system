@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[77027,["/_next/static/chunks/ccf8a1323bd88747.js","/_next/static/chunks/af7361913d9895e8.js","/_next/static/chunks/92dc0de4992c31ec.js","/_next/static/chunks/eddaeea19440ccdf.js"],"Topbar"]
+3:I[14114,["/_next/static/chunks/07c97d105ae97b8c.js","/_next/static/chunks/5e563149883edf93.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"5F81OJdaOzo6YjXex15SY","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"flex flex-1 flex-col overflow-hidden","children":[["$","$L2",null,{"title":"Playground"}],["$","main",null,{"className":"flex-1 overflow-y-auto p-8","children":["$","div",null,{"className":"max-w-3xl space-y-10","children":[["$","div",null,{"children":[["$","h1",null,{"className":"text-2xl font-bold text-zinc-900","children":"Playground"}],["$","p",null,{"className":"mt-2 text-sm text-zinc-500","children":"Exploration space for effects, patterns, and full-page demos under active development. Items here are not handoff-ready — graduate them to the confirmed sections when they meet DS standards."}]]}],[null,null,null,null]]}]}]]}],[["$","script","script-0",{"src":"/_next/static/chunks/eddaeea19440ccdf.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

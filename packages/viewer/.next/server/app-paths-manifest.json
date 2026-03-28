@@ -1,0 +1,17 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/apple-icon.png/route": "app/apple-icon.png/route.js",
+  "/assets/[category]/page": "app/assets/[category]/page.js",
+  "/components/[component]/page": "app/components/[component]/page.js",
+  "/effects/[effect]/page": "app/effects/[effect]/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/icon.svg/route": "app/icon.svg/route.js",
+  "/page": "app/page.js",
+  "/patterns/[pattern]/page": "app/patterns/[pattern]/page.js",
+  "/patterns/page": "app/patterns/page.js",
+  "/playground/[slug]/page": "app/playground/[slug]/page.js",
+  "/playground/page": "app/playground/page.js",
+  "/tokens/[category]/page": "app/tokens/[category]/page.js",
+  "/typography/page": "app/typography/page.js"
+}

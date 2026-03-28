@@ -1,0 +1,247 @@
+@import "tailwindcss";
+@import "../../design-system/tokens/tokens.css";
+
+/* Exclude documentation/config directories from Tailwind's content scanner.
+   Without this, class-like strings in skill files generate invalid CSS.
+   Paths are relative to this file (app/globals.css), so ../ reaches the repo root. */
+@source not "../.claude/**";
+@source not "../docs/**";
+@source not "../CLAUDE.md";
+@source not "../.worktrees/**";
+
+@theme {
+  /* ── Semantic colors wired into Tailwind utilities ── */
+  --color-text-primary:           var(--text-primary);
+  --color-text-secondary:         var(--text-secondary);
+  --color-text-tertiary:          var(--text-tertiary);
+  --color-text-placeholder:       var(--text-placeholder);
+  --color-text-inverse:           var(--text-inverse);
+
+  --color-bg-surface-base:        var(--bg-surface-base);
+  --color-bg-surface-primary:     var(--bg-surface-primary);
+  --color-bg-surface-secondary:   var(--bg-surface-secondary);
+  --color-bg-surface-tertiary:    var(--bg-surface-tertiary);
+
+  --color-bg-interactive-primary-default: var(--bg-interactive-primary-default);
+  --color-bg-interactive-primary-hover:   var(--bg-interactive-primary-hover);
+  --color-bg-interactive-primary-pressed: var(--bg-interactive-primary-pressed);
+
+  --color-bg-interactive-secondary-default: var(--bg-interactive-secondary-default);
+  --color-bg-interactive-secondary-hover:   var(--bg-interactive-secondary-hover);
+
+  --color-bg-interactive-error-default: var(--bg-interactive-error-default);
+  --color-bg-interactive-error-hover:   var(--bg-interactive-error-hover);
+
+  --color-bg-interactive-success-default: var(--bg-interactive-success-default);
+  --color-bg-interactive-warning-default: var(--bg-interactive-warning-default);
+
+  --color-border-default:     var(--border-default);
+  --color-border-subtle:      var(--border-subtle);
+  --color-border-input-default: var(--border-input-default);
+  --color-border-input-focus:   var(--border-input-focus);
+
+  --color-bg-status-success: var(--bg-status-success);
+  --color-bg-status-warning: var(--bg-status-warning);
+  --color-bg-status-error:   var(--bg-status-error);
+  --color-bg-status-info:    var(--bg-status-info);
+  --color-bg-status-neutral: var(--bg-status-neutral);
+
+  /* ── Typography ── */
+  --font-sans:  var(--font-family-secondary);
+  --font-serif: var(--font-family-primary);
+  --font-mono:  var(--font-family-mono);
+
+  /* ── Shadows ── */
+  --shadow-border:       var(--shadow-border);
+  --shadow-border-hover: var(--shadow-border-hover);
+
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--bg-surface-base);
+    color: var(--text-primary);
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+  }
+}
+
+/* Register shimmer gradient variables so style recalculation stays scoped to the element */
+@property --_g1-x { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+@property --_g1-y { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+@property --_g2-x { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+@property --_g2-y { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+@property --_g3-x { syntax: "<percentage>"; inherits: false; initial-value: 100%; }
+@property --_g3-y { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+
+.thinking-text-animated {
+  --_g1-x: 0%;   --_g1-y: 50%;
+  --_g2-x: 50%;  --_g2-y: 50%;
+  --_g3-x: 100%; --_g3-y: 50%;
+
+  background:
+    radial-gradient(
+      ellipse 140% 300% at var(--_g1-x) var(--_g1-y),
+      var(--effect-thinking-1) 0%,
+      color-mix(in srgb, var(--effect-thinking-1) 40%, transparent) 30%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 140% 300% at var(--_g2-x) var(--_g2-y),
+      var(--effect-thinking-3) 0%,
+      color-mix(in srgb, var(--effect-thinking-3) 40%, transparent) 30%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 140% 300% at var(--_g3-x) var(--_g3-y),
+      var(--effect-thinking-5) 0%,
+      color-mix(in srgb, var(--effect-thinking-5) 40%, transparent) 30%,
+      transparent 60%
+    ),
+    linear-gradient(90deg, var(--effect-thinking-2) 0%, var(--effect-thinking-4) 100%);
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes thinking-dots-sweep {
+  from { background-position-x: 0%; }
+  to   { background-position-x: 300%; }
+}
+
+.thinking-dot-bounce {
+  display: inline-block;
+  background: linear-gradient(90deg,
+    var(--effect-thinking-1),
+    var(--effect-thinking-3),
+    var(--effect-thinking-5),
+    var(--effect-thinking-1)
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Each dot is staggered by 1/3 of the 4s sweep cycle so colors flow left → right across the trio */
+.thinking-dot-1 { animation: thinking-dots-sweep 4s linear 0s infinite; }
+.thinking-dot-2 { animation: thinking-dots-sweep 4s linear -1.33s infinite; }
+.thinking-dot-3 { animation: thinking-dots-sweep 4s linear -2.67s infinite; }
+
+.thinking-dots-subtle {
+  --effect-thinking-1: var(--text-secondary);
+  --effect-thinking-2: var(--effect-shimmer-highlight);
+  --effect-thinking-3: var(--text-secondary);
+  --effect-thinking-4: var(--effect-shimmer-highlight);
+  --effect-thinking-5: var(--text-secondary);
+  --effect-thinking-dot: color-mix(in srgb, var(--text-secondary) 50%, transparent);
+  --effect-thinking-line: color-mix(in srgb, var(--text-secondary) 48%, transparent);
+}
+
+@keyframes shimmer-text-sweep {
+  from { background-position-x: 400%; }
+  to   { background-position-x: 0%; }
+}
+
+.shimmer-text-linear {
+  background: linear-gradient(90deg,
+    var(--effect-thinking-1),
+    var(--effect-thinking-2),
+    var(--effect-thinking-3),
+    var(--effect-thinking-4),
+    var(--effect-thinking-5),
+    var(--effect-thinking-1)
+  );
+  background-size: 400% 100%;
+  animation: shimmer-text-sweep 6s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.shimmer-text-subtle {
+  background: linear-gradient(90deg,
+    var(--text-secondary),
+    var(--effect-shimmer-highlight),
+    var(--text-secondary)
+  );
+  background-size: 400% 100%;
+  animation: shimmer-text-sweep 6s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.shimmer-dot-subtle {
+  display: inline-block;
+  background: linear-gradient(90deg,
+    var(--text-secondary),
+    var(--effect-shimmer-highlight),
+    var(--text-secondary)
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.shimmer-dot-subtle-1 { animation: thinking-dots-sweep 4s linear 0s infinite; }
+.shimmer-dot-subtle-2 { animation: thinking-dots-sweep 4s linear -1.33s infinite; }
+.shimmer-dot-subtle-3 { animation: thinking-dots-sweep 4s linear -2.67s infinite; }
+
+@keyframes blink-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.blink-dot {
+  animation: blink-dot 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Stop all indefinite CSS keyframe animations */
+  .thinking-dot-1,
+  .thinking-dot-2,
+  .thinking-dot-3,
+  .shimmer-dot-subtle-1,
+  .shimmer-dot-subtle-2,
+  .shimmer-dot-subtle-3 {
+    animation: none !important;
+    background-position-x: 0% !important;
+  }
+
+  .shimmer-text-linear,
+  .shimmer-text-subtle {
+    animation: none !important;
+    background-position-x: 0% !important;
+  }
+
+  .blink-dot {
+    animation: none !important;
+  }
+
+  /* Stop spinning indicators (Tailwind's animate-spin) */
+  .animate-spin {
+    animation: none !important;
+  }
+
+  /* Disable long CSS transitions */
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../../../../../.worktrees/monorepo-restructure/packages/viewer/app/page.tsx"],"sourcesContent":["import { redirect } from 'next/navigation';\n\nexport default function Home() {\n  redirect('/tokens/colors');\n}\n"],"names":[],"mappings":"0XAAA,EAAA,CAAA,CAAA,OAAA,IAAA,EAAA,EAAA,CAAA,CAAA,MAEe,SAAS,IACtB,CAAA,EAAA,EAAA,QAAA,AAAQ,EAAC,iBACX"}

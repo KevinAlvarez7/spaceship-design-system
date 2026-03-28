@@ -1,0 +1,17 @@
+{
+  "status": 404,
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/patterns/layout,_N_T_/patterns/[pattern]/layout,_N_T_/patterns/[pattern]/page,_N_T_/patterns/chat-input-slot"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/patterns/$d$pattern/__PAGE__",
+    "/patterns/$d$pattern",
+    "/patterns",
+    "/_index",
+    "/_head"
+  ]
+}

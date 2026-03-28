@@ -1,0 +1,3 @@
+module.exports=[84956,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(77345);a.n(d("[project]/.worktrees/monorepo-restructure/node_modules/next/dist/client/components/builtin/global-error.js <module evaluation>"))},16318,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(77345);a.n(d("[project]/.worktrees/monorepo-restructure/node_modules/next/dist/client/components/builtin/global-error.js"))},77223,a=>{"use strict";a.i(84956);var b=a.i(16318);a.n(b)}];
+
+//# sourceMappingURL=5b2c9_next_dist_client_components_builtin_global-error_9888dd05.js.map
