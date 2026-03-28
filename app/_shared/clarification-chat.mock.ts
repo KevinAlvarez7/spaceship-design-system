@@ -1,6 +1,11 @@
 import type { Artifact } from '@/components/patterns/artifact-types';
 import type { ClarificationQuestion } from '@/components/ui';
-import type { ApprovalPlan } from '@/components/ui';
+type ApprovalPlan = {
+  title: string;
+  totalEstimate: string;
+  steps: Array<{ title: string; timeEstimate: string; riskLevel: string }>;
+  riskSummary: { overallRisk: string; notes: string[] };
+};
 
 // ─── User message ─────────────────────────────────────────────────────────────
 
