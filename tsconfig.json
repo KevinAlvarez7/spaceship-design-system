@@ -30,7 +30,7 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "packages"],
+  "exclude": ["node_modules", "packages", "stories", "storybook-static"],
   "references": [
     { "path": "./packages/design-system" },
     { "path": "./packages/viewer" }

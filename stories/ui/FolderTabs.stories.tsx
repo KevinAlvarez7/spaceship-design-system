@@ -1,0 +1,90 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
+import { FileText, Settings, Star } from 'lucide-react';
+import { Button, FolderTabs, FolderTab } from '@/components/ui';
+
+const meta = {
+  title: 'Components/FolderTabs',
+  component: FolderTabs,
+  parameters: { layout: 'centered' },
+  decorators: [
+    (Story) => (
+      <div className="w-96">
+        <Story />
+      </div>
+    ),
+  ],
+  argTypes: {
+    surface: {
+      control: { type: 'select' },
+      options: ['default', 'shadow-border'],
+      table: { category: 'Variants' },
+    },
+    disableMotion: { control: 'boolean', table: { category: 'Motion' } },
+    children:      { table: { disable: true } },
+    activeActions: { table: { disable: true } },
+  },
+  args: {
+    defaultValue: 'v1',
+    surface: 'default',
+    disableMotion: false,
+  },
+  render: (args) => (
+    <FolderTabs {...args}>
+      <FolderTab value="v1">Version 1</FolderTab>
+      <FolderTab value="v2">Version 2</FolderTab>
+      <FolderTab value="v3">Version 3</FolderTab>
+    </FolderTabs>
+  ),
+} satisfies Meta<typeof FolderTabs>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
+
+export const ShadowBorder: Story = {
+  args: { surface: 'shadow-border' },
+};
+
+export const WithIcons: Story = {
+  render: () => (
+    <div className="w-96">
+      <FolderTabs defaultValue="draft">
+        <FolderTab value="draft" leadingIcon={<FileText />}>Draft</FolderTab>
+        <FolderTab value="starred" leadingIcon={<Star />}>Starred</FolderTab>
+        <FolderTab value="settings" leadingIcon={<Settings />}>Settings</FolderTab>
+      </FolderTabs>
+    </div>
+  ),
+};
+
+export const WithActiveActions: Story = {
+  render: () => (
+    <div className="w-96">
+      <FolderTabs
+        defaultValue="v1"
+        activeActions={<Button size="sm" variant="ghost">+ New</Button>}
+      >
+        <FolderTab value="v1">Version 1</FolderTab>
+        <FolderTab value="v2">Version 2</FolderTab>
+      </FolderTabs>
+    </div>
+  ),
+};
+
+export const Controlled: Story = {
+  render: () => {
+    const [value, setValue] = useState('v1');
+    return (
+      <div className="w-96 flex flex-col gap-3">
+        <FolderTabs value={value} onChange={setValue}>
+          <FolderTab value="v1">Version 1</FolderTab>
+          <FolderTab value="v2">Version 2</FolderTab>
+          <FolderTab value="v3">Version 3</FolderTab>
+        </FolderTabs>
+        <p className="text-sm text-zinc-500">Active: {value}</p>
+      </div>
+    );
+  },
+};

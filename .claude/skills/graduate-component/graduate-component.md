@@ -7,44 +7,38 @@ Use this skill when the user says `/graduate`, "graduate component", "confirm as
 Graduate a versioned playground component into a confirmed DS component by:
 1. Copying its source file to `components/ui/`
 2. Exporting it from the barrel
-3. Updating the viewer registry
-4. Generating a viewer page
+3. Creating a Storybook story
+
+Graduation is a **copy + promote** operation — playground entries remain intact.
 
 ---
 
 ## Step 0 — Gather parameters
 
-If the user did not specify a slug and version, ask:
-- Which playground component? (e.g. `pg-button`)
+If the user did not specify a component name and version, ask:
+- Which playground component? (e.g. `button`)
 - Which version? (e.g. `v1`)
 
-Example invocation: `/graduate pg-button v1`
+Example invocation: `/graduate button v1`
 
 ---
 
-## Step 1 — Read the config
+## Step 1 — Read the source
 
-Read `lib/playground-config.ts`. Find the config for the given slug. Locate the specified version inside `versions[]`.
+Read `components/playground/{component}/{version}.tsx`.
 
 Extract:
-- `config.componentName` — e.g. `Button`
-- `config.importPath` — e.g. `@/components/ui`
-- `version.sourcePath` — e.g. `components/playground/button/v1.tsx`
-- `version.controls` — for the viewer page props table
-- `version.label` — e.g. `v1`
-
-If `sourcePath` is missing, tell the user and stop — the version file must exist before graduation.
+- Component name (e.g. `Button`)
+- CVA variants (variant, size, surface, etc.)
+- Props interface
 
 ---
 
 ## Step 2 — Copy source to `components/ui/`
 
-Read `{version.sourcePath}`.
+Write the file to `components/ui/{lowercase-name}.tsx`.
 
-Write it to `components/ui/{lowercase-componentName}.tsx`.
-- Example: `Button` → `components/ui/button.tsx`
-
-Adjust the file as needed to pass the DS Enforcement Checklist:
+Adjust the file to pass the DS Enforcement Checklist:
 - All colours/spacing/radius/shadow use semantic tokens (`var(--token)`) — no hardcoded hex, no Tailwind colour utilities
 - Only semantic tokens — never primitive tokens (`--orbit-blue-500`)
 - CVA base uses **array syntax**
@@ -70,109 +64,52 @@ Only add lines that don't already exist.
 
 ---
 
-## Step 4 — Update viewer registry
+## Step 4 — Create Storybook story
 
-Read `lib/viewer-registry.ts`.
+Create `stories/ui/{ComponentName}.stories.tsx`.
 
-**Graduation is a copy + promote operation — never remove or mutate the playground entry.**
+Use the `/add-story` skill to generate it, or follow this pattern:
 
-1. **Keep** the existing playground entry (e.g. `slug: 'pg-button'`) exactly as-is. The playground page must remain navigable with its version switcher after graduation.
-
-2. **Check** if a confirmed entry already exists in `'Components'` with the component's lowercase slug (e.g. `slug: 'button'`).
-
-3. If **not found**, add a new confirmed entry in the `'Components'` section alongside the existing entries:
 ```typescript
-{ slug: 'button', title: 'Button', section: 'Components', route: 'components', layout: 'standard' },
-```
+import type { Meta, StoryObj } from '@storybook/react';
+import { ComponentName } from '@/components/ui';
+import { EXCLUDE_MOTION_PROPS } from '../_helpers/motion-argtypes';
 
-4. If **found**, leave it as-is (the component page file gets updated in Step 5).
+const meta = {
+  title: 'Components/ComponentName',
+  component: ComponentName,
+  parameters: { layout: 'centered' },
+  argTypes: {
+    variant: {
+      control: { type: 'select' },
+      options: [/* CVA options */],
+      table: { category: 'Variants' },
+    },
+    // ... other argTypes
+    ...EXCLUDE_MOTION_PROPS,
+  },
+  args: { /* defaults */ },
+} satisfies Meta<typeof ComponentName>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
+export const AllVariants: Story = { render: () => (/* ... */) };
+```
 
 ---
 
-## Step 5 — Generate viewer page
+## Step 5 — Verify
 
-Check if `app/components/[component]/` directory exists with pages for this component.
-
-### 5a — Create `{Name}Page.tsx`
-
-Create `app/components/{lowercase-name}/{Name}Page.tsx`.
-
-Use the component's controls to generate variant showcase sections. Template:
-
-```typescript
-import { ComponentName, componentNameVariants } from '@/components/ui';
-import { Preview } from '@/components/viewer/Preview';
-import { PropsTable } from '@/components/viewer/PropsTable';
-import { CodeBlock } from '@/components/viewer/CodeBlock';
-
-// Props table derived from version.controls
-const PROPS = [
-  // One entry per control
-];
-
-export function ComponentNamePage() {
-  return (
-    <div className="flex flex-col gap-10">
-      {/* Title */}
-      <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold text-zinc-900">ComponentName</h1>
-        <p className="text-zinc-500">Description from config or a sensible default.</p>
-      </div>
-
-      {/* Variants section */}
-      <section className="flex flex-col gap-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400">Variants</h2>
-        <Preview>
-          {/* Render each variant option */}
-        </Preview>
-      </section>
-
-      {/* Props */}
-      <section className="flex flex-col gap-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400">Props</h2>
-        <PropsTable props={PROPS} />
-      </section>
-
-      {/* Usage */}
-      <section className="flex flex-col gap-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400">Usage</h2>
-        <CodeBlock language="tsx" code={`import { ComponentName } from '@/components/ui';\n\n<ComponentName />`} />
-      </section>
-    </div>
-  );
-}
-```
-
-Adapt the template to the actual component — use the controls to enumerate variants, sizes, etc.
-
-### 5b — Create or update `page.tsx`
-
-Check if `app/components/{lowercase-name}/page.tsx` exists.
-
-If it doesn't exist, create it:
-```typescript
-import { ComponentNamePage } from './ComponentNamePage';
-
-export default function Page() {
-  return <ComponentNamePage />;
-}
-```
-
-If it exists, read it and add the new page component to the existing pattern.
+Run `npm run build`. Fix any TypeScript errors.
+Run `npx storybook build`. Fix any story errors.
 
 ---
 
-## Step 6 — Verify
-
-Run `npm run build`. If there are TypeScript errors, fix them and re-run.
-
-Run `npm run lint`. Fix any new warnings.
-
----
-
-## Step 7 — Report
+## Step 6 — Report
 
 After all steps complete, report:
 - Files created/modified
-- Where to find the new component page in the viewer
-- Any DS checklist items that needed adjustment during graduation
+- The story location: `stories/ui/{ComponentName}.stories.tsx`
+- Any DS checklist items adjusted during graduation

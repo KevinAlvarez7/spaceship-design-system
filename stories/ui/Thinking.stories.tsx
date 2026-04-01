@@ -1,0 +1,66 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import { Thinking, ThinkingDots, ThinkingShip, ThinkingLogo, ThinkingSaucer } from '@/components/ui';
+
+const meta = {
+  title: 'Components/Thinking',
+  component: Thinking,
+  parameters: { layout: 'centered' },
+  argTypes: {
+    surface: {
+      control: { type: 'select' },
+      options: ['default', 'shadow-border'],
+      table: { category: 'Variants' },
+    },
+    shimmerVariant: {
+      control: { type: 'select' },
+      options: ['blob', 'linear', 'subtle'],
+      table: { category: 'Variants' },
+    },
+    dots:         { control: 'boolean', table: { category: 'State' } },
+    textScramble: { control: 'boolean', table: { category: 'State' } },
+    disableMotion:{ control: 'boolean', table: { category: 'Motion' } },
+    children:     { control: 'text' },
+  },
+  args: {
+    children: 'Thinking',
+    surface: 'default',
+    shimmerVariant: 'blob',
+    dots: true,
+    textScramble: false,
+    disableMotion: false,
+  },
+} satisfies Meta<typeof Thinking>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
+
+export const TextScramble: Story = {
+  args: { textScramble: true },
+};
+
+export const ShadowBorder: Story = {
+  args: { surface: 'shadow-border' },
+};
+
+export const AllShimmerVariants: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4">
+      <Thinking shimmerVariant="blob">Blob shimmer</Thinking>
+      <Thinking shimmerVariant="linear">Linear shimmer</Thinking>
+      <Thinking shimmerVariant="subtle">Subtle shimmer</Thinking>
+    </div>
+  ),
+};
+
+export const Indicators: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4 items-start">
+      <ThinkingDots />
+      <ThinkingShip />
+      <ThinkingLogo />
+      <ThinkingSaucer />
+    </div>
+  ),
+};

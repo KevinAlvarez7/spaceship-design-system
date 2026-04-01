@@ -554,6 +554,17 @@ Patterns (`components/patterns/`) compose DS components — they are **not** DS 
 
 ---
 
+## After Creating or Modifying a DS Component
+
+When a component is created or has new variants added, create or update its story:
+
+1. Check if `stories/ui/{ComponentName}.stories.tsx` exists.
+2. If not, use the `/add-story` skill to generate it.
+3. If it exists and new variants were added, add corresponding named story exports.
+4. Run `npx storybook build` to verify the story compiles cleanly.
+
+---
+
 ## Reference Files
 
 Read when needed:

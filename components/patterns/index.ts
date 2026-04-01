@@ -1,5 +1,6 @@
 export { PreviewPanel } from './PreviewPanel';
 export { PreviewPanelHeader } from './PreviewPanelHeader';
+export { PreviewLink } from './PreviewLink';
 export { EditableTitle } from './EditableTitle';
 export { ShareableLink } from './ShareableLink';
 export { ArtifactSegmentedControl } from './ArtifactSegmentedControl';
