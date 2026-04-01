@@ -14,14 +14,12 @@ import { useChatDemo } from '@/app/_shared/useChatDemo';
 
 const DEMO_QUESTIONS: ClarificationQuestion[] = [
   {
-    type: 'single',
     label: 'What kind of project is this?',
-    options: ['Web app', 'Mobile app', 'CLI tool', 'API service'],
+    options: ['Web app', 'Mobile app', 'CLI tool', 'API service', 'Others'],
   },
   {
-    type: 'multi',
-    label: 'Which tools are you using?',
-    options: ['React', 'TypeScript', 'Node.js', 'GraphQL'],
+    label: 'Which tool matters most?',
+    options: ['React', 'TypeScript', 'Node.js', 'GraphQL', 'Others'],
   },
 ];
 

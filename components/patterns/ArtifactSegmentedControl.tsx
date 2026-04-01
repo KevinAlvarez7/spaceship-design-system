@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { RefreshCw, Copy, Share2, FileText, Search, GitBranch, Code2, Eye, BookOpen, FileCheck, ShieldCheck, Smartphone } from 'lucide-react';
+import { RefreshCw, Copy, Share2, FileText, AppWindow } from 'lucide-react';
 import { Button, FolderTabs, FolderTab } from '@/components/ui';
 import { ArtifactContentRenderer } from './ArtifactContentRenderer';
 import {
@@ -13,14 +13,14 @@ import {
 
 const TYPE_ICON: Record<ArtifactType, React.ReactNode> = {
   prd:            <FileText className="size-4" />,
-  research:       <Search className="size-4" />,
-  implementation: <GitBranch className="size-4" />,
-  code:           <Code2 className="size-4" />,
-  preview:        <Eye className="size-4" />,
-  brief:          <BookOpen className="size-4" />,
-  proposal:       <FileCheck className="size-4" />,
-  security:       <ShieldCheck className="size-4" />,
-  prototype:      <Smartphone className="size-4" />,
+  research:       <FileText className="size-4" />,
+  implementation: <FileText className="size-4" />,
+  code:           <FileText className="size-4" />,
+  preview:        <FileText className="size-4" />,
+  brief:          <FileText className="size-4" />,
+  proposal:       <FileText className="size-4" />,
+  security:       <FileText className="size-4" />,
+  prototype:      <AppWindow className="size-4" />,
 };
 
 export function ArtifactSegmentedControl({

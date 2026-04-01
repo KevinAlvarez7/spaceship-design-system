@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ClarificationCard, ChatInputBox } from '@/components/ui';
 import type {
   ClarificationQuestion,
-  ClarificationAnswers,
+  ClarificationAnswer,
   ChatInputBoxProps,
 } from '@/components/ui';
 import { cn } from '@/lib/utils';
@@ -19,7 +19,7 @@ export interface ChatInputSlotProps {
   /** Props forwarded to ClarificationCard when mode = 'clarification'. */
   clarification?: {
     questions: ClarificationQuestion[];
-    onSubmit: (answers: ClarificationAnswers) => void;
+    onSubmit: (answers: ClarificationAnswer[]) => void;
     surface?: 'default' | 'shadow-border';
   };
 

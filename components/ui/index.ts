@@ -20,8 +20,14 @@ export type { ModalProps } from './modal';
 export { Tag, tagVariants } from './tag';
 export type { TagProps } from './tag';
 
-export { ClarificationCard, clarificationCardVariants } from './clarification-card';
-export type { ClarificationCardProps, ClarificationQuestion, ClarificationAnswers, ClarificationSingleSelect, ClarificationMultiSelect, ClarificationRankPriorities, ClarificationOption, OptionMetadata, RiskLevel } from './clarification-card';
+export { ClarificationCard } from './clarification-card';
+export type { ClarificationCardProps } from './clarification-card';
+
+export { ClarificationCardKeycap } from './clarification-card-keycap';
+export type { ClarificationCardKeycapProps } from './clarification-card-keycap';
+
+export { clarificationCardVariants } from './clarification-card-shared';
+export type { ClarificationQuestion, ClarificationAnswer } from './clarification-card-shared';
 
 export { ApprovalCard, approvalCardVariants } from './approval-card';
 export type { ApprovalCardProps } from './approval-card';
@@ -44,6 +50,9 @@ export type { TabBarProps, TabBarItemProps } from './tab-bar';
 export { FolderTabs, FolderTab, folderTabsVariants } from './folder-tabs';
 export type { FolderTabsProps, FolderTabProps } from './folder-tabs';
 
+export { FolderTabsV2, FolderTabV2, folderTabsV2Variants } from './folder-tabs-v2';
+export type { FolderTabsV2Props, FolderTabV2Props } from './folder-tabs-v2';
+
 export { ThinkingDots, thinkingDotsVariants } from './thinking';
 export type { ThinkingDotsProps } from './thinking';
 
@@ -65,7 +74,13 @@ export type { ShimmerTextProps } from './shimmer-text';
 export { ShimmerDots } from './shimmer-text';
 export type { ShimmerDotsProps } from './shimmer-text';
 
+export { Keycap, KeyCombo, keycapVariants } from './keycap';
+export type { KeycapProps, KeyComboProps, KeycapVariant } from './keycap';
+
 export { useSystemReducedMotion } from './use-reduced-motion';
+
+export { useDragResize } from './use-drag-resize';
+export type { UseDragResizeConfig, UseDragResizeReturn } from './use-drag-resize';
 
 export {
   DropdownMenu,

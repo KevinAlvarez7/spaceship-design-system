@@ -25,11 +25,9 @@ export const easingTokens: MotionToken[] = [
 /* ------------------------------------------------------------------ */
 
 /** Spring transition preset for motion/react components. */
-export type SpringPreset = {
-  type: 'spring';
-  stiffness: number;
-  damping: number;
-};
+export type SpringPreset =
+  | { type: 'spring'; stiffness: number; damping: number }
+  | { type: 'spring'; visualDuration: number; bounce: number };
 
 /** Scale interaction preset (hover + tap) for motion/react components. */
 export type ScalePreset = {
@@ -69,6 +67,14 @@ export const springs = {
    * Components: FolderTabs.
    */
   layout: { type: 'spring' as const, stiffness: 200, damping: 24 },        // ζ ≈ 0.85
+
+  /**
+   * Critically-damped spring with zero overshoot.
+   * Feel: precise and controlled — settles exactly at target without ringing.
+   * Use for: drag-to-resize snap, card height morphs, layoutId shared transitions.
+   * Components: ApprovalCard, ClarificationCard (via useDragResize).
+   */
+  snappy: { type: 'spring' as const, visualDuration: 0.2, bounce: 0 },     // ζ = 1.0
 } satisfies Record<string, SpringPreset>;
 
 /**
@@ -113,6 +119,7 @@ export const springPresetTokens: FramerMotionToken[] = [
   { name: 'interactive', value: 'stiffness: 400, damping: 30 (ζ ≈ 0.75)', usedBy: 'Button, Modal, RadioGroup, CheckboxGroup, TabBar, ClarificationCard, TaskList' },
   { name: 'gentle',      value: 'stiffness: 160, damping: 24 (ζ ≈ 0.95)', usedBy: 'ThinkingDots, ThinkingSaucer, ChatPanel height morph, ChatInputSlot height morph' },
   { name: 'layout',      value: 'stiffness: 200, damping: 24 (ζ ≈ 0.85)', usedBy: 'FolderTabs' },
+  { name: 'snappy',      value: 'visualDuration: 0.2, bounce: 0 (ζ = 1.0)', usedBy: 'ApprovalCard, ClarificationCard (useDragResize)' },
 ];
 
 export const scalePresetTokens: FramerMotionToken[] = [

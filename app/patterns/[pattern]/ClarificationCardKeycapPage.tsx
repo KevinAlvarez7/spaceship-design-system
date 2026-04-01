@@ -1,13 +1,13 @@
 import { PropsTable, type PropRow } from '@/components/viewer/PropsTable';
 import { CodeBlock } from '@/components/viewer/CodeBlock';
-import { ClarificationCardDemos } from './ClarificationCardDemos';
+import { ClarificationCardKeycapDemos } from './ClarificationCardKeycapDemos';
 
 const CARD_PROPS: PropRow[] = [
   { name: 'questions',     type: 'ClarificationQuestion[]',    default: '—',               description: 'Array of questions. Each can be type single, multi, or rank (defaults to single when type is omitted).' },
-  { name: 'onSubmit',      type: '(answers: ClarificationAnswer[]) => void', default: '—', description: 'Called when the user submits. Returns one ClarificationAnswer per question (null = skipped).' },
+  { name: 'onSubmit',      type: '(answers: ClarificationAnswer[]) => void', default: '—', description: 'Called when the user submits (⇧↵). Returns one ClarificationAnswer per question (null = skipped).' },
   { name: 'onClose',       type: '() => void',                 default: '—',               description: 'Optional close handler (not rendered as a button — call externally).' },
   { name: 'surface',       type: '\"default\" | \"shadow-border\"', default: '\"shadow-border\"', description: 'Surface treatment — shadow-border adds the outer ring shadow.' },
-  { name: 'disableMotion', type: 'boolean',                    default: 'false',           description: 'Disables slide animation and checkbox scale animation.' },
+  { name: 'disableMotion', type: 'boolean',                    default: 'false',           description: 'Disables slide animation, keycap press animation, and checkbox scale animation.' },
   { name: 'className',     type: 'string',                     default: '—',               description: 'Extra classes merged onto the root element.' },
 ];
 
@@ -26,11 +26,12 @@ const ANSWER_VARIANTS: PropRow[] = [
   { name: 'skipped',       type: 'null',                                                  default: '—', description: 'null means the question was not answered (navigated past without selecting).' },
 ];
 
-const USAGE = `import { ClarificationCard } from '@/components/ui';
+const USAGE = `import { ClarificationCardKeycap } from '@/components/ui';
 import type { ClarificationQuestion } from '@/components/ui';
 
-// Single-select (type omitted for backward compatibility)
-<ClarificationCard
+// Keyboard hint bar variant — shows ↑↓ ↵ ← → ⇧↵ animated keycap indicators
+// Best suited for keyboard-first chat flows (e.g. ArtifactClarificationChat)
+<ClarificationCardKeycap
   questions={[{
     label: 'Who is the primary user?',
     options: ['Internal team', 'External customer', 'Admin / ops', 'API consumer', 'Others'],
@@ -39,22 +40,12 @@ import type { ClarificationQuestion } from '@/components/ui';
 />
 
 // Multi-select with inline free text
-<ClarificationCard
+<ClarificationCardKeycap
   questions={[{
     type: 'multi',
     label: 'Which constraints must we design around?',
     options: ['Mobile-first', 'Singpass login', 'Data compliance', 'No app download', 'Others'],
     freeText: true,
-  }]}
-  onSubmit={(answers) => console.log(answers)}
-/>
-
-// Rank
-<ClarificationCard
-  questions={[{
-    type: 'rank',
-    label: 'Rank these features by importance for v1',
-    items: ['Job posting', 'Notifications', 'Accept / decline', 'Double-booking prevention'],
   }]}
   onSubmit={(answers) => console.log(answers)}
 />
@@ -69,35 +60,25 @@ const questions: ClarificationQuestion[] = [
     items: ['Ship fast', 'High quality', 'Low cost', 'Security'] },
 ];
 
-<ClarificationCard
+<ClarificationCardKeycap
   questions={questions}
-  onSubmit={(answers) => {
-    // answers[0] → { type: 'single', index: 0 }
-    // answers[1] → { type: 'multi', indices: [0, 2], freeText: 'custom text' }
-    // answers[2] → { type: 'rank', order: ['High quality', 'Security', 'Ship fast', 'Low cost'] }
-    console.log(answers);
-  }}
+  onSubmit={(answers) => console.log(answers)}
 />`;
 
-export function ClarificationCardPage() {
+export function ClarificationCardKeycapPage() {
   return (
     <div className="max-w-2xl space-y-10">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900">Clarification Card</h1>
+        <h1 className="text-2xl font-bold text-zinc-900">Clarification Card Keycap</h1>
         <p className="mt-2 text-sm text-zinc-500">
-          Q&amp;A navigator with a drag-handle pill header, numbered option badges, and a
-          button footer (Back / Skip / Next / Submit) using DS buttons with shadow surface.
-          Three question types: single-select (auto-advances immediately on click or key press),
-          multi-select, and drag-to-rank. Keyboard shortcuts work silently — number keys (1–9)
-          select or toggle, ↑↓ move focus, ↵ confirms, ←→ navigate, ⇧↵ submits.
-          Option rows have button-like hover motion (scale 0.99 spring) and highlight to
-          bg-surface-primary. Card height morphs smoothly via layout animation when moving
-          between questions. Submit button shows ⇧↵ keycap icons.
+          Q&amp;A navigator with an animated keyboard hint bar footer showing ↑↓ ↵ ← → ⇧↵
+          keycap indicators that react to actual key presses. Three question types: single-select,
+          multi-select, and drag-to-rank. Designed for keyboard-first chat flows.
           Setting <code>freeText: true</code> turns the last option row into an inline text input when selected.
         </p>
       </div>
 
-      <ClarificationCardDemos />
+      <ClarificationCardKeycapDemos />
 
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Props</h2>

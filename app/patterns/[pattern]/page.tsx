@@ -5,8 +5,10 @@ import { PreviewPanelPage }          from './PreviewPanelPage';
 import { PreviewPanelHeaderPage }    from './PreviewPanelHeaderPage';
 import { EditableTitlePage }         from './EditableTitlePage';
 import { ShareableLinkPage }         from './ShareableLinkPage';
-import { ClarificationCardPage }     from './ClarificationCardPage';
+import { ClarificationCardPage }        from './ClarificationCardPage';
+import { ClarificationCardKeycapPage } from './ClarificationCardKeycapPage';
 import { ArtifactSegmentedControlPage } from './ArtifactSegmentedControlPage';
+import { ArtifactPanelV2Page }       from './ArtifactPanelV2Page';
 import { ChatPanelPage }             from './ChatPanelPage';
 import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
@@ -17,7 +19,9 @@ const PATTERNS: Record<string, React.ComponentType> = {
   'editable-title':               EditableTitlePage,
   'shareable-link':               ShareableLinkPage,
   'clarification-card':           ClarificationCardPage,
+  'clarification-card-keycap':   ClarificationCardKeycapPage,
   'artifact-segmented-control':   ArtifactSegmentedControlPage,
+  'artifact-panel-v2':            ArtifactPanelV2Page,
   'chat-panel':                   ChatPanelPage,
 };
 

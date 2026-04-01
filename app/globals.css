@@ -52,8 +52,11 @@
   --font-mono:  var(--font-family-mono);
 
   /* ── Shadows ── */
-  --shadow-border:       var(--shadow-border);
-  --shadow-border-hover: var(--shadow-border-hover);
+  --shadow-border:         var(--shadow-border);
+  --shadow-border-hover:   var(--shadow-border-hover);
+  --shadow-keycap:         var(--shadow-keycap);
+  --shadow-keycap-hover:   var(--shadow-keycap-hover);
+  --shadow-keycap-pressed: var(--shadow-keycap-pressed);
 
 }
 

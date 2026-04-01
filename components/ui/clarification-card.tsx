@@ -1,470 +1,282 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useLayoutEffect } from 'react';
 import { motion } from 'motion/react';
-import useMeasure from 'react-use-measure';
-import * as SeparatorPrimitive from '@radix-ui/react-separator';
-import { cva, type VariantProps } from 'class-variance-authority';
-import {
-  ChevronLeft,
-  ChevronRight,
-  X,
-  ArrowRight,
-} from 'lucide-react';
+import { useDragResize } from './use-drag-resize';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { springs } from '@/tokens';
 import { Button } from './button';
-import { RadioGroup, RadioItem } from './radio-group';
-import { CheckboxGroup, CheckboxItem } from './checkbox-group';
 import { SortableList } from './sortable-list';
-import { Tag } from './tag';
+import {
+  clarificationCardVariants,
+  type ClarificationCardBaseProps,
+  type ClarificationQuestion,
+  type ClarificationAnswer,
+  isIndexSelected,
+  hasAnswer,
+  statusText,
+  SummaryView,
+  InlineCheckbox,
+  useClarificationState,
+} from './clarification-card-shared';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Types ───────────────────────────────────────────────────────────────────
 
-export type RiskLevel = 'safe' | 'low' | 'medium' | 'unsafe';
-
-export interface OptionMetadata {
-  timeEstimate?: string;
-  riskLevel?: RiskLevel;
-}
-
-/** A clarification option — either a plain string or an object with metadata. */
-export type ClarificationOption = string | { label: string; meta?: OptionMetadata };
-
-export type ClarificationSingleSelect = { type: 'single'; label: string; options: ClarificationOption[]; freeText?: boolean };
-export type ClarificationMultiSelect  = { type: 'multi';  label: string; options: ClarificationOption[]; freeText?: boolean };
-export type ClarificationRankPriorities = { type: 'rank'; label: string; items: string[] };
-export type ClarificationQuestion =
-  | ClarificationSingleSelect
-  | ClarificationMultiSelect
-  | ClarificationRankPriorities;
-export type ClarificationAnswers = Record<number, string | string[]>;
-
-// ─── CVA ──────────────────────────────────────────────────────────────────────
-
-export const clarificationCardVariants = cva(
-  ['flex flex-col', 'w-full', 'min-w-(--sizing-chat-min)', 'max-w-(--sizing-chat-max)', 'font-sans', 'bg-(--bg-surface-base)', 'rounded-lg overflow-hidden'],
-  {
-    variants: {
-      surface: {
-        default:       '',
-        'shadow-border': 'shadow-(--shadow-border)',
-      },
-    },
-    defaultVariants: { surface: 'shadow-border' },
-  },
-);
-
-// ─── Props ────────────────────────────────────────────────────────────────────
-
-export interface ClarificationCardProps
-  extends VariantProps<typeof clarificationCardVariants> {
-  questions: ClarificationQuestion[];
-  onSubmit?: (answers: ClarificationAnswers) => void;
-  onClose?: () => void;
+export interface ClarificationCardProps extends ClarificationCardBaseProps {
+  questions:      ClarificationQuestion[];
+  onSubmit?:      (answers: ClarificationAnswer[]) => void;
+  onClose?:       () => void;
   disableMotion?: boolean;
-  className?: string;
+  className?:     string;
 }
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const RISK_TAG_VARIANT: Record<RiskLevel, 'success' | 'warning' | 'error'> = {
-  safe:   'success',
-  low:    'success',
-  medium: 'warning',
-  unsafe: 'error',
-};
-
-// ─── Internal helpers ─────────────────────────────────────────────────────────
-
-/** Extracts the display label from a ClarificationOption (string or object). */
-function getOptionLabel(opt: ClarificationOption): string {
-  return typeof opt === 'string' ? opt : opt.label;
-}
-
-/** Renders inline metadata badges (time estimate + risk level) for rich options. */
-function OptionMeta({ opt }: { opt: ClarificationOption }) {
-  if (typeof opt === 'string' || !opt.meta) return null;
-  const { timeEstimate, riskLevel } = opt.meta;
-  return (
-    <span className="flex items-center gap-1 shrink-0">
-      {timeEstimate && (
-        <Tag variant="neutral" size="sm">{timeEstimate}</Tag>
-      )}
-      {riskLevel && (
-        <Tag variant={RISK_TAG_VARIANT[riskLevel]} size="sm">
-          {riskLevel === 'safe' ? 'Safe' : riskLevel === 'low' ? 'Low risk' : riskLevel === 'medium' ? 'Medium risk' : 'Unsafe'}
-        </Tag>
-      )}
-    </span>
-  );
-}
-
-function getRankItems(
-  answers: ClarificationAnswers,
-  qIndex: number,
-  question: ClarificationRankPriorities,
-): string[] {
-  const ans = answers[qIndex];
-  return Array.isArray(ans) ? ans : question.items;
-}
-
-function hasAnswer(answers: ClarificationAnswers, qIndex: number): boolean {
-  const ans = answers[qIndex];
-  if (ans === undefined) return false;
-  if (Array.isArray(ans)) return ans.length > 0;
-  return ans.length > 0;
-}
-
-// ─── NumberBadge ──────────────────────────────────────────────────────────────
-
-function NumberBadge({ n }: { n: number }) {
-  return (
-    <span
-      className={cn(
-        'flex items-center justify-center shrink-0',
-        'w-6 h-6 rounded-md',
-        'bg-(--bg-interactive-secondary-default) text-(--text-primary)',
-        'group-hover/radio:bg-(--bg-interactive-secondary-hover)',
-        'transition-colors duration-(--duration-fast)',
-        '[font-size:var(--font-size-xs)] [font-weight:var(--font-weight-semibold)]',
-      )}
-    >
-      {n}
-    </span>
-  );
-}
-
-// ─── ClarificationCard ────────────────────────────────────────────────────────
+// ━━━ ClarificationCard ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 export function ClarificationCard({
   questions,
   onSubmit,
-  onClose,
   disableMotion = false,
   surface,
   className,
 }: ClarificationCardProps) {
-  const [measureRef, { height }] = useMeasure();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<ClarificationAnswers>({});
-  const [maxVisited, setMaxVisited] = useState(0);
-  const [freeTextValue, setFreeTextValue] = useState('');
+  const {
+    currentIndex, focusIndex, answers, submitted,
+    freeTextValue, freeTextRef,
+    isFirst, isLast, currentQ, currentAnswer, qt, lastOptionIdx, showFreeText,
+    goTo, submit, selectSingle, toggleMulti, updateRank, advance,
+    updateFreeText, cancelFreeText, confirmFreeText,
+    clearFocusIndex, handleKeyDown, handleKeyUp,
+  } = useClarificationState({ questions, onSubmit });
 
-  const total = questions.length;
-  const question = questions[currentIndex];
-  const answered = hasAnswer(answers, currentIndex);
+  const { cardRef, cardHeight, handleProps, animateToContent } = useDragResize({
+    enabled: !submitted,
+    disableMotion,
+  });
 
-  // ── Answer setters ─────────────────────────────────────────────────────────
-
-  function selectSingle(value: string) {
-    const nextAnswers = { ...answers, [currentIndex]: value };
-    setAnswers(nextAnswers);
-    if (currentIndex < total - 1) {
-      advance(1);
-    } else {
-      onSubmit?.(nextAnswers);
-    }
-  }
-
-  function onMultiChange(next: string[]) {
-    setAnswers(prev => ({ ...prev, [currentIndex]: next }));
-  }
-
-  function reorderRank(items: string[]) {
-    setAnswers(prev => ({ ...prev, [currentIndex]: items }));
-  }
-
-  // ── Navigation ─────────────────────────────────────────────────────────────
-
-  function advance(dir: 1 | -1) {
-    const next = currentIndex + dir;
-    setCurrentIndex(next);
-    setFreeTextValue('');
-    if (dir === 1) setMaxVisited(prev => Math.max(prev, next));
-  }
-
-  function handleSubmit() {
-    if (currentIndex < total - 1) {
-      advance(1);
-    } else {
-      onSubmit?.(answers);
-    }
-  }
-
-  function handleSkip() {
-    if (currentIndex < total - 1) {
-      advance(1);
-    } else {
-      onSubmit?.(answers);
-    }
-  }
-
-  function handlePrev() {
-    if (currentIndex > 0) advance(-1);
-  }
-
-  function handleNext() {
-    if (currentIndex < maxVisited) advance(1);
-  }
-
-  // ── Question content ───────────────────────────────────────────────────────
-
-  function renderQuestion() {
-    if (question.type === 'single') {
-      return (
-        <RadioGroup
-          value={(answers[currentIndex] as string | undefined) ?? ''}
-          onChange={selectSingle}
-          indicator="none"
-          surface="default"
-          className="rounded-none"
-          disableMotion={disableMotion}
-        >
-          {question.options.map((option, i) => {
-            const label = getOptionLabel(option);
-            return (
-              <RadioItem key={label} value={label}>
-                <NumberBadge n={i + 1} />
-                <span className="flex-1 [font-size:var(--font-size-sm)] text-(--text-primary)">
-                  {label}
-                </span>
-                <OptionMeta opt={option} />
-                <ArrowRight
-                  className="h-4 w-4 text-(--text-tertiary) shrink-0 opacity-0 group-hover/radio:opacity-100 transition-opacity duration-(--duration-fast)"
-                  strokeWidth={2}
-                />
-              </RadioItem>
-            );
-          })}
-        </RadioGroup>
-      );
-    }
-
-    if (question.type === 'multi') {
-      const selected = (answers[currentIndex] as string[] | undefined) ?? [];
-      const count = selected.length;
-      return (
-        <div className="flex flex-col">
-          <CheckboxGroup
-            value={selected}
-            onChange={onMultiChange}
-            surface="default"
-            className="rounded-none"
-            disableMotion={disableMotion}
-          >
-            {question.options.map(option => {
-              const label = getOptionLabel(option);
-              return (
-                <CheckboxItem key={label} value={label}>
-                  <span className="flex-1 [font-size:var(--font-size-sm)] text-(--text-primary)">
-                    {label}
-                  </span>
-                  <OptionMeta opt={option} />
-                </CheckboxItem>
-              );
-            })}
-          </CheckboxGroup>
-          {question.freeText && (
-            <>
-              <SeparatorPrimitive.Root className="mx-4 h-px bg-(--bg-surface-secondary)" />
-              <div className="flex items-center gap-3 w-full px-4 py-2 rounded-lg">
-                <input
-                  type="text"
-                  aria-label="Add your own option"
-                  placeholder="Add your own..."
-                  value={freeTextValue}
-                  onChange={e => setFreeTextValue(e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' && freeTextValue.trim()) {
-                      onMultiChange([...selected, freeTextValue.trim()]);
-                      setFreeTextValue('');
-                    }
-                  }}
-                  className={cn(
-                    'flex-1 bg-(--bg-surface-secondary) text-(--text-primary)',
-                    'rounded-lg px-3 py-1.5',
-                    '[font-size:var(--font-size-sm)]',
-                    'placeholder:text-(--text-tertiary)',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--border-input-focus)',
-                  )}
-                />
-                <Button
-                  variant="ghost"
-                  size="icon-md"
-                  icon={<ArrowRight strokeWidth={2.5} />}
-                  onClick={() => {
-                    if (freeTextValue.trim()) {
-                      onMultiChange([...selected, freeTextValue.trim()]);
-                      setFreeTextValue('');
-                    }
-                  }}
-                  disableMotion={disableMotion}
-                  className="w-6 h-6"
-                />
-              </div>
-            </>
-          )}
-          <SeparatorPrimitive.Root className="h-px bg-(--bg-surface-tertiary)" />
-          <div className="p-2">
-            <span className="[font-size:var(--font-size-xs)] text-(--text-tertiary)">
-              {count === 0 ? 'None selected' : `${count} selected`}
-            </span>
-          </div>
-        </div>
-      );
-    }
-
-    if (question.type === 'rank') {
-      const items = getRankItems(answers, currentIndex, question);
-      return (
-        <div className="flex flex-col">
-          <SortableList
-            items={items}
-            onReorder={reorderRank}
-            surface="default"
-            className="rounded-none"
-            renderItem={(item, index) => (
-              <>
-                <NumberBadge n={index + 1} />
-                <span className="flex-1 [font-size:var(--font-size-sm)] text-(--text-primary)">
-                  {item}
-                </span>
-              </>
-            )}
-          />
-          <SeparatorPrimitive.Root className="h-px bg-(--bg-surface-tertiary)" />
-          <div className="p-2">
-            <span className="[font-size:var(--font-size-xs)] text-(--text-tertiary)">
-              Drag to re-order your priorities
-            </span>
-          </div>
-        </div>
-      );
-    }
-
-    return null;
-  }
-
-  // ── Render ─────────────────────────────────────────────────────────────────
+  // Animate height when content changes (question navigation, submit).
+  // Runs before paint so the temporary height: auto measurement is invisible.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => { animateToContent(); }, [currentIndex, submitted]);
 
   return (
-    <div className={cn(clarificationCardVariants({ surface }), className)}>
-
-      {/* Header */}
-      <div className="flex items-center gap-2 p-3">
-        <span className="flex-1 font-sans text-(length:--font-size-base) [font-weight:var(--font-weight-bold)] leading-(--line-height-base) text-(--text-primary)">
-          {question.label}
-        </span>
-
-        {/* Close */}
-        {onClose && (
-          <Button
-            variant="ghost"
-            size="icon-md"
-            icon={<X strokeWidth={2.5} />}
-            onClick={onClose}
-            disableMotion={disableMotion} 
-            className="w-6 h-6"
-          />
-        )}
-      </div>
-
-      {/* Question content — explicit height animation via useMeasure */}
-      <motion.div
-        animate={{ height: height || 'auto' }}
-        transition={disableMotion ? { duration: 0 } : springs.gentle}
-        className="overflow-hidden"
-      >
-        <div ref={measureRef}>
-          <div className="p-2">
-            {renderQuestion()}
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Footer */}
-      {question.type === 'single' && question.freeText ? (
-        <div className="flex items-center gap-2 px-4 py-3">
-          <input
-            type="text"
-            aria-label="Type your answer"
-            placeholder="Type your answer..."
-            value={freeTextValue}
-            onChange={e => setFreeTextValue(e.target.value)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' && freeTextValue.trim()) {
-                selectSingle(freeTextValue.trim());
-                setFreeTextValue('');
-              }
-            }}
-            className={cn(
-              'flex-1 bg-(--bg-surface-secondary) text-(--text-primary)',
-              'rounded-lg px-3 py-2',
-              '[font-size:var(--font-size-sm)]',
-              'placeholder:text-(--text-tertiary)',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--border-input-focus)',
-            )}
-          />
-          <Button
-            variant={freeTextValue.trim() ? 'primary' : 'secondary'}
-            size="icon-md"
-            icon={<ArrowRight strokeWidth={2.5} />}
-            onClick={() => {
-              if (freeTextValue.trim()) {
-                selectSingle(freeTextValue.trim());
-                setFreeTextValue('');
-              }
-            }}
-            disableMotion={disableMotion}
-          />
-        </div>
-      ) : (
-        <div className="flex items-center gap-2 px-4 py-3">
-          {/* Pagination */}
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon-md"
-              icon={<ChevronLeft strokeWidth={2.5} />}
-              onClick={handlePrev}
-              disabled={currentIndex === 0}
-              disableMotion={disableMotion}
-              className="w-6 h-6"
-            />
-
-            <span className="[font-size:var(--font-size-xs)] text-(--text-tertiary) min-w-[3rem] text-center tabular-nums">
-              {currentIndex + 1} of {total}
-            </span>
-
-            <Button
-              variant="ghost"
-              size="icon-md"
-              icon={<ChevronRight strokeWidth={2.5} />}
-              onClick={handleNext}
-              disabled={currentIndex >= maxVisited}
-              disableMotion={disableMotion}
-              className="w-6 h-6"
-            />
-          </div>
-          <div className="flex-1" />
-          <Button
-            variant="ghost"
-            size="md"
-            onClick={handleSkip}
-            disableMotion={disableMotion}
-          >
-            Skip
-          </Button>
-          <Button
-            variant={answered ? 'primary' : 'secondary'}
-            size="icon-md"
-            icon={<ArrowRight strokeWidth={2.5} />}
-            onClick={handleSubmit}
-            disableMotion={disableMotion}
-          />
+    <motion.div
+      ref={cardRef}
+      role="group"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      onKeyUp={handleKeyUp}
+      className={cn(clarificationCardVariants({ surface }), className)}
+      style={{ height: cardHeight, willChange: 'height' }}
+    >
+      {/* Drag handle */}
+      {!submitted && (
+        <div
+          {...handleProps}
+          className="flex justify-center py-2 cursor-grab touch-none select-none"
+        >
+          <div className="w-8 h-1 rounded-full bg-(--bg-surface-tertiary)" />
         </div>
       )}
-    </div>
+
+      {/* Content: question flow or summary */}
+      {submitted ? (
+        <SummaryView questions={questions} answers={answers} />
+      ) : (
+        <div className="flex-1 overflow-y-auto">
+          <div className="flex flex-col gap-3 px-4">
+
+          {/* Question group — pagination + title */}
+          <div className="flex flex-col gap-3">
+            {questions.length > 1 && (
+              <p className="[font-size:var(--font-size-sm)] font-semibold text-(--text-tertiary)">
+                Question {currentIndex + 1} of {questions.length}
+              </p>
+            )}
+            <h5
+              className="[font-size:var(--font-size-base)] font-bold text-(--text-primary)"
+              id={`cc-q-${currentIndex}`}
+            >
+              {currentQ.label}
+            </h5>
+          </div>
+
+          {/* Answer group — options/rank + status footer */}
+          <div className="flex flex-col gap-3">
+
+          {/* Option list — single or multi */}
+          {qt !== 'rank' && 'options' in currentQ && (
+            <div
+              role="listbox"
+              aria-multiselectable={qt === 'multi'}
+              aria-labelledby={`cc-q-${currentIndex}`}
+              aria-activedescendant={`cc-opt-${currentIndex}-${focusIndex}`}
+              className="flex flex-col"
+            >
+              {currentQ.options.map((opt, oi) => {
+                const isFocused        = focusIndex === oi;
+                const isSelected       = isIndexSelected(currentAnswer, oi);
+                const isLastOpt        = oi === lastOptionIdx;
+                const isInlineFreeText = showFreeText && isLastOpt;
+
+                const rowClass = isFocused
+                  ? 'bg-(--bg-surface-primary) text-(--text-primary)'
+                  : isSelected
+                    ? 'text-(--text-primary)'
+                    : 'text-(--text-secondary)';
+
+                return (
+                  <div
+                    key={oi}
+                    id={`cc-opt-${currentIndex}-${oi}`}
+                    role="option"
+                    aria-selected={isSelected}
+                    onMouseEnter={() => clearFocusIndex()}
+                    onClick={() => {
+                      if (isInlineFreeText) { freeTextRef.current?.focus(); return; }
+                      if (qt === 'single') selectSingle(oi);
+                      else toggleMulti(oi);
+                    }}
+                    className={cn(
+                      'flex items-center gap-4 p-3 rounded-md cursor-pointer',
+                      'hover:bg-(--bg-surface-primary) hover:text-(--text-primary)',
+                      '[transition:background-color_80ms_ease,color_80ms_ease]',
+                      rowClass,
+                    )}
+                  >
+                    {/* Number badge */}
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        'flex items-center justify-center shrink-0 w-6 h-6 rounded',
+                        'bg-(--bg-surface-secondary)',
+                        '[font-size:var(--font-size-xs)] font-semibold',
+                        'text-(--text-secondary)',
+                      )}
+                    >
+                      {String(oi + 1)}
+                    </span>
+
+                    {isInlineFreeText ? (
+                      <input
+                        ref={freeTextRef}
+                        type="text"
+                        value={freeTextValue}
+                        placeholder="Type another option"
+                        onChange={e => updateFreeText(e.target.value)}
+                        onClick={e => e.stopPropagation()}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter')  { e.preventDefault(); confirmFreeText(); }
+                          if (e.key === 'Escape') { e.preventDefault(); cancelFreeText(); }
+                        }}
+                        className={cn(
+                          'flex-1 min-w-0 bg-transparent outline-none',
+                          '[font-size:var(--font-size-sm)]',
+                          'text-(--text-primary) placeholder:text-(--text-placeholder)',
+                        )}
+                      />
+                    ) : isLastOpt && 'freeText' in currentQ && currentQ.freeText ? (
+                      <span className="flex-1 [font-size:var(--font-size-sm)] leading-snug text-(--text-placeholder)">
+                        Type another option
+                      </span>
+                    ) : (
+                      <span className="flex-1 [font-size:var(--font-size-sm)] leading-snug">
+                        {opt}
+                      </span>
+                    )}
+
+                    {/* Right indicator */}
+                    {qt === 'multi' && (
+                      <InlineCheckbox checked={isSelected} disableMotion={disableMotion} />
+                    )}
+                    {qt === 'single' && (isSelected || isInlineFreeText) && (
+                      <Check
+                        className="h-4 w-4 text-(--text-tertiary) shrink-0"
+                        aria-hidden="true"
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Rank — SortableList */}
+          {qt === 'rank' && (
+            <SortableList
+              items={currentAnswer?.type === 'rank' ? currentAnswer.order : (currentQ as { items: string[] }).items}
+              onReorder={updateRank}
+              surface="default"
+              dividers={false}
+            />
+          )}
+
+          {/* Status footer */}
+          <div className="p-2 border-t border-(--bg-surface-tertiary)">
+            <p className="[font-size:var(--font-size-xs)] font-semibold text-(--text-placeholder)">
+              {statusText(qt, currentAnswer)}
+            </p>
+          </div>
+          </div>
+          </div>
+        </div>
+      )}
+
+      {/* Button footer */}
+      {!submitted && (
+        <div className="flex items-center justify-between p-3 gap-2">
+          {/* Back */}
+          <div>
+            {!isFirst && (
+              <Button
+                variant="secondary"
+                surface="flat"
+                size="sm"
+                leadingIcon={<ArrowLeft />}
+                disableMotion={disableMotion}
+                onClick={() => goTo(currentIndex - 1, -1)}
+              >
+                Back
+              </Button>
+            )}
+          </div>
+
+          {/* Skip + Next / Submit */}
+          <div className="flex items-center gap-2">
+            {isLast ? (
+              <Button
+                variant="primary"
+                size="sm"
+                disableMotion={disableMotion}
+                onClick={() => submit()}
+              >
+                Submit
+              </Button>
+            ) : (
+              <>
+                <Button
+                  variant="secondary"
+                  surface="flat"
+                  size="sm"
+                  disableMotion={disableMotion}
+                  onClick={advance}
+                >
+                  Skip
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  trailingIcon={<ArrowRight />}
+                  disabled={!hasAnswer(currentAnswer)}
+                  disableMotion={disableMotion}
+                  onClick={advance}
+                >
+                  Next
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </motion.div>
   );
 }

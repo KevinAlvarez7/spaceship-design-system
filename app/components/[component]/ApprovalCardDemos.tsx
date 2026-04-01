@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ApprovalCard } from '@/components/ui';
@@ -100,38 +101,50 @@ const MD_CLASSES = [
 // ─── ApprovalCardDemos ────────────────────────────────────────────────────────
 
 export function ApprovalCardDemos() {
+  const [approvedLow, setApprovedLow]     = useState(false);
+  const [rejectedLow, setRejectedLow]     = useState<string | undefined>();
+  const [approvedUnsafe, setApprovedUnsafe] = useState(false);
+
   return (
     <>
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Low risk plan</h2>
-        <Preview label="overallRisk=&quot;low&quot;" justify="center">
+        <Preview label="default" justify="center">
           <div className="w-(--sizing-chat-default)">
             <ApprovalCard
-              onApprove={() => {}}
-              onReject={() => {}}
-              disableMotion
+              onApprove={() => setApprovedLow(true)}
+              onReject={msg => setRejectedLow(msg ?? '(no message)')}
             >
               <div className={MD_CLASSES}>
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{LOW_RISK_MD}</ReactMarkdown>
               </div>
             </ApprovalCard>
+            {approvedLow && (
+              <p className="mt-3 text-sm text-zinc-500">✓ Approved</p>
+            )}
+            {rejectedLow && (
+              <p className="mt-3 text-sm text-zinc-500">✗ Changes requested: &quot;{rejectedLow}&quot;</p>
+            )}
           </div>
         </Preview>
       </section>
 
       <section>
         <h2 className="text-base font-semibold text-zinc-800 mb-3">Unsafe plan</h2>
-        <Preview label="overallRisk=&quot;unsafe&quot;" justify="center">
+        <Preview label='title="Security Review"' justify="center">
           <div className="w-(--sizing-chat-default)">
             <ApprovalCard
-              onApprove={() => {}}
+              title="Security Review"
+              onApprove={() => setApprovedUnsafe(true)}
               onReject={() => {}}
-              disableMotion
             >
               <div className={MD_CLASSES}>
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{UNSAFE_MD}</ReactMarkdown>
               </div>
             </ApprovalCard>
+            {approvedUnsafe && (
+              <p className="mt-3 text-sm text-zinc-500">✓ Approved</p>
+            )}
           </div>
         </Preview>
       </section>

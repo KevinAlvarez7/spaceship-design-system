@@ -8,6 +8,7 @@ import type { PageEntry } from './viewer-registry';
 
 const EXCLUDE_FILES = new Set(['index.ts', 'index.tsx']);
 const EXCLUDE_PREFIXES = ['use-'];
+const EXCLUDE_SUFFIXES = ['-shared.tsx', '-shared.ts'];
 
 // ─── Extra entries ───────────────────────────────────────────────────────────
 
@@ -55,6 +56,7 @@ export function discoverComponentEntries(): PageEntry[] {
     .filter(f => f.endsWith('.tsx') || f.endsWith('.ts'))
     .filter(f => !EXCLUDE_FILES.has(f))
     .filter(f => !EXCLUDE_PREFIXES.some(prefix => f.startsWith(prefix)))
+    .filter(f => !EXCLUDE_SUFFIXES.some(suffix => f.endsWith(suffix)))
     .map((f): PageEntry => {
       const slug = f.replace(/\.tsx?$/, '');
       const override = COMPONENT_OVERRIDES[slug] ?? {};

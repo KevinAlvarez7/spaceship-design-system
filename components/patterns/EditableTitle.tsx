@@ -24,6 +24,8 @@ interface EditableTitleProps {
   onMenuClick: () => void;
   onDelete?: () => void;
   error?: string;
+  /** Extra content rendered after the 3-dot menu (e.g., a folder toggle button). */
+  trailingSlot?: React.ReactNode;
   className?: string;
 }
 
@@ -35,6 +37,7 @@ export function EditableTitle({
   onMenuClick,
   onDelete,
   error,
+  trailingSlot,
   className,
 }: EditableTitleProps) {
 
@@ -99,31 +102,33 @@ export function EditableTitle({
           {title}
         </span>
 
-        {/* Right: 3-dot menu — isolateScale keeps bounding rect stable so dropdown doesn't shift */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="secondary"
-              surface="shadow"
-              size="icon-md"
-              isolateScale
-              className="shrink-0"
-              icon={<EllipsisVertical />}
-              aria-label="Project actions"
-            />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onSelect={handleRenameOpen}>
-              <PenLine />
-              Rename
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onSelect={onDelete}>
-              <Trash2 />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* Right: 3-dot menu + optional trailing slot */}
+        <div className="flex items-center gap-2 shrink-0">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="secondary"
+                surface="shadow"
+                size="icon-md"
+                isolateScale
+                icon={<EllipsisVertical />}
+                aria-label="Project actions"
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onSelect={handleRenameOpen}>
+                <PenLine />
+                Rename
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem variant="destructive" onSelect={onDelete}>
+                <Trash2 />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {trailingSlot}
+        </div>
       </div>
 
       {/* Rename modal */}

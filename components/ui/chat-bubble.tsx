@@ -9,7 +9,7 @@ const chatBubbleVariants = cva(
   [
     'max-w-[75%] px-4 py-3',
     'bg-(--bg-surface-brand-secondary)',
-    'rounded-tl-xl rounded-bl-xl rounded-br-xl',
+    'rounded-sm',
     'text-(length:--font-size-base) leading-(--line-height-base)',
     'font-(family-name:--font-family-secondary)',
     'text-(--text-primary)',

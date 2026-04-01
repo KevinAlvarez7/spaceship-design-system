@@ -9,6 +9,7 @@ import { ModalPage }       from './ModalPage';
 import { TagPage }         from './TagPage';
 import { TabBarPage }      from './TabBarPage';
 import { FolderTabsPage } from './FolderTabsPage';
+import { FolderTabsV2Page } from './FolderTabsV2Page';
 import { ThinkingDotsPage } from './ThinkingDotsPage';
 import { ThinkingPage } from './ThinkingPage';
 import { TaskListPage } from './TaskListPage';
@@ -18,6 +19,7 @@ import { RadioGroupPage }  from './RadioGroupPage';
 import { CheckboxGroupPage } from './CheckboxGroupPage';
 import { SortableListPage } from './SortableListPage';
 import { ShimmerTextPage } from './ShimmerTextPage';
+import { KeycapPage }      from './KeycapPage';
 import { GravityAssistPage } from '../../playground/[slug]/GravityAssistPage';
 import { GridBackgroundPage } from '../../playground/[slug]/GridBackgroundPage';
 import { buildTopbarTitle } from '@/lib/viewer-registry';
@@ -33,6 +35,7 @@ const COMPONENTS: Record<string, React.ComponentType> = {
   tag:              TagPage,
   'tab-bar':        TabBarPage,
   'folder-tabs':    FolderTabsPage,
+  'folder-tabs-v2': FolderTabsV2Page,
   'thinking-dots':  ThinkingDotsPage,
   'thinking':       ThinkingPage,
   'task-list':      TaskListPage,
@@ -42,6 +45,7 @@ const COMPONENTS: Record<string, React.ComponentType> = {
   'checkbox-group': CheckboxGroupPage,
   'sortable-list':  SortableListPage,
   'shimmer-text':   ShimmerTextPage,
+  keycap:           KeycapPage,
   'gravity-assist': GravityAssistPage,
   'grid-background': GridBackgroundPage,
 };

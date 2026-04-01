@@ -202,6 +202,7 @@
   --font-size-sm: 0.875rem; /* 14px */
   --font-size-xl: 1.25rem; /* 20px */
   --font-size-xs: 0.75rem; /* 12px */
+  --font-size-2xs: 0.6875rem; /* 11px */
 
   /* Line Heights */
   --line-height-2xl: 2rem; /* 32px */
@@ -221,8 +222,9 @@
 
   /* Font Weights */
   --font-weight-thin: 100;
-  --font-weight-semibold: 600;
   --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
 
@@ -237,6 +239,23 @@
     0px 0px 0px 1px rgba(0, 0, 0, 0.08),
     0px 1px 2px -1px rgba(0, 0, 0, 0.08),
     0px 2px 4px 0px rgba(0, 0, 0, 0.06);
+
+  /* ── Keycap Shadows ──────────────────────────────────────────
+     3-layer Jakub system: outline ring + inner softness + flat depth.
+     Not in Figma variables — maintained manually.
+     ──────────────────────────────────────────────────────────── */
+  --shadow-keycap:
+    0px 0px 0px 1px rgba(0, 0, 0, 0.06),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.06),
+    0px 3px 0px 0px rgba(0, 0, 0, 0.10);
+  --shadow-keycap-hover:
+    0px 0px 0px 1px rgba(0, 0, 0, 0.08),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.08),
+    0px 3px 0px 0px rgba(0, 0, 0, 0.14);
+  --shadow-keycap-pressed:
+    0px 0px 0px 1px rgba(0, 0, 0, 0.06),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.06),
+    0px 0px 0px 0px rgba(0, 0, 0, 0.00);
 
   /* ── Effects ─────────────────────────────────────────────────
      Not in Figma variables — maintained manually.
@@ -282,6 +301,7 @@
      ──────────────────────────────────────────────────────────── */
   --sizing-chat-min:     20rem;    /* 320px */
   --sizing-chat-default: 26.75rem; /* 428px */
+  --sizing-chat-panel:   35rem;    /* 560px — chat column width when artifact panel is visible */
   --sizing-chat-max:     48rem;    /* 768px */
 }
 
@@ -324,6 +344,20 @@
     0px 0px 0px 1px rgba(255, 255, 255, 0.10),
     0px 1px 2px -1px rgba(0, 0, 0, 0.5),
     0px 2px 4px 0px rgba(0, 0, 0, 0.4);
+
+  /* Keycap shadows — dark */
+  --shadow-keycap:
+    0px 0px 0px 1px rgba(255, 255, 255, 0.10),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.4),
+    0px 3px 0px 0px rgba(255, 255, 255, 0.06);
+  --shadow-keycap-hover:
+    0px 0px 0px 1px rgba(255, 255, 255, 0.14),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.5),
+    0px 3px 0px 0px rgba(255, 255, 255, 0.10);
+  --shadow-keycap-pressed:
+    0px 0px 0px 1px rgba(255, 255, 255, 0.10),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.4),
+    0px 0px 0px 0px rgba(255, 255, 255, 0.00);
 
   /* Effects — dark */
   --effect-gravity-bg:   var(--neutral-950);

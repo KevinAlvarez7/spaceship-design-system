@@ -37,8 +37,6 @@ export interface ModalProps extends VariantProps<typeof modalVariants> {
   children?: ReactNode;
   className?: string;
   disableMotion?: boolean;
-  'aria-labelledby'?: string;
-  'aria-describedby'?: string;
 }
 
 export function ModalHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
@@ -49,16 +47,14 @@ export function ModalHeader({ className, ...props }: React.HTMLAttributes<HTMLDi
 
 export function ModalTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <DialogPrimitive.Title asChild>
-      <h2
-        className={cn(
-          'font-sans [font-size:var(--font-size-xl)] [font-weight:var(--font-weight-bold)] leading-(--line-height-lg)',
-          'text-(--text-primary)',
-          className
-        )}
-        {...props}
-      />
-    </DialogPrimitive.Title>
+    <DialogPrimitive.Title
+      className={cn(
+        'font-sans [font-size:var(--font-size-xl)] [font-weight:var(--font-weight-bold)] leading-(--line-height-lg)',
+        'text-(--text-primary)',
+        className
+      )}
+      {...props}
+    />
   );
 }
 
@@ -93,8 +89,6 @@ export function Modal({
   className,
   surface,
   disableMotion = false,
-  'aria-labelledby': labelledby,
-  'aria-describedby': describedby,
 }: ModalProps) {
   return (
     <DialogPrimitive.Root
@@ -123,8 +117,6 @@ export function Modal({
                   {/* Dialog panel */}
                   <DialogPrimitive.Content
                     forceMount
-                    aria-labelledby={labelledby}
-                    aria-describedby={describedby}
                     className="relative z-10 w-full max-w-lg outline-none"
                   >
                     <motion.div

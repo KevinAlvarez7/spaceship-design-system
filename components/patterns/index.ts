@@ -3,6 +3,10 @@ export { PreviewPanelHeader } from './PreviewPanelHeader';
 export { EditableTitle } from './EditableTitle';
 export { ShareableLink } from './ShareableLink';
 export { ArtifactSegmentedControl } from './ArtifactSegmentedControl';
+export { ArtifactPanelV2 } from './ArtifactPanelV2';
+export type { ArtifactPanelV2Props } from './ArtifactPanelV2';
+export { ArtifactToolbarDropdown } from './ArtifactToolbarDropdown';
+export type { ArtifactToolbarDropdownProps } from './ArtifactToolbarDropdown';
 export { ArtifactContentRenderer } from './ArtifactContentRenderer';
 export { ChatPanel } from './ChatPanel';
 export { ChatInputSlot } from './ChatInputSlot';
@@ -19,23 +23,12 @@ export {
   ARTIFACT_STATUS_LABEL,
 } from './artifact-types';
 export type {
-  SingleSelectQuestion,
-  MultiSelectQuestion,
-  RankPrioritiesQuestion,
   Question,
   Stage,
   StageAnswers,
 } from './ClarificationForm';
 export {
   STAGES,
-  PILL_BASE,
-  PILL_SELECTED,
-  PILL_UNSELECTED,
-  isStageComplete,
   buildAnswerSummary,
   buildClosingMessage,
-  SingleSelect,
-  MultiSelect,
-  SortableItem,
-  RankPriorities,
 } from './ClarificationForm';

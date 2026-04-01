@@ -28,7 +28,7 @@ export function ChatThread({ children, className, bare }: ChatThreadProps) {
   }, [lastChildKey, bare]);
 
   const content = (
-    <div className="flex flex-col gap-6 px-8 pb-3 pt-5">
+    <div className="flex flex-col gap-6 px-6 pb-3 pt-5">
       {children}
       <div ref={bottomRef} aria-hidden="true" />
     </div>

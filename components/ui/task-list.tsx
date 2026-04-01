@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { CheckCircle2, Loader2, ChevronDown, ChevronRight, ClipboardCheck } from 'lucide-react';
+import { CheckCircle2, Loader2, ClipboardCheck } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
 import * as ProgressPrimitive from '@radix-ui/react-progress';
@@ -20,7 +20,7 @@ export const taskListVariants = cva(
         'shadow-border': 'shadow-(--shadow-border)',
       },
     },
-    defaultVariants: { surface: 'default' },
+    defaultVariants: { surface: 'shadow-border' },
   },
 );
 
@@ -56,8 +56,6 @@ export function TaskList({
   const active = isActive ?? completedCount < items.length;
   const progressPct = items.length > 0 ? (completedCount / items.length) * 100 : 0;
 
-  const ChevronIcon = expanded ? ChevronDown : ChevronRight;
-
   return (
     <div
       className={cn(taskListVariants({ surface }), className)}
@@ -68,7 +66,7 @@ export function TaskList({
         <CollapsiblePrimitive.Trigger asChild>
           <button
             type="button"
-            className="relative flex items-center justify-between px-4 py-3 overflow-hidden bg-(--bg-surface-base) border-b border-(--bg-surface-secondary) cursor-pointer w-full text-left"
+            className="relative flex items-center justify-between p-3 overflow-hidden bg-(--bg-surface-base) cursor-pointer w-full text-left"
           >
             {/* Progress fill — absolute, behind content; scaleX from left (compositor-only) */}
             <ProgressPrimitive.Root
@@ -77,10 +75,10 @@ export function TaskList({
               className="absolute inset-y-0 left-0 w-full overflow-hidden"
             >
               <ProgressPrimitive.Indicator
-                className="h-full bg-(--bg-surface-success-base) transition-transform duration-500 ease-out origin-left"
+                className={cn('h-full transition-transform duration-500 ease-out origin-left', active ? 'bg-(--bg-surface-success-base)' : 'bg-(--bg-surface-secondary)')}
                 style={{ transform: `scaleX(${progressPct / 100})` }}
               >
-                {!disableMotion && progressPct > 0 && (
+                {!disableMotion && progressPct > 0 && active && (
                   <motion.span
                     className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent)]"
                     animate={{ x: ['-100%', '100%'] }}
@@ -93,21 +91,20 @@ export function TaskList({
 
             {/* Left: icon + count */}
             <span className="relative z-10 flex items-center gap-2">
-              <ClipboardCheck className="h-5 w-5 shrink-0 text-(--text-primary)" />
-              <span className="font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-primary)">
+              <ClipboardCheck className="h-4 w-4 shrink-0 text-(--text-primary)" />
+              <span className="font-sans [font-size:var(--font-size-sm)] leading-5 text-(--text-primary)">
                 {completedCount}/{items.length} tasks completed
               </span>
             </span>
 
-            {/* Right: timestamp + chevron */}
-            <span className="relative z-10 flex items-center gap-2 shrink-0">
-              {updatedAt && (
+            {/* Right: timestamp */}
+            {updatedAt && (
+              <span className="relative z-10 flex items-center shrink-0">
                 <span className="font-sans [font-size:var(--font-size-xs)] [font-weight:var(--font-weight-semibold)] text-(--text-tertiary)">
                   {updatedAt}
                 </span>
-              )}
-              <ChevronIcon className="h-4 w-4 text-(--text-tertiary)" />
-            </span>
+              </span>
+            )}
           </button>
         </CollapsiblePrimitive.Trigger>
 
@@ -121,7 +118,7 @@ export function TaskList({
                 animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
                 exit={disableMotion ? undefined : { opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
                 transition={springs.interactive}
-                className="bg-(--bg-surface-primary)"
+                className="bg-(--bg-surface-primary) border-t border-(--bg-surface-tertiary)"
               >
             <ol className="flex flex-col gap-3 px-4 py-4 list-none">
               {items.map((task, i) => {
@@ -149,12 +146,9 @@ export function TaskList({
                 }
 
                 return (
-                  <li key={task} className="flex items-center gap-3">
-                    <span className="font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] text-(--text-tertiary) w-4 shrink-0 text-right tabular-nums">
-                      {i + 1}
-                    </span>
-                    <span className={cn('flex-1 font-sans [font-size:var(--font-size-sm)] [line-height:var(--line-height-sm)]', textClass)}>
-                      {task}
+                  <li key={task} className="flex items-start gap-3">
+                    <span className={cn('flex-1 font-sans [font-size:var(--font-size-sm)] leading-(--line-height-sm)', textClass)}>
+                      {i + 1}. {task}
                     </span>
                     {disableMotion ? (
                       <span className="shrink-0">{icon}</span>

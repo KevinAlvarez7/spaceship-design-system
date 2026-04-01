@@ -1,67 +1,119 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, ClarificationCard, type ClarificationQuestion, type ClarificationAnswers } from '@/components/ui';
+import { ClarificationCard } from '@/components/ui';
+import type { ClarificationAnswer } from '@/components/ui';
+import { Preview } from '@/components/viewer/Preview';
+import {
+  STEP_1_QUESTIONS,
+  STEP_2_QUESTIONS,
+  IMPL_QUESTIONS,
+} from '@/app/_shared/clarification-chat.mock';
 
-const QUESTIONS: ClarificationQuestion[] = [
-  {
-    type: 'single',
-    label: 'Who is the primary user of this feature?',
-    options: ['Government officer', 'Admin & ops', 'Public citizen', 'Internal developer'],
-  },
-  {
-    type: 'multi',
-    label: 'Which pain points does this solve?',
-    options: [
-      'Too many manual steps',
-      'Hard to find information',
-      'Process takes too long',
-      'Errors from copy-pasting',
-      'No visibility into status',
-    ],
-  },
-  {
-    type: 'rank',
-    label: 'Rank what matters most in this build',
-    items: ['Correctness', 'Speed of delivery', 'Visual polish', 'Edge case handling'],
-  },
-];
+// ─── Result display helper ────────────────────────────────────────────────────
+
+function ResultBlock({ result, onReset }: { result: ClarificationAnswer[]; onReset: () => void }) {
+  return (
+    <div className="w-full flex flex-col gap-2">
+      <pre className="[font-size:var(--font-size-xs)] text-(--text-primary) bg-(--bg-surface-secondary) rounded-lg p-3 overflow-auto">
+        {JSON.stringify(result, null, 2)}
+      </pre>
+      <button
+        type="button"
+        onClick={onReset}
+        className="[font-size:var(--font-size-xs)] text-(--text-tertiary) hover:text-(--text-secondary) text-center"
+      >
+        Reset
+      </button>
+    </div>
+  );
+}
+
+// ─── Demos ────────────────────────────────────────────────────────────────────
+
+function Step1Demo() {
+  const [key, setKey]       = useState(0);
+  const [result, setResult] = useState<ClarificationAnswer[] | null>(null);
+  return (
+    <div className="flex flex-col items-center gap-4 w-(--sizing-chat-default)">
+      <ClarificationCard key={key} questions={STEP_1_QUESTIONS} onSubmit={answers => setResult(answers)} />
+      {result && <ResultBlock result={result} onReset={() => { setKey(k => k + 1); setResult(null); }} />}
+    </div>
+  );
+}
+
+function Step2Demo() {
+  const [key, setKey]       = useState(0);
+  const [result, setResult] = useState<ClarificationAnswer[] | null>(null);
+  return (
+    <div className="flex flex-col items-center gap-4 w-(--sizing-chat-default)">
+      <ClarificationCard key={key} questions={STEP_2_QUESTIONS} onSubmit={answers => setResult(answers)} />
+      {result && <ResultBlock result={result} onReset={() => { setKey(k => k + 1); setResult(null); }} />}
+    </div>
+  );
+}
+
+function ImplDemo() {
+  const [key, setKey]       = useState(0);
+  const [result, setResult] = useState<ClarificationAnswer[] | null>(null);
+  return (
+    <div className="flex flex-col items-center gap-4 w-(--sizing-chat-default)">
+      <ClarificationCard key={key} questions={IMPL_QUESTIONS} onSubmit={answers => setResult(answers)} />
+      {result && <ResultBlock result={result} onReset={() => { setKey(k => k + 1); setResult(null); }} />}
+    </div>
+  );
+}
+
+function SurfaceDemo() {
+  const [key, setKey] = useState(0);
+  return (
+    <div className="w-(--sizing-chat-default)">
+      <ClarificationCard
+        key={key}
+        surface="default"
+        questions={[{
+          type: 'single',
+          label: 'Which approach fits best?',
+          options: ['Quick patch', 'Full refactor', 'Feature flag rollout', 'Hotfix + follow-up', 'Others'],
+        }]}
+        onSubmit={() => setKey(k => k + 1)}
+      />
+    </div>
+  );
+}
+
+// ─── Export ───────────────────────────────────────────────────────────────────
 
 export function ClarificationCardDemos() {
-  const [key, setKey] = useState(0);
-  const [result, setResult] = useState<ClarificationAnswers | null>(null);
-
-  function handleSubmit(answers: ClarificationAnswers) {
-    setResult(answers);
-  }
-
-  function handleReset() {
-    setKey(k => k + 1);
-    setResult(null);
-  }
-
   return (
-    <div className="flex flex-col gap-6 items-center">
-      <div className="w-(--sizing-chat-default)">
-        <ClarificationCard
-          key={key}
-          questions={QUESTIONS}
-          onSubmit={handleSubmit}
-          onClose={handleReset}
-        />
-      </div>
+    <>
+      <section>
+        <h2 className="text-sm font-medium text-zinc-700 mb-3">Step 1 — Problem clarification</h2>
+        <Preview label="5 questions: single (freeText), multi, single, single (freeText), rank — auto-advances on single-select">
+          <Step1Demo />
+        </Preview>
+      </section>
 
-      {result && (
-        <div className="flex flex-col gap-2 w-(--sizing-chat-default)">
-          <p className="[font-size:var(--font-size-sm)] text-(--text-tertiary)">Submitted answers:</p>
-          <pre className="[font-size:var(--font-size-xs)] text-(--text-primary) bg-(--bg-surface-primary) rounded-lg p-3 overflow-auto">
-            {JSON.stringify(result, null, 2)}
-          </pre>
-          <Button variant="ghost" size="sm" onClick={handleReset} className="self-start">
-            Reset
-          </Button>
-        </div>
-      )}
-    </div>
+      <section>
+        <h2 className="text-sm font-medium text-zinc-700 mb-3">Step 2 — Solution clarification</h2>
+        <Preview label="5 questions: single, single, rank, multi, single">
+          <Step2Demo />
+        </Preview>
+      </section>
+
+      <section>
+        <h2 className="text-sm font-medium text-zinc-700 mb-3">Implementation questions</h2>
+        <Preview label="5 questions: single (freeText), single, multi, single, rank">
+          <ImplDemo />
+        </Preview>
+      </section>
+
+      <section>
+        <h2 className="text-sm font-medium text-zinc-700 mb-3">surface=&quot;default&quot;</h2>
+        <Preview label="Flat surface, no shadow-border ring">
+          <SurfaceDemo />
+        </Preview>
+      </section>
+    </>
   );
 }

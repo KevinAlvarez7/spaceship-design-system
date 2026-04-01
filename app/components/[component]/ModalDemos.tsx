@@ -10,13 +10,10 @@ function DefaultDemo() {
   return (
     <>
       <Button onClick={() => setOpen(true)}>Open modal</Button>
-      <Modal open={open} onClose={() => setOpen(false)}
-        aria-labelledby="demo-title"
-        aria-describedby="demo-desc"
-      >
+      <Modal open={open} onClose={() => setOpen(false)}>
         <ModalHeader>
-          <ModalTitle id="demo-title">Are you absolutely sure?</ModalTitle>
-          <ModalDescription id="demo-desc">
+          <ModalTitle>Are you absolutely sure?</ModalTitle>
+          <ModalDescription>
             This action cannot be undone. This will permanently delete your
             account and remove your data from our servers.
           </ModalDescription>
@@ -35,9 +32,9 @@ function TitleOnlyDemo() {
   return (
     <>
       <Button variant="secondary" onClick={() => setOpen(true)}>Title only</Button>
-      <Modal open={open} onClose={() => setOpen(false)} aria-labelledby="title-only">
+      <Modal open={open} onClose={() => setOpen(false)}>
         <ModalHeader>
-          <ModalTitle id="title-only">Confirm action</ModalTitle>
+          <ModalTitle>Confirm action</ModalTitle>
         </ModalHeader>
         <ModalFooter>
           <Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button>
@@ -53,13 +50,10 @@ function DestructiveDemo() {
   return (
     <>
       <Button variant="destructive" onClick={() => setOpen(true)}>Delete account</Button>
-      <Modal open={open} onClose={() => setOpen(false)}
-        aria-labelledby="destr-title"
-        aria-describedby="destr-desc"
-      >
+      <Modal open={open} onClose={() => setOpen(false)}>
         <ModalHeader>
-          <ModalTitle id="destr-title">Delete account</ModalTitle>
-          <ModalDescription id="destr-desc">
+          <ModalTitle>Delete account</ModalTitle>
+          <ModalDescription>
             Your account and all associated data will be permanently removed.
             This action cannot be reversed.
           </ModalDescription>
@@ -78,11 +72,9 @@ function NoMotionDemo() {
   return (
     <>
       <Button variant="secondary" onClick={() => setOpen(true)}>No animation</Button>
-      <Modal open={open} onClose={() => setOpen(false)} disableMotion
-        aria-labelledby="no-motion-title"
-      >
+      <Modal open={open} onClose={() => setOpen(false)} disableMotion>
         <ModalHeader>
-          <ModalTitle id="no-motion-title">No motion modal</ModalTitle>
+          <ModalTitle>No motion modal</ModalTitle>
           <ModalDescription>
             This modal opens instantly with no scale or fade animation on the panel.
           </ModalDescription>

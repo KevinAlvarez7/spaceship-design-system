@@ -7,12 +7,11 @@ import {
   ChatBubble,
   ChatMessage,
   ChatInputBox,
-  ClarificationCard,
+  ClarificationCardKeycap,
 } from '@/components/ui';
-import type { ClarificationQuestion, ClarificationAnswers } from '@/components/ui';
+import type { ClarificationQuestion, ClarificationAnswer } from '@/components/ui';
 import { springs } from '@/tokens';
 import {
-  type StageAnswers,
   STAGES,
   buildAnswerSummary,
   buildClosingMessage,
@@ -62,17 +61,14 @@ function TypingIndicator() {
 // ─── Stage mapper ─────────────────────────────────────────────────────────────
 
 function stageToQuestions(stageIndex: number): ClarificationQuestion[] {
-  return STAGES[stageIndex].questions.map(q => {
-    if (q.type === 'rank') return { type: 'rank', label: q.label, items: q.items };
-    return { type: q.type, label: q.label, options: q.options };
-  });
+  return STAGES[stageIndex].questions as ClarificationQuestion[];
 }
 
 // ─── ArtifactClarificationChat ────────────────────────────────────────────────
 
 export function ArtifactClarificationChat() {
   const [items, setItems]             = useState<ThreadItem[]>(INITIAL_ITEMS);
-  const [allAnswers, setAllAnswers]   = useState<StageAnswers[]>([]);
+  const [allAnswers, setAllAnswers]   = useState<ClarificationAnswer[][]>([]);
   const [activeStage, setActiveStage] = useState(-1);
   const [inputValue, setInputValue]   = useState('');
   const timeouts                      = useRef<NodeJS.Timeout[]>([]);
@@ -120,7 +116,7 @@ export function ArtifactClarificationChat() {
     };
   }, []);
 
-  function handleStageSubmit(stageIndex: number, answers: ClarificationAnswers) {
+  function handleStageSubmit(stageIndex: number, answers: ClarificationAnswer[]) {
     const stage = STAGES[stageIndex];
     const summary = buildAnswerSummary(stage, answers);
     const nextStageIndex = stageIndex + 1;
@@ -218,7 +214,7 @@ export function ArtifactClarificationChat() {
 
       <div className="px-4 pb-4 pt-2 shrink-0">
         {showPanel ? (
-          <ClarificationCard
+          <ClarificationCardKeycap
             key={activeStage}
             questions={stageToQuestions(activeStage)}
             onSubmit={answers => handleStageSubmit(activeStage, answers)}

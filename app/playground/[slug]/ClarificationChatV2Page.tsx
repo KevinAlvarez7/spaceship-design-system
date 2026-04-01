@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { LayoutGroup, motion, AnimatePresence } from 'motion/react';
+import { LayoutGroup, motion } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Globe, Link, Copy, Folder, MessageSquare } from 'lucide-react';
 import {
   ChatThread,
   ChatBubble,
@@ -11,13 +12,16 @@ import {
   ChatInputBox,
   TaskList,
   Thinking,
+  Button,
+  DropdownMenuItem,
 } from '@/components/ui';
 import type { ClarificationQuestion, ClarificationAnswer } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { GridBackground, SpaceshipLogoScene } from '@/components/effects';
-import { ArtifactSegmentedControl, ChatPanel } from '@/components/patterns';
+import { ArtifactPanelV2, ArtifactToolbarDropdown, ChatPanel } from '@/components/patterns';
 import type { Artifact, ArtifactStatus } from '@/components/patterns';
 import { springs } from '@/tokens';
+import { useMediaQuery } from '@/lib/use-media-query';
 import {
   ASSISTANT_INTRO,
   ASSISTANT_AFTER_STEP_1,
@@ -46,7 +50,7 @@ type ThreadItem =
   | { kind: 'user-bubble'; id: string; content: string }
   | { kind: 'assistant-text'; id: string; content: string }
   | { kind: 'typing'; id: string }
-  | { kind: 'task-list'; id: string; items: string[]; completedCount: number };
+  | { kind: 'task-list'; id: string; items: string[]; completedCount: number; defaultExpanded?: boolean };
 
 type Phase =
   | 'homepage'
@@ -59,6 +63,46 @@ type Phase =
   | 'approval-rejected'
   | 'building'
   | 'done';
+
+// ─── Toolbar helpers ──────────────────────────────────────────────────────────
+
+const VERSION_ITEMS = (
+  <>
+    <DropdownMenuItem>Version 1</DropdownMenuItem>
+    <DropdownMenuItem>Version 2</DropdownMenuItem>
+  </>
+);
+
+function PrototypeToolbar() {
+  return (
+    <div className="flex items-center w-full">
+      <div className="px-2 py-1.5">
+        <ArtifactToolbarDropdown label="Version 1">{VERSION_ITEMS}</ArtifactToolbarDropdown>
+      </div>
+      <div className="flex flex-1 items-center gap-2 p-2 border-l border-(--bg-surface-tertiary) bg-(--bg-surface-primary)">
+        <div className="flex flex-1 items-center gap-2 px-2 py-1 min-w-0">
+          <Globe className="size-4 shrink-0 text-(--text-tertiary)" />
+          <span className="font-sans [font-size:var(--font-size-sm)] text-(--text-placeholder) flex-1 truncate">
+            Enter your domain name
+          </span>
+          <span className="font-sans [font-size:var(--font-size-sm)] text-(--text-tertiary) shrink-0">
+            .on.spaceship.gov.sg
+          </span>
+        </div>
+        <Button variant="success" size="sm" trailingIcon={<Link />}>Share</Button>
+      </div>
+    </div>
+  );
+}
+
+function DocumentToolbar() {
+  return (
+    <div className="flex items-center justify-between w-full p-2">
+      <ArtifactToolbarDropdown label="Version 1">{VERSION_ITEMS}</ArtifactToolbarDropdown>
+      <Button variant="success" size="sm" trailingIcon={<Copy />}>Copy</Button>
+    </div>
+  );
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -110,20 +154,28 @@ function StreamingChatMessage({ content, onComplete }: {
   return <ChatMessage content={content.slice(0, len)} />;
 }
 
-// ─── ClarificationChatDemoPage ────────────────────────────────────────────────
+// ─── ClarificationChatV2Page ──────────────────────────────────────────────────
 
-export function ClarificationChatDemoPage() {
+export function ClarificationChatV2Page() {
   const [phase, setPhase]                       = useState<Phase>('homepage');
   const [items, setItems]                       = useState<ThreadItem[]>([]);
   const [artifacts, setArtifacts]               = useState<Artifact[]>([]);
   const [activeArtifactId, setActiveArtifactId] = useState('');
-  const [taskProgress, setTaskProgress]         = useState(0);
   const [inputValue, setInputValue]             = useState('');
   const [streamingId, setStreamingId]           = useState<string | null>(null);
   const [approvalContent, setApprovalContent]   = useState(IMPL_PLAN_CONTENT);
-  const clearStreamingId                        = useCallback(() => setStreamingId(null), []);
-  const timeouts                                = useRef<NodeJS.Timeout[]>([]);
-  const intervalRef                             = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [isArtifactOpen, setIsArtifactOpen]     = useState(true);
+  const [mobileView, setMobileView]             = useState<'chat' | 'artifact'>('chat');
+
+  // ── Responsive detection ──────────────────────────────────────────────────
+  const isMobile = useMediaQuery('(max-width: 767.98px)');
+  const isMobileRef = useRef(false);
+  useEffect(() => { isMobileRef.current = isMobile; }, [isMobile]);
+
+
+  const clearStreamingId = useCallback(() => setStreamingId(null), []);
+  const timeouts         = useRef<NodeJS.Timeout[]>([]);
+  const intervalRef      = useRef<ReturnType<typeof setInterval> | null>(null);
 
   /** Schedules a callback and tracks the timeout for cleanup. */
   function schedule(fn: () => void, delay: number) {
@@ -145,6 +197,7 @@ export function ClarificationChatDemoPage() {
   function addArtifact(a: Artifact) {
     setArtifacts(prev => [...prev, a]);
     setActiveArtifactId(a.id);
+    if (isMobileRef.current) setMobileView('artifact');
   }
 
   function updateArtifactStatus(id: string, status: ArtifactStatus) {
@@ -153,6 +206,7 @@ export function ClarificationChatDemoPage() {
 
   function updateArtifactContent(id: string, content: string) {
     setArtifacts(prev => prev.map(a => a.id === id ? { ...a, content } : a));
+    if (isMobileRef.current) setMobileView('artifact');
   }
 
   // ── Homepage submit ───────────────────────────────────────────────────────
@@ -162,7 +216,6 @@ export function ClarificationChatDemoPage() {
     setItems([{ kind: 'user-bubble', id: 'user-msg', content: value }]);
     setPhase('thinking');
 
-    // Small delay lets the layout transition settle before the typing indicator
     schedule(() => {
       setItems(prev => [...prev, { kind: 'typing', id: 'preamble-typing' }]);
     }, 350);
@@ -316,25 +369,35 @@ export function ClarificationChatDemoPage() {
   useEffect(() => {
     if (phase !== 'building') return;
 
+    // Add live task list into the chat thread
+    setItems(prev => {
+      if (prev.some(i => i.kind === 'task-list' && i.id === 'live-tasks')) return prev;
+      return [...prev, {
+        kind: 'task-list',
+        id: 'live-tasks',
+        items: IMPLEMENTATION_TASKS,
+        completedCount: 0,
+        defaultExpanded: true,
+      }];
+    });
+
     let progress = 0;
     intervalRef.current = setInterval(() => {
       progress += 1;
-      setTaskProgress(progress);
+
+      setItems(prev => prev.map(item =>
+        item.kind === 'task-list' && item.id === 'live-tasks'
+          ? { ...item, completedCount: progress }
+          : item
+      ));
 
       if (progress >= IMPLEMENTATION_TASKS.length) {
         clearInterval(intervalRef.current!);
         intervalRef.current = null;
 
-        // Move TaskList into the thread, then show summary and prototype
         const doneMsgId = 'done-msg';
         setItems(prev => [
           ...prev,
-          {
-            kind: 'task-list',
-            id: 'completed-tasks',
-            items: IMPLEMENTATION_TASKS,
-            completedCount: IMPLEMENTATION_TASKS.length,
-          },
           { kind: 'assistant-text', id: doneMsgId, content: ASSISTANT_BUILD_COMPLETE },
         ]);
         setStreamingId(doneMsgId);
@@ -344,19 +407,29 @@ export function ClarificationChatDemoPage() {
           addArtifact(PROTOTYPE_ARTIFACT);
         }, 1000);
       }
-    }, 1500);
+    }, 2000);
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [phase]);
 
+  // ── Toolbar derivation ────────────────────────────────────────────────────
+
+  const activeArtifact = artifacts.find(a => a.id === activeArtifactId);
+
+  const toolbar = activeArtifact?.type === 'prototype'
+    ? <PrototypeToolbar />
+    : activeArtifact
+      ? <DocumentToolbar />
+      : undefined;
+
   // ── Footer state derivation ───────────────────────────────────────────────
 
   const clarificationProp =
-    phase === 'step1'         ? { questions: STEP_1_QUESTIONS, onSubmit: handleStep1Submit, surface: 'shadow-border' as const } :
-    phase === 'step2'         ? { questions: STEP_2_QUESTIONS, onSubmit: handleStep2Submit, surface: 'shadow-border' as const } :
-    phase === 'impl-questions'? { questions: IMPL_QUESTIONS,   onSubmit: handleImplSubmit,  surface: 'shadow-border' as const } :
+    phase === 'step1'          ? { questions: STEP_1_QUESTIONS, onSubmit: handleStep1Submit, surface: 'shadow-border' as const } :
+    phase === 'step2'          ? { questions: STEP_2_QUESTIONS, onSubmit: handleStep2Submit, surface: 'shadow-border' as const } :
+    phase === 'impl-questions' ? { questions: IMPL_QUESTIONS,   onSubmit: handleImplSubmit,  surface: 'shadow-border' as const } :
     undefined;
 
   const approvalProp =
@@ -395,6 +468,100 @@ export function ClarificationChatDemoPage() {
     phase === 'approval-rejected' ? handleRevisionSubmit :
     () => {};
 
+  // ── Shared props ──────────────────────────────────────────────────────────
+
+  const sharedChatPanelProps = {
+    title: 'New conversation' as const,
+    onTitleChange: () => {},
+    input: {
+      size: 'sm' as const,
+      submitLabel: 'Send',
+      placeholder: inputPlaceholder,
+      value: inputValue,
+      onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => setInputValue(e.target.value),
+      onSubmit: inputSubmit,
+      disabled: inputDisabled,
+    },
+    clarification: clarificationProp,
+    approval: approvalProp,
+  };
+
+  const threadContent = (
+    <ChatThread bare className="flex-1 min-h-0">
+      {items.map(item => {
+        if (item.kind === 'assistant-text') {
+          return (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={springs.interactive}
+            >
+              {item.id === streamingId ? (
+                <StreamingChatMessage content={item.content} onComplete={clearStreamingId} />
+              ) : (
+                <ChatMessage content={item.content} />
+              )}
+            </motion.div>
+          );
+        }
+        if (item.kind === 'user-bubble') {
+          return (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={springs.interactive}
+            >
+              <ChatBubble>
+                <div className="[&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:font-semibold">
+                  <ReactMarkdown>{item.content}</ReactMarkdown>
+                </div>
+              </ChatBubble>
+            </motion.div>
+          );
+        }
+        if (item.kind === 'typing') {
+          return (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Thinking textScramble />
+            </motion.div>
+          );
+        }
+        if (item.kind === 'task-list') {
+          return (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={springs.interactive}
+            >
+              <TaskList
+                items={item.items}
+                completedCount={item.completedCount}
+                defaultExpanded={item.defaultExpanded ?? false}
+                surface="shadow-border"
+              />
+            </motion.div>
+          );
+        }
+        return null;
+      })}
+    </ChatThread>
+  );
+
+  const sharedArtifactProps = {
+    artifacts,
+    activeId: activeArtifactId,
+    onSelect: setActiveArtifactId,
+    toolbar,
+  };
+
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
@@ -403,174 +570,129 @@ export function ClarificationChatDemoPage() {
         <GridBackground />
 
         <div className="relative z-10 flex flex-1 size-full">
-          <AnimatePresence mode="popLayout">
 
-            {phase === 'homepage' ? (
+          {phase === 'homepage' ? (
 
-              // ── Homepage hero ─────────────────────────────────────────────
-              <motion.div
-                key="homepage"
-                className="absolute inset-0 flex items-center justify-center"
-                exit={{ opacity: 0, y: -16 }}
-                transition={{ duration: 0.25 }}
-              >
-                <div className="flex flex-col items-center gap-4 w-full max-w-(--sizing-chat-max) px-4">
-                  <SpaceshipLogoScene width={110} interactive maxDisplacement={60} fleeRadius={200} />
-                  <h1 className="font-serif text-(length:--font-size-4xl) font-bold leading-(--line-height-4xl) text-(--text-primary) text-center">
-                    What ideas do you want to explore?
-                  </h1>
-                  <motion.div layoutId="chat-input" className="w-full" transition={springs.gentle}>
-                    <ChatInputBox
-                      size="md"
-                      placeholder="Explore any problems, prototype any ideas..."
-                      onSubmit={handleHomepageSubmit}
-                    />
+            // ── Homepage hero ─────────────────────────────────────────────
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center"
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.25 }}
+            >
+              <div className="flex flex-col items-center gap-4 w-full max-w-(--sizing-chat-max) px-4">
+                <SpaceshipLogoScene width={110} interactive maxDisplacement={60} fleeRadius={200} />
+                <h1 className="font-serif text-(length:--font-size-4xl) font-bold leading-(--line-height-4xl) text-(--text-primary) text-center">
+                  What ideas do you want to explore?
+                </h1>
+                <motion.div layoutId="chat-input" className="w-full" transition={springs.gentle}>
+                  <ChatInputBox
+                    size="md"
+                    placeholder="Explore any problems, prototype any ideas..."
+                    onSubmit={handleHomepageSubmit}
+                  />
+                </motion.div>
+              </div>
+            </motion.div>
+
+          ) : (
+
+            // ── Chat layout ───────────────────────────────────────────────
+            <motion.div
+              className="flex flex-1 size-full flex-col"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.25 }}
+            >
+
+              {/* ── Mobile layout (<768px) ───────────────────────────────── */}
+              {isMobile && (
+                <main className="flex flex-1 min-h-0 overflow-hidden">
+                  <motion.div
+                    className="flex shrink-0 h-full"
+                    style={{ width: '200%' }}
+                    animate={{ x: mobileView === 'artifact' && artifacts.length > 0 ? '-50%' : '0%' }}
+                    transition={springs.gentle}
+                  >
+                    {/* Chat panel — left half */}
+                    <div className="w-1/2 h-full flex flex-col min-h-0">
+                      <ChatPanel
+                        {...sharedChatPanelProps}
+                        headerTrailingSlot={artifacts.length > 0 ? (
+                          <Button
+                            variant="secondary"
+                            surface="shadow"
+                            size="icon-md"
+                            icon={<Folder />}
+                            onClick={() => setMobileView('artifact')}
+                            aria-label="Show artifacts"
+                          />
+                        ) : undefined}
+                      >
+                        {threadContent}
+                      </ChatPanel>
+                    </div>
+
+                    {/* Artifact panel — right half */}
+                    {artifacts.length > 0 && (
+                      <div className="w-1/2 h-full flex flex-col min-h-0">
+                        <ArtifactPanelV2
+                          {...sharedArtifactProps}
+                          leadingAction={
+                            <Button
+                              variant="ghost"
+                              size="icon-md"
+                              icon={<MessageSquare />}
+                              onClick={() => setMobileView('chat')}
+                              aria-label="Back to chat"
+                            />
+                          }
+                        />
+                      </div>
+                    )}
                   </motion.div>
-                </div>
-              </motion.div>
+                </main>
+              )}
 
-            ) : (
-
-              // ── Chat layout ───────────────────────────────────────────────
-              <motion.div
-                key="chat"
-                className="flex flex-1 size-full flex-col"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.25 }}
-              >
+              {/* ── Desktop layout (≥768px) ──────────────────────────────── */}
+              {!isMobile && (
                 <main className="flex flex-1 min-h-0">
 
-                  {/* ── Chat column ── */}
+                  {/* Chat column */}
                   <div className={cn(
                     'flex flex-col min-h-0',
-                    artifacts.length > 0 ? 'w-(--sizing-chat-default) shrink-0' : 'flex-1',
+                    artifacts.length > 0 && isArtifactOpen ? 'w-(--sizing-chat-panel) shrink-0' : 'flex-1',
                   )}>
                     <ChatPanel
-                      title="New conversation"
-                      onTitleChange={() => {}}
-                      input={{
-                        size: 'sm',
-                        submitLabel: 'Send',
-                        placeholder: inputPlaceholder,
-                        value: inputValue,
-                        onChange: e => setInputValue(e.target.value),
-                        onSubmit: inputSubmit,
-                        disabled: inputDisabled,
-                        containerClassName: phase === 'building' ? 'rounded-t-none' : undefined,
-                      }}
-                      clarification={clarificationProp}
-                      approval={approvalProp}
-                      footerAddon={phase === 'building' ? (
-                        <motion.div
-                          initial={{ opacity: 0, y: 8 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={springs.interactive}
-                        >
-                          <TaskList
-                            items={IMPLEMENTATION_TASKS}
-                            completedCount={taskProgress}
-                            isActive
-                            updatedAt="Updated just now"
-                            surface="shadow-border"
-                            className="rounded-b-none"
-                          />
-                        </motion.div>
+                      {...sharedChatPanelProps}
+                      headerTrailingSlot={artifacts.length > 0 ? (
+                        <Button
+                          variant="secondary"
+                          surface="shadow"
+                          size="icon-md"
+                          icon={<Folder />}
+                          onClick={() => setIsArtifactOpen(prev => !prev)}
+                          aria-label={isArtifactOpen ? 'Hide artifacts' : 'Show artifacts'}
+                        />
                       ) : undefined}
                     >
-                      <ChatThread bare className="flex-1 min-h-0">
-                        {items.map(item => {
-                          if (item.kind === 'assistant-text') {
-                            return (
-                              <motion.div
-                                key={item.id}
-                                initial={{ opacity: 0, y: 8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={springs.interactive}
-                              >
-                                {item.id === streamingId ? (
-                                  <StreamingChatMessage content={item.content} onComplete={clearStreamingId} />
-                                ) : (
-                                  <ChatMessage content={item.content} />
-                                )}
-                              </motion.div>
-                            );
-                          }
-                          if (item.kind === 'user-bubble') {
-                            return (
-                              <motion.div
-                                key={item.id}
-                                initial={{ opacity: 0, y: 8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={springs.interactive}
-                              >
-                                <ChatBubble>
-                                  <div className="[&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:font-semibold">
-                                    <ReactMarkdown>{item.content}</ReactMarkdown>
-                                  </div>
-                                </ChatBubble>
-                              </motion.div>
-                            );
-                          }
-                          if (item.kind === 'typing') {
-                            return (
-                              <motion.div
-                                key={item.id}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ duration: 0.2 }}
-                              >
-                                <Thinking textScramble />
-                              </motion.div>
-                            );
-                          }
-                          if (item.kind === 'task-list') {
-                            return (
-                              <motion.div
-                                key={item.id}
-                                initial={{ opacity: 0, y: 8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={springs.interactive}
-                              >
-                                <TaskList
-                                  items={item.items}
-                                  completedCount={item.completedCount}
-                                  defaultExpanded={false}
-                                  surface="shadow-border"
-                                />
-                              </motion.div>
-                            );
-                          }
-                          return null;
-                        })}
-                      </ChatThread>
+                      {threadContent}
                     </ChatPanel>
                   </div>
 
-                  {/* ── Artifact panel — slides in on first artifact ── */}
-                  <AnimatePresence>
-                    {artifacts.length > 0 && (
-                      <motion.div
-                        className="flex flex-col flex-1 min-w-0 min-h-0"
-                        initial={{ opacity: 0, x: 24 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 24 }}
-                        transition={springs.interactive}
-                      >
-                        <ArtifactSegmentedControl
-                          artifacts={artifacts}
-                          activeId={activeArtifactId}
-                          onSelect={setActiveArtifactId}
-                        />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {/* Artifact panel — instant show/hide */}
+                  {artifacts.length > 0 && isArtifactOpen && (
+                    <div className="flex flex-col flex-1 min-w-0 min-h-0">
+                      <ArtifactPanelV2 {...sharedArtifactProps} />
+                    </div>
+                  )}
 
                 </main>
-              </motion.div>
+              )}
 
-            )}
-          </AnimatePresence>
+            </motion.div>
+
+          )}
+
         </div>
       </div>
     </LayoutGroup>

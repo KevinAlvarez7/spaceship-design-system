@@ -3,14 +3,15 @@ import { PropsTable, type PropRow } from '@/components/viewer/PropsTable';
 import { CodeBlock }  from '@/components/viewer/CodeBlock';
 
 const PROPS: PropRow[] = [
-  { name: 'children',      type: 'React.ReactNode', default: '—',            description: 'Content rendered in the scrollable document container (typically rendered markdown)' },
-  { name: 'onApprove',     type: '() => void',      default: '—',            description: 'Called when the user clicks the approve button' },
-  { name: 'onReject',      type: '() => void',      default: '—',            description: 'Called when the user clicks the reject button' },
-  { name: 'approveLabel',  type: 'string',           default: '"Approve plan"',    description: 'Label for the approve action button' },
-  { name: 'rejectLabel',   type: 'string',           default: '"Request changes"', description: 'Label for the reject action button' },
-  { name: 'surface',       type: '"default" | "shadow-border"', default: '"shadow-border"', description: 'Visual treatment applied to both containers' },
-  { name: 'disableMotion', type: 'boolean',          default: 'false',        description: 'Disables motion animations' },
-  { name: 'className',     type: 'string',           default: '—',            description: 'Additional classes applied to the outer wrapper' },
+  { name: 'children',      type: 'React.ReactNode', default: '—',                       description: 'Content rendered in the scrollable document container (typically rendered markdown)' },
+  { name: 'title',         type: 'string',           default: '"Implementation Plan"',   description: 'Title displayed in the header bar' },
+  { name: 'onApprove',     type: '() => void',       default: '—',                       description: 'Called when the user clicks the Approve Plan row' },
+  { name: 'onReject',      type: '(message?: string) => void', default: '—',            description: 'Called when the user submits the Request Changes form; receives the optional message text' },
+  { name: 'approveLabel',  type: 'string',           default: '"Approve Plan"',          description: 'Label for the approve action row' },
+  { name: 'rejectLabel',   type: 'string',           default: '"Request Changes"',       description: 'Label for the request-changes action row' },
+  { name: 'surface',       type: '"default" | "shadow-border"', default: '"shadow-border"', description: 'Applies shadow-border to the card and action rows when set' },
+  { name: 'disableMotion', type: 'boolean',          default: 'false',                   description: 'Disables motion animations' },
+  { name: 'className',     type: 'string',           default: '—',                       description: 'Additional classes applied to the outer wrapper' },
 ];
 
 const USAGE = `import ReactMarkdown from 'react-markdown';
@@ -21,8 +22,9 @@ const content = \`## Implementation Plan
 \`;
 
 <ApprovalCard
+  title="Implementation Plan"
   onApprove={() => console.log('approved')}
-  onReject={() => console.log('rejected')}
+  onReject={(message) => console.log('changes requested:', message)}
 >
   <div className="flex flex-col w-full">
     <ReactMarkdown>{content}</ReactMarkdown>
@@ -35,8 +37,10 @@ export function ApprovalCardPage() {
       <div>
         <h1 className="text-2xl font-bold text-zinc-900">Approval Card</h1>
         <p className="mt-2 text-sm text-zinc-500">
-          Two-container layout: a scrollable markdown document on top and a separate approve / reject
-          action bar below. Designed for use as a bottom-sheet overlay in ChatPanel.
+          Drag-to-resize card with a header, scrollable content, and two full-width action rows —
+          Approve Plan and Request Changes. The Request Changes row expands into an inline text input
+          so the user can explain what they want before submitting. Designed for use as a bottom-sheet
+          overlay in ChatPanel.
         </p>
       </div>
 

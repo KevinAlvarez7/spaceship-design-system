@@ -4,13 +4,16 @@ import { HomepagePage }              from './HomepagePage';
 import { PrototypeWorkspacePage }    from './PrototypeWorkspacePage';
 import { ArtifactNavigationPage }    from './ArtifactNavigationPage';
 import { ClarificationChatDemoPage } from './ClarificationChatDemoPage';
+import { ClarificationChatV2Page }   from './ClarificationChatV2Page';
+import { PlaygroundViewportWrapper } from './PlaygroundViewportWrapper';
 import { getEntry, getSlugsForRoute, buildTopbarTitle } from '@/lib/viewer-registry';
 
 const PLAYGROUND: Record<string, React.ComponentType> = {
-  'homepage':            HomepagePage,
-  'prototype-workspace': PrototypeWorkspacePage,
-  'artifact-navigation': ArtifactNavigationPage,
-  'clarification-chat':  ClarificationChatDemoPage,
+  'homepage':              HomepagePage,
+  'prototype-workspace':   PrototypeWorkspacePage,
+  'artifact-navigation':   ArtifactNavigationPage,
+  'clarification-chat':    ClarificationChatDemoPage,
+  'clarification-chat-v2': ClarificationChatV2Page,
 };
 
 export function generateStaticParams() {
@@ -30,7 +33,11 @@ export default async function PlaygroundSlugPage({
   if (!Component) notFound();
 
   if (entry.layout === 'bare') {
-    return <Component />;
+    return (
+      <PlaygroundViewportWrapper>
+        <Component />
+      </PlaygroundViewportWrapper>
+    );
   }
 
   return (

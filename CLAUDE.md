@@ -210,6 +210,7 @@ Located in `.claude/skills/`. **Read the relevant skill file BEFORE starting wor
 | `docs/plans/2026-03-01-design-system-viewer-design.md` | Architecture decisions |
 | `docs/plans/2026-03-01-design-system-viewer.md` | Implementation plan |
 | `docs/plans/2026-03-02-semantic-color-hierarchy.md` | Semantic color hierarchy decisions |
+| `docs/plans/2026-03-31-storybook-migration-exploration.md` | Storybook migration exploration — custom viewer vs Storybook trade-offs, feature mapping, skills layer, designer prototyping at scale recommendation |
 | `docs/conventions.md` | Token naming, viewer hierarchy, extension conventions |
 
 ---

@@ -25,7 +25,8 @@ export const fontSizes: TypographyToken[] = [
   { name: 'lg', cssVar: '--font-size-lg', value: '1.125rem / 18px' },
   { name: 'sm', cssVar: '--font-size-sm', value: '0.875rem / 14px' },
   { name: 'xl', cssVar: '--font-size-xl', value: '1.25rem / 20px' },
-  { name: 'xs', cssVar: '--font-size-xs', value: '0.75rem / 12px' },
+  { name: 'xs',  cssVar: '--font-size-xs',  value: '0.75rem / 12px' },
+  { name: '2xs', cssVar: '--font-size-2xs', value: '0.6875rem / 11px' },
 ];
 
 export const lineHeights: TypographyToken[] = [
@@ -47,6 +48,7 @@ export const lineHeights: TypographyToken[] = [
 export const fontWeights: TypographyToken[] = [
   { name: 'thin',     cssVar: '--font-weight-thin',     value: '100' },
   { name: 'regular',  cssVar: '--font-weight-regular',  value: '400' },
+  { name: 'medium',   cssVar: '--font-weight-medium',   value: '500' },
   { name: 'semibold', cssVar: '--font-weight-semibold', value: '600' },
   { name: 'bold',     cssVar: '--font-weight-bold',     value: '700' },
 ];

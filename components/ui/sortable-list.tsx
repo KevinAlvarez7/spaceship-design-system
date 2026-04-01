@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { GripVertical } from 'lucide-react';
@@ -108,6 +108,7 @@ export function SortableList({
   surface,
   className,
 }: SortableListProps) {
+  const dndId = useId();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -126,6 +127,7 @@ export function SortableList({
     <div className={cn(sortableListVariants({ surface }), className)}>
       <VisuallyHidden>Drag items to reorder. Use arrow keys when focused on a drag handle.</VisuallyHidden>
       <DndContext
+        id={dndId}
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}

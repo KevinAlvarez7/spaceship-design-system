@@ -28,6 +28,8 @@ export type PageEntry = {
   experiment?: true;
   interactive?: true;
   graduatedFrom?: { playground: string; version: string };
+  description?: string;
+  thumbnail?: string;
 };
 
 export const PAGE_REGISTRY: PageEntry[] = [
@@ -54,15 +56,18 @@ export const PAGE_REGISTRY: PageEntry[] = [
   { slug: 'preview-panel-header',       title: 'Preview Panel Header',  section: 'Patterns', route: 'patterns', layout: 'standard' },
   { slug: 'editable-title',             title: 'Editable Title',        section: 'Patterns', route: 'patterns', layout: 'standard' },
   { slug: 'shareable-link',             title: 'Shareable Link',        section: 'Patterns', route: 'patterns', layout: 'standard' },
-  { slug: 'clarification-card',         title: 'Clarification Card',    section: 'Patterns', route: 'patterns', layout: 'standard' },
+  { slug: 'clarification-card',         title: 'Clarification Card',        section: 'Patterns', route: 'patterns', layout: 'standard' },
+  { slug: 'clarification-card-keycap', title: 'Clarification Card Keycap', section: 'Patterns', route: 'patterns', layout: 'standard' },
   { slug: 'artifact-segmented-control', title: 'Artifact Panel',        section: 'Patterns', route: 'patterns', layout: 'standard' },
+  { slug: 'artifact-panel-v2',          title: 'Artifact Panel V2',     section: 'Patterns', route: 'patterns', layout: 'standard' },
   { slug: 'chat-panel',                 title: 'Chat Panel',            section: 'Patterns', route: 'patterns', layout: 'bare' },
 
   // Playground (full-page flow demos only)
-  { slug: 'homepage',            title: 'Homepage',            section: 'Playground', route: 'playground', layout: 'bare', status: 'playground' },
-  { slug: 'prototype-workspace', title: 'Prototype Workspace', section: 'Playground', route: 'playground', layout: 'bare', status: 'playground' },
-  { slug: 'artifact-navigation', title: 'Artifact Navigation', section: 'Playground', route: 'playground', layout: 'bare', status: 'playground' },
-  { slug: 'clarification-chat',  title: 'Clarification Chat',  section: 'Playground', route: 'playground', layout: 'bare', status: 'playground' },
+  { slug: 'homepage',            title: 'Homepage',            section: 'Playground', route: 'playground', layout: 'bare', status: 'playground', description: 'Landing page hero with animated background effects', thumbnail: '/playground/homepage.png' },
+  { slug: 'prototype-workspace', title: 'Prototype Workspace', section: 'Playground', route: 'playground', layout: 'bare', status: 'playground', description: 'Full workspace with chat and artifact panels side by side', thumbnail: '/playground/prototype-workspace.png' },
+  { slug: 'artifact-navigation', title: 'Artifact Navigation', section: 'Playground', route: 'playground', layout: 'bare', status: 'playground', description: 'Artifact panel navigation and folder tab switching', thumbnail: '/playground/artifact-navigation.png' },
+  { slug: 'clarification-chat',    title: 'Clarification Chat',    section: 'Playground', route: 'playground', layout: 'bare', status: 'playground', description: 'Chat flow with inline clarification cards', thumbnail: '/playground/clarification-chat.png' },
+  { slug: 'clarification-chat-v2', title: 'Clarification Chat V2', section: 'Playground', route: 'playground', layout: 'bare', status: 'playground', description: 'Revised clarification flow with keycap interactions', thumbnail: '/playground/clarification-chat-v2.png' },
 ];
 
 export const SECTION_ORDER: SidebarSection[] = [
@@ -137,9 +142,12 @@ export function buildNav(componentEntries: PageEntry[] = []): NavItem[] {
     const isPlayground = PLAYGROUND_SECTIONS.has(section);
     const children: NavItem[] = [];
 
-    // Patterns section gets a prepended "Overview" link
+    // Patterns + Playground sections get a prepended "Overview" link
     if (section === 'Patterns') {
       children.push({ label: 'Overview', href: '/patterns' });
+    }
+    if (section === 'Playground') {
+      children.push({ label: 'Overview', href: '/playground' });
     }
 
     for (const entry of entries) {
