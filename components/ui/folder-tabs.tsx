@@ -43,8 +43,9 @@ function useFolderTabsContext() {
 
 // ─── CVA ──────────────────────────────────────────────────────────────────────
 
+/** Applied to the outer wrapper so shadow encloses both the tab list and toolbar. */
 export const folderTabsVariants = cva(
-  ['flex items-center w-full', 'font-sans'],
+  ['w-full'],
   {
     variants: {
       surface: {
@@ -120,23 +121,23 @@ export function FolderTabs({
         value={value}
         onValueChange={handleChange}
       >
-        <LayoutGroup>
-          <TabsPrimitive.List
-            className={cn(folderTabsVariants({ surface }), className)}
-          >
-            {leadingAction && (
-              <div className="shrink-0 flex items-center self-stretch border-r border-(--bg-surface-tertiary)">
-                {leadingAction}
-              </div>
-            )}
-            {children}
-          </TabsPrimitive.List>
-        </LayoutGroup>
-        {toolbar && (
-          <div className="shrink-0 bg-(--bg-surface-base) border-x border-b border-(--bg-surface-tertiary)">
-            {toolbar}
-          </div>
-        )}
+        <div className={cn(folderTabsVariants({ surface }), className)}>
+          <LayoutGroup>
+            <TabsPrimitive.List className="flex items-center w-full font-sans">
+              {leadingAction && (
+                <div className="shrink-0 flex items-center self-stretch border-r border-(--bg-surface-tertiary)">
+                  {leadingAction}
+                </div>
+              )}
+              {children}
+            </TabsPrimitive.List>
+          </LayoutGroup>
+          {toolbar && (
+            <div className="shrink-0 bg-(--bg-surface-base) border-t border-(--bg-surface-tertiary)">
+              {toolbar}
+            </div>
+          )}
+        </div>
       </TabsPrimitive.Root>
     </FolderTabsContext.Provider>
   );
