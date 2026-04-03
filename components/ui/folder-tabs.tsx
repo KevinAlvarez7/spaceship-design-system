@@ -156,7 +156,7 @@ export function FolderTab({
   const isActive = groupValue === value;
 
   const wrapperClasses = cn(
-    'self-stretch shrink-0 overflow-hidden border-r border-(--bg-surface-tertiary) last:border-r-0 flex items-stretch',
+    'self-stretch shrink-0 overflow-hidden border-r border-(--bg-surface-tertiary) flex items-stretch',
     isActive
       ? 'bg-(--bg-surface-base) border-b border-transparent'
       : 'bg-(--bg-surface-secondary) border-b border-(--bg-surface-tertiary)',
@@ -213,34 +213,17 @@ export function FolderTab({
     </AnimatePresence>
   );
 
-  // The wrapper div handles layout animation and contains both the Radix Trigger
-  // (the clickable button) and the actionsContent slot (rendered alongside, not inside).
-  const content = (
-    <>
+  return (
+    <div className={cn(wrapperClasses, isActive && 'flex-1')}>
       <TabsPrimitive.Trigger value={value} disabled={disabled} asChild>
         <button type="button" className={buttonClasses}>
-          <motion.span layout="position" className="flex items-center gap-1.5 px-2">
+          <span className="flex items-center gap-1.5 px-2">
             <IconSlot icon={leadingIcon} />
             {children}
-          </motion.span>
+          </span>
         </button>
       </TabsPrimitive.Trigger>
       {actionsContent}
-    </>
-  );
-
-  if (disableMotion) {
-    return <div className={cn(wrapperClasses, isActive && 'flex-1')}>{content}</div>;
-  }
-
-  return (
-    <motion.div
-      layout
-      transition={{ layout: springs.layout }}
-      className={cn(wrapperClasses, isActive && 'flex-1')}
-      style={{ willChange: 'transform' }}
-    >
-      {content}
-    </motion.div>
+    </div>
   );
 }
