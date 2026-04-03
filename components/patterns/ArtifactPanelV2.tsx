@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { motion } from 'motion/react';
 import { FileText, AppWindow } from 'lucide-react';
-import { FolderTabsV2, FolderTabV2 } from '@/components/ui';
+import { FolderTabs, FolderTab } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { ArtifactContentRenderer } from './ArtifactContentRenderer';
 import {
@@ -31,7 +31,7 @@ const TYPE_ICON: Record<ArtifactType, ReactNode> = {
 export interface ArtifactPanelV2Props extends ArtifactNavigationProps {
   /** Flexible toolbar slot rendered in the content card header. Varies per artifact type. */
   toolbar?: ReactNode;
-  /** Action button slot forwarded to FolderTabsV2 — renders before the tab divider. */
+  /** Action button rendered before the tab list (e.g. mobile back-to-chat). */
   leadingAction?: ReactNode;
   className?: string;
 }
@@ -83,14 +83,15 @@ export function ArtifactPanelV2({
       <div className="flex flex-col flex-1 min-h-0 p-4">
 
         {/* ── Folder tab bar ── */}
-        <FolderTabsV2
+        <FolderTabs
           value={activeId}
           onChange={onSelect}
           surface="shadow-border"
           leadingAction={leadingAction}
+          toolbar={toolbar}
         >
           {artifacts.map(artifact => (
-            <FolderTabV2
+            <FolderTab
               key={artifact.id}
               value={artifact.id}
               leadingIcon={
@@ -100,19 +101,12 @@ export function ArtifactPanelV2({
               }
             >
               {ARTIFACT_TYPE_LABEL[artifact.type]}
-            </FolderTabV2>
+            </FolderTab>
           ))}
-        </FolderTabsV2>
+        </FolderTabs>
 
         {/* ── Content card ── */}
         <div className="flex flex-col flex-1 min-h-0 rounded-b-lg shadow-border bg-(--bg-surface-base) overflow-clip">
-
-          {/* Toolbar slot */}
-          {toolbar && (
-            <div className="shrink-0 bg-(--bg-surface-secondary) border-b border-(--bg-surface-tertiary)">
-              {toolbar}
-            </div>
-          )}
 
           {/* Scrollable content + shimmer overlay */}
           <div className="relative flex flex-1 min-h-0">
