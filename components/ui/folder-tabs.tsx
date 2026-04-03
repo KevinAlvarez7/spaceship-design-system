@@ -133,7 +133,7 @@ export function FolderTabs({
           </TabsPrimitive.List>
         </LayoutGroup>
         {toolbar && (
-          <div className="shrink-0 bg-(--bg-surface-base) border-b border-(--bg-surface-tertiary)">
+          <div className="shrink-0 bg-(--bg-surface-base) border-x border-b border-(--bg-surface-tertiary)">
             {toolbar}
           </div>
         )}
@@ -157,7 +157,7 @@ export function FolderTab({
   const wrapperClasses = cn(
     'self-stretch shrink-0 overflow-hidden border-r border-(--bg-surface-tertiary) last:border-r-0 flex items-stretch',
     isActive
-      ? 'bg-(--bg-surface-base) border-b border-(--bg-surface-tertiary)'
+      ? 'bg-(--bg-surface-base) border-b border-transparent'
       : 'bg-(--bg-surface-secondary) border-b border-(--bg-surface-tertiary)',
   );
 
