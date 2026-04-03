@@ -19,7 +19,11 @@ const PLAN_CONTENT = `**Phase 1: Database schema**
 const meta = {
   title: 'Components/ApprovalCard',
   component: ApprovalCard,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Approve/reject decision card for gating AI-generated plans before execution.' } },
+  },
   decorators: [
     (Story) => (
       <div className="w-(--sizing-chat-default)">

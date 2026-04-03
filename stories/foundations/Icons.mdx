@@ -1,0 +1,26 @@
+import { Meta, IconGallery, IconItem } from '@storybook/addon-docs/blocks';
+import { lucideIcons } from '@/assets/lucide-icons';
+
+<Meta title="Foundations/Icons" />
+
+# Icons
+
+The design system uses [Lucide](https://lucide.dev) for iconography. Icons are imported directly from `lucide-react`.
+
+## Usage
+
+```tsx
+import { Check, ChevronRight } from 'lucide-react';
+
+<Check className="h-4 w-4" />
+```
+
+## Icon Set
+
+<IconGallery>
+  {lucideIcons.map(({ name, icon: Icon }) => (
+    <IconItem key={name} name={name}>
+      <Icon />
+    </IconItem>
+  ))}
+</IconGallery>

@@ -4,7 +4,11 @@ import { ChatBubble } from '@/components/ui';
 const meta = {
   title: 'Components/ChatBubble',
   component: ChatBubble,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Message bubble for user messages in chat interfaces.' } },
+  },
   argTypes: {
     surface: {
       control: { type: 'select' },

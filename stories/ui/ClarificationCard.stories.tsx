@@ -39,7 +39,11 @@ const WITH_FREE_TEXT: ClarificationQuestion[] = [
 const meta = {
   title: 'Components/ClarificationCard',
   component: ClarificationCard,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Multi-step clarification form with single-select, multi-select, and ranked question types.' } },
+  },
   decorators: [
     (Story) => (
       <div className="w-(--sizing-chat-default)">

@@ -15,7 +15,11 @@ It uses \`useState\` to track the count and increments on click.`;
 const meta = {
   title: 'Components/ChatMessage',
   component: ChatMessage,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Assistant message row with markdown rendering and optional streaming state.' } },
+  },
   argTypes: {
     content:       { control: 'text' },
     isStreaming:   { control: 'boolean', table: { category: 'State' } },

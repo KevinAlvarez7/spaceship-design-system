@@ -248,7 +248,6 @@ spaceship-design-system/
 │   │   ├── LucideIconCard.tsx
 │   │   ├── AnimationPlayer.tsx + players/
 │   │   ├── PropsTable.tsx
-│   │   ├── ExperimentBadge.tsx
 │   │   └── pages/           # full-page doc components (used by stories)
 │   ├── shadcn/              # badge.tsx + tooltip.tsx (used by docs only)
 │   └── playground/          # playground button versions

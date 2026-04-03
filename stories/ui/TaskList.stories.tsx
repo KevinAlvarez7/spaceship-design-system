@@ -14,7 +14,11 @@ const TASKS = [
 const meta = {
   title: 'Components/TaskList',
   component: TaskList,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Animated task progress list with status indicators (pending, active, done) and staggered entry.' } },
+  },
   decorators: [
     (Story) => (
       <div className="w-80">

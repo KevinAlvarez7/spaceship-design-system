@@ -17,7 +17,11 @@ function ThreadDemo({ bare }: { bare?: boolean }) {
 const meta = {
   title: 'Components/ChatThread',
   component: ThreadDemo,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Scrollable container that composes ChatBubble and ChatMessage into a conversation thread.' } },
+  },
   argTypes: {
     bare: { control: 'boolean', table: { category: 'Variants' } },
   },

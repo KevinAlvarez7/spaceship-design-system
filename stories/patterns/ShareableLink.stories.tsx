@@ -16,8 +16,9 @@ function ShareableLinkDemo() {
 }
 
 const meta = {
-  title: 'Patterns/ShareableLink',
+  title: 'Playground/Components/ShareableLink',
   component: ShareableLinkDemo,
+  tags: ['experimental'],
   parameters: { layout: 'centered' },
 } satisfies Meta<typeof ShareableLinkDemo>;
 

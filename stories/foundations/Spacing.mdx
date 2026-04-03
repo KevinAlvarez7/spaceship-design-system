@@ -1,0 +1,18 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { spacingTokens } from '@/tokens';
+
+<Meta title="Foundations/Spacing" />
+
+# Spacing
+
+Tailwind v4 built-in spacing scale (4px grid). Use native Tailwind utilities directly — `px-4`, `gap-3`, `w-0.5`, etc. No custom CSS variables.
+
+<div style={{ fontFamily: 'monospace', fontSize: '13px' }}>
+  {spacingTokens.map(token => (
+    <div key={token.name} style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px' }}>
+      <div style={{ width: '80px', color: '#6b7280', flexShrink: 0 }}>{token.pxValue}</div>
+      <div style={{ width: '100px', color: '#374151', flexShrink: 0 }}>{token.name}</div>
+      <div style={{ height: '16px', background: '#bfdbfe', borderRadius: '2px', flexShrink: 0, width: token.remValue === '0' ? '2px' : token.remValue }} />
+    </div>
+  ))}
+</div>

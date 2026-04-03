@@ -6,7 +6,11 @@ import { TabBar, TabBarItem } from '@/components/ui';
 const meta = {
   title: 'Components/TabBar',
   component: TabBar,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Horizontal tab bar with animated selection pill indicator, optional icons, and surface variants.' } },
+  },
   argTypes: {
     surface: {
       control: { type: 'select' },

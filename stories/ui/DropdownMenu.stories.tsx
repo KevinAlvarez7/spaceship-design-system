@@ -31,7 +31,11 @@ function DropdownDemo() {
 const meta = {
   title: 'Components/DropdownMenu',
   component: DropdownDemo,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Radix-based dropdown menu with spring-animated content, keyboard navigation, and icon support.' } },
+  },
 } satisfies Meta<typeof DropdownDemo>;
 
 export default meta;

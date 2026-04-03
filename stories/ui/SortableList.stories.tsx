@@ -22,7 +22,11 @@ function SortableDemo({ surface }: { surface?: 'default' | 'shadow-border' }) {
 const meta = {
   title: 'Components/SortableList',
   component: SortableDemo,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Drag-and-drop reorderable list with spring animations, keyboard accessibility, and optional dividers.' } },
+  },
 } satisfies Meta<typeof SortableDemo>;
 
 export default meta;

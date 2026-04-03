@@ -1,0 +1,36 @@
+import { Meta, ColorPalette, ColorItem } from '@storybook/addon-docs/blocks';
+import { colorPrimitives, colorSemantic } from '@/tokens';
+
+<Meta title="Foundations/Colors" />
+
+export const primitiveScales = colorPrimitives.reduce((acc, t) => {
+  if (!acc[t.scale]) acc[t.scale] = {};
+  acc[t.scale][t.name] = `var(${t.cssVar})`;
+  return acc;
+}, {});
+
+# Colors
+
+## Primitives
+
+Raw palette values. Never reference these directly in components — use semantic tokens.
+
+<ColorPalette>
+  {Object.entries(primitiveScales).map(([scale, colors]) => (
+    <ColorItem key={scale} title={scale} subtitle="" colors={colors} />
+  ))}
+</ColorPalette>
+
+## Semantic Tokens
+
+Semantic tokens wire primitives to intent. Use these in all components.
+
+{colorSemantic.map(group => (
+  <ColorPalette key={group.group}>
+    <ColorItem
+      title={group.group}
+      subtitle=""
+      colors={Object.fromEntries(group.tokens.map(t => [t.name, `var(${t.cssVar})`]))}
+    />
+  </ColorPalette>
+))}

@@ -80,29 +80,6 @@ export type SemanticColorGroup = {
   tokens: ColorToken[];
 };
 
-export const colourScheme: ColorToken[] = [
-
-  { name: 'primary-50',  cssVar: '--primary-50',  description: 'Orbit Blue 50' },
-  { name: 'primary-100', cssVar: '--primary-100', description: 'Orbit Blue 100' },
-  { name: 'primary-200', cssVar: '--primary-200', description: 'Orbit Blue 200' },
-  { name: 'primary-300', cssVar: '--primary-300', description: 'Orbit Blue 300' },
-  { name: 'primary-400', cssVar: '--primary-400', description: 'Orbit Blue 400' },
-  { name: 'primary-500', cssVar: '--primary-500', description: 'Orbit Blue 500' },
-  { name: 'primary-600', cssVar: '--primary-600', description: 'Orbit Blue 600' },
-  { name: 'primary-700', cssVar: '--primary-700', description: 'Orbit Blue 700' },
-  { name: 'primary-800', cssVar: '--primary-800', description: 'Orbit Blue 800' },
-  { name: 'primary-900', cssVar: '--primary-900', description: 'Orbit Blue 900' },
-  { name: 'secondary-50',  cssVar: '--secondary-50',  description: 'Neutral 50' },
-  { name: 'secondary-100', cssVar: '--secondary-100', description: 'Neutral 100' },
-  { name: 'secondary-200', cssVar: '--secondary-200', description: 'Neutral 200' },
-  { name: 'secondary-300', cssVar: '--secondary-300', description: 'Neutral 300' },
-  { name: 'secondary-400', cssVar: '--secondary-400', description: 'Neutral 400' },
-  { name: 'secondary-500', cssVar: '--secondary-500', description: 'Neutral 500' },
-  { name: 'secondary-600', cssVar: '--secondary-600', description: 'Neutral 600' },
-  { name: 'secondary-700', cssVar: '--secondary-700', description: 'Neutral 700' },
-  { name: 'secondary-800', cssVar: '--secondary-800', description: 'Neutral 800' },
-  { name: 'secondary-900', cssVar: '--secondary-900', description: 'Neutral 900' },
-];
 
 export const colorSemantic: SemanticColorGroup[] = [
   {

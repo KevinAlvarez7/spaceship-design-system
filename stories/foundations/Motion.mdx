@@ -1,0 +1,42 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { durationTokens, easingTokens, springPresetTokens, scalePresetTokens, staggerPresetTokens } from '@/tokens';
+
+<Meta title="Foundations/Motion" />
+
+# Motion
+
+## Duration
+
+| Name | CSS Var | Value |
+|------|---------|-------|
+{durationTokens.map(t => `| \`${t.name}\` | \`${t.cssVar}\` | ${t.value} |`).join('\n')}
+
+## Easing
+
+| Name | CSS Var | Value |
+|------|---------|-------|
+{easingTokens.map(t => `| \`${t.name}\` | \`${t.cssVar}\` | \`${t.value}\` |`).join('\n')}
+
+## Framer Motion Presets
+
+JS-only values — import directly from `@/tokens/motion`. Not CSS custom properties.
+
+### Spring Presets
+
+Rule: damping ratio ζ = damping / (2 × √stiffness) must be ≥ 0.7 to avoid visible oscillation.
+
+| Name | Value | Used By |
+|------|-------|---------|
+{springPresetTokens.map(t => `| \`${t.name}\` | ${t.value} | ${t.usedBy} |`).join('\n')}
+
+### Scale Presets
+
+| Name | Value | Used By |
+|------|-------|---------|
+{scalePresetTokens.map(t => `| \`${t.name}\` | ${t.value} | ${t.usedBy} |`).join('\n')}
+
+### Stagger Presets
+
+| Name | Value | Used By |
+|------|-------|---------|
+{staggerPresetTokens.map(t => `| \`${t.name}\` | ${t.value} | ${t.usedBy} |`).join('\n')}

@@ -5,7 +5,11 @@ import { Tag } from '@/components/ui';
 const meta = {
   title: 'Components/Tag',
   component: Tag,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Compact status label with semantic color variants, two sizes, and optional icon slots.' } },
+  },
   argTypes: {
     variant: {
       control: { type: 'select' },

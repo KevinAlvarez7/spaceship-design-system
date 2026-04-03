@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { HomepagePage } from '@/components/docs/pages/HomepagePage';
+import { LogoPage } from '@/components/docs/pages/LogoPage';
 
 const meta = {
-  title: 'Playground/Prototypes/Homepage',
-  component: HomepagePage,
+  title: 'Effects/Logo',
+  component: LogoPage,
   parameters: { layout: 'fullscreen' },
-} satisfies Meta<typeof HomepagePage>;
+} satisfies Meta<typeof LogoPage>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

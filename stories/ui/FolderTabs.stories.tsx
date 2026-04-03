@@ -6,7 +6,11 @@ import { Button, FolderTabs, FolderTab } from '@/components/ui';
 const meta = {
   title: 'Components/FolderTabs',
   component: FolderTabs,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Tab navigation styled as folder tabs with animated underline indicator and optional icon support.' } },
+  },
   decorators: [
     (Story) => (
       <div className="w-96">

@@ -4,8 +4,6 @@ import { assetCategories } from '@/assets';
 import { AssetGrid } from '@/components/docs/AssetGrid';
 import { SpaceshipPlanet, SpaceshipStar } from '@/components/effects';
 import { PropsTable, type PropRow } from '@/components/docs/PropsTable';
-import { ExperimentBadge } from '@/components/docs/ExperimentBadge';
-
 // ── SpaceshipPlanet props ──────────────────────────────────────────────────────
 
 const PLANET_PROPS: PropRow[] = [
@@ -91,10 +89,7 @@ export function IllustrationsPage() {
       {/* SpaceshipPlanet */}
       <section className="space-y-8">
         <div>
-          <div className="flex items-center gap-3">
-            <h2 className="text-xl font-semibold text-zinc-900">Spaceship Planet</h2>
-            <ExperimentBadge />
-          </div>
+          <h2 className="text-xl font-semibold text-zinc-900">Spaceship Planet</h2>
           <p className="mt-2 text-sm text-zinc-500">
             A soft circle illustration with a shadow-border drop shadow and 10%-opacity black stroke.
             Pairs with SpaceshipLogoV2 as a decorative accent element.
@@ -146,10 +141,7 @@ export function IllustrationsPage() {
       {/* SpaceshipStar */}
       <section className="space-y-8">
         <div>
-          <div className="flex items-center gap-3">
-            <h2 className="text-xl font-semibold text-zinc-900">Spaceship Star</h2>
-            <ExperimentBadge />
-          </div>
+          <h2 className="text-xl font-semibold text-zinc-900">Spaceship Star</h2>
           <p className="mt-2 text-sm text-zinc-500">
             A 4-pointed star with curved concave edges, shadow-border drop shadow, and 10%-opacity
             black stroke. Pairs with SpaceshipLogoV2 as a decorative accent element.

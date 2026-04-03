@@ -5,7 +5,11 @@ import { CheckboxGroup, CheckboxItem } from '@/components/ui';
 const meta = {
   title: 'Components/CheckboxGroup',
   component: CheckboxGroup,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Multi-select checkbox group built on Radix with accessible keyboard navigation and group-level state.' } },
+  },
   argTypes: {
     surface: {
       control: { type: 'select' },

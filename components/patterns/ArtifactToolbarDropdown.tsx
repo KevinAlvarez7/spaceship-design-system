@@ -23,7 +23,7 @@ export function ArtifactToolbarDropdown({ label, children }: ArtifactToolbarDrop
           {label}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent align="start">
         {children}
       </DropdownMenuContent>
     </DropdownMenu>

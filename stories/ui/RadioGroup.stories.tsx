@@ -5,7 +5,11 @@ import { RadioGroup, RadioItem } from '@/components/ui';
 const meta = {
   title: 'Components/RadioGroup',
   component: RadioGroup,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Single-select radio group built on Radix with accessible keyboard navigation and group-level surface variants.' } },
+  },
   argTypes: {
     surface: {
       control: { type: 'select' },

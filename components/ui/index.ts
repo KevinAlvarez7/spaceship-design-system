@@ -26,6 +26,9 @@ export type { ClarificationCardProps } from './clarification-card';
 export { ClarificationCardKeycap } from './clarification-card-keycap';
 export type { ClarificationCardKeycapProps } from './clarification-card-keycap';
 
+export { Keycap, KeyCombo, keycapVariants } from './keycap';
+export type { KeycapProps, KeyComboProps, KeycapVariant } from './keycap';
+
 export { clarificationCardVariants } from './clarification-card-shared';
 export type { ClarificationQuestion, ClarificationAnswer } from './clarification-card-shared';
 
@@ -53,6 +56,7 @@ export type { FolderTabsProps, FolderTabProps } from './folder-tabs';
 export { FolderTabsV2, FolderTabV2, folderTabsV2Variants } from './folder-tabs-v2';
 export type { FolderTabsV2Props, FolderTabV2Props } from './folder-tabs-v2';
 
+
 export { ThinkingDots, thinkingDotsVariants } from './thinking';
 export type { ThinkingDotsProps } from './thinking';
 
@@ -74,10 +78,6 @@ export type { ShimmerTextProps } from './shimmer-text';
 export { ShimmerDots } from './shimmer-text';
 export type { ShimmerDotsProps } from './shimmer-text';
 
-export { Keycap, KeyCombo, keycapVariants } from './keycap';
-export type { KeycapProps, KeyComboProps, KeycapVariant } from './keycap';
-
-export { useSystemReducedMotion } from './use-reduced-motion';
 
 export { useDragResize } from './use-drag-resize';
 export type { UseDragResizeConfig, UseDragResizeReturn } from './use-drag-resize';

@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Rocket, Star, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui';
@@ -6,7 +7,15 @@ import { EXCLUDE_MOTION_PROPS } from '../_helpers/motion-argtypes';
 const meta = {
   title: 'Components/Button',
   component: Button,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        component: 'Interactive button with spring-based motion, multiple variants, surfaces, and leading/trailing icon slots.',
+      },
+    },
+  },
   argTypes: {
     variant: {
       control: { type: 'select' },
@@ -96,10 +105,10 @@ export const ShadowSurface: Story = {
 export const WithIcons: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">
-      <Button leadingIcon={Rocket}>Leading Icon</Button>
-      <Button trailingIcon={ChevronRight}>Trailing Icon</Button>
-      <Button leadingIcon={Star} trailingIcon={ChevronRight}>Both Icons</Button>
-      <Button size="icon-md" leadingIcon={Rocket} aria-label="Rocket" />
+      <Button leadingIcon={<Rocket />}>Leading Icon</Button>
+      <Button trailingIcon={<ChevronRight />}>Trailing Icon</Button>
+      <Button leadingIcon={<Star />} trailingIcon={<ChevronRight />}>Both Icons</Button>
+      <Button size="icon-md" leadingIcon={<Rocket />} aria-label="Rocket" />
     </div>
   ),
 };

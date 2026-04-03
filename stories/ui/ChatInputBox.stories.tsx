@@ -5,7 +5,11 @@ import { ChatInputBox } from '@/components/ui';
 const meta = {
   title: 'Components/ChatInputBox',
   component: ChatInputBox,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Auto-expanding textarea for chat interfaces with send/stop controls and keyboard submission.' } },
+  },
   decorators: [
     (Story) => (
       <div className="w-(--sizing-chat-default)">

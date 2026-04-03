@@ -4,7 +4,11 @@ import { ShimmerText, ShimmerDots } from '@/components/ui';
 const shimmerTextMeta = {
   title: 'Components/ShimmerText',
   component: ShimmerText,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Animated shimmer sweep for loading and streaming text feedback. ShimmerDots provides a compact ellipsis variant.' } },
+  },
   argTypes: {
     children: { control: 'text' },
     shimmerClassName: { control: 'text', table: { category: 'Style' } },

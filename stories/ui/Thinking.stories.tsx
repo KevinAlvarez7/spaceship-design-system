@@ -4,7 +4,11 @@ import { Thinking, ThinkingDots, ThinkingShip, ThinkingLogo, ThinkingSaucer } fr
 const meta = {
   title: 'Components/Thinking',
   component: Thinking,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Thinking indicator family: Thinking (card), ThinkingDots (inline), ThinkingShip, ThinkingLogo, ThinkingSaucer.' } },
+  },
   argTypes: {
     surface: {
       control: { type: 'select' },

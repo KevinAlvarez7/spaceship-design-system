@@ -33,7 +33,11 @@ function ModalDemo({ surface }: { surface?: 'default' | 'shadow-border' }) {
 const meta = {
   title: 'Components/Modal',
   component: ModalDemo,
-  parameters: { layout: 'centered' },
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'Portal-based dialog with backdrop, Escape-to-close, body scroll lock, and spring-animated entry.' } },
+  },
 } satisfies Meta<typeof ModalDemo>;
 
 export default meta;
