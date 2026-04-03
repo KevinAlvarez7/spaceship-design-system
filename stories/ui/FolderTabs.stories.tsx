@@ -63,6 +63,21 @@ export const WithIcons: Story = {
   ),
 };
 
+export const WithToolbar: Story = {
+  render: () => (
+    <div className="w-96">
+      <FolderTabs
+        defaultValue="v1"
+        surface="shadow-border"
+        toolbar={<div className="px-3 py-1.5"><Button size="sm" variant="ghost">v2 (latest)</Button></div>}
+      >
+        <FolderTab value="v1">Version 1</FolderTab>
+        <FolderTab value="v2">Version 2</FolderTab>
+      </FolderTabs>
+    </div>
+  ),
+};
+
 export const WithActiveActions: Story = {
   render: () => (
     <div className="w-96">
