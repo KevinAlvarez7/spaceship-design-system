@@ -29,7 +29,7 @@ const TYPE_ICON: Record<ArtifactType, ReactNode> = {
 // ─── Props ─────────────────────────────────────────────────────────────────────
 
 export interface ArtifactPanelV2Props extends ArtifactNavigationProps {
-  /** Flexible toolbar slot rendered in the content card header. Varies per artifact type. */
+  /** Flexible toolbar slot forwarded to FolderTabs — rendered below the tab strip. Varies per artifact type. */
   toolbar?: ReactNode;
   /** Action button rendered before the tab list (e.g. mobile back-to-chat). */
   leadingAction?: ReactNode;
