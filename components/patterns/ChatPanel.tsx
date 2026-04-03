@@ -154,14 +154,14 @@ export function ChatPanel({
               >
                 <div className="absolute inset-0 pointer-events-none opacity-[0.04]" style={{ backgroundImage: `url("${NOISE_SVG}")`, backgroundSize: '200px 200px' }} />
               </motion.div>
-              <motion.div layout="position" transition={springs.layout} className="relative max-w-(--sizing-chat-max) mx-auto w-full px-4 py-4 pointer-events-auto">
+              <div className="relative max-w-(--sizing-chat-max) mx-auto w-full px-4 py-4 pointer-events-auto">
                 <EditableTitle
                   title={title}
                   onTitleChange={onTitleChange}
                   onMenuClick={onMenuClick ?? (() => {})}
                   trailingSlot={headerTrailingSlot}
                 />
-              </motion.div>
+              </div>
             </div>
           )}
 

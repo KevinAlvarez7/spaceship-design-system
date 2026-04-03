@@ -1,7 +1,8 @@
+import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
-import { FileText, Settings, Star } from 'lucide-react';
-import { Button, FolderTabs, FolderTab } from '@/components/ui';
+import { FileText, Settings, Star, Copy } from 'lucide-react';
+import { Button, FolderTabs, FolderTab, DropdownMenuItem } from '@/components/ui';
+import { ShareableLink, ArtifactToolbarDropdown } from '@/components/patterns';
 
 const meta = {
   title: 'Components/FolderTabs',
@@ -63,19 +64,46 @@ export const WithIcons: Story = {
   ),
 };
 
-export const WithToolbar: Story = {
-  render: () => (
-    <div className="w-96">
-      <FolderTabs
-        defaultValue="v1"
-        surface="shadow-border"
-        toolbar={<div className="px-3 py-1.5"><Button size="sm" variant="ghost">v2 (latest)</Button></div>}
-      >
-        <FolderTab value="v1">Version 1</FolderTab>
-        <FolderTab value="v2">Version 2</FolderTab>
+// ─── With Toolbar (per-tab) ───────────────────────────────────────────────────
+
+const VERSION_ITEMS = (
+  <>
+    <DropdownMenuItem>v2 (latest)</DropdownMenuItem>
+    <DropdownMenuItem>v1</DropdownMenuItem>
+  </>
+);
+
+function FolderTabsWithToolbar() {
+  const [value, setValue] = useState('brief');
+  const [domain, setDomain] = useState('');
+
+  const toolbar = value === 'preview'
+    ? (
+      <div className="flex items-center w-full p-2 gap-2">
+        <ArtifactToolbarDropdown label="v2 (latest)">{VERSION_ITEMS}</ArtifactToolbarDropdown>
+        <ShareableLink value={domain} onChange={setDomain} className="shadow-none rounded bg-(--bg-surface-primary) flex-1 min-w-0" />
+      </div>
+    )
+    : (
+      <div className="flex items-center justify-between w-full p-2">
+        <ArtifactToolbarDropdown label="v2 (latest)">{VERSION_ITEMS}</ArtifactToolbarDropdown>
+        <Button variant="success" size="sm" trailingIcon={<Copy />}>Copy</Button>
+      </div>
+    );
+
+  return (
+    <div className="w-[480px]">
+      <FolderTabs value={value} onChange={setValue} surface="shadow-border" toolbar={toolbar}>
+        <FolderTab value="brief">Project Brief</FolderTab>
+        <FolderTab value="code">Code</FolderTab>
+        <FolderTab value="preview">Preview</FolderTab>
       </FolderTabs>
     </div>
-  ),
+  );
+}
+
+export const WithToolbar: Story = {
+  render: () => <FolderTabsWithToolbar />,
 };
 
 export const WithActiveActions: Story = {

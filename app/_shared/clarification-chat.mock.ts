@@ -416,6 +416,17 @@ export const PROTOTYPE_ARTIFACT: Artifact = {
   content: '',
 };
 
+// ─── Preview artifact ─────────────────────────────────────────────────────────
+
+export const PREVIEW_ARTIFACT: Artifact = {
+  id: 'preview',
+  type: 'preview',
+  title: 'Live Preview',
+  status: 'complete',
+  updatedAt: 'just now',
+  content: '',
+};
+
 // ─── Implementation tasks (for live progress ticker) ─────────────────────────
 
 export const IMPLEMENTATION_TASKS = [

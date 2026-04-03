@@ -45,7 +45,7 @@ function useFolderTabsContext() {
 
 /** Applied to the outer wrapper so shadow encloses both the tab list and toolbar. */
 export const folderTabsVariants = cva(
-  ['w-full'],
+  ['w-full', 'bg-(--bg-surface-secondary)'],
   {
     variants: {
       surface: {
@@ -130,10 +130,12 @@ export function FolderTabs({
                 </div>
               )}
               {children}
+              {/* Spacer: fills remaining width so the bottom border is continuous */}
+              <div aria-hidden className="flex-1 self-stretch border-b border-(--bg-surface-tertiary)" />
             </TabsPrimitive.List>
           </LayoutGroup>
           {toolbar && (
-            <div className="shrink-0 bg-(--bg-surface-base) border-t border-(--bg-surface-tertiary)">
+            <div className="shrink-0 bg-(--bg-surface-base)">
               {toolbar}
             </div>
           )}
@@ -156,9 +158,9 @@ export function FolderTab({
   const isActive = groupValue === value;
 
   const wrapperClasses = cn(
-    'self-stretch shrink-0 overflow-hidden border-r border-(--bg-surface-tertiary) flex items-stretch',
+    'self-stretch shrink-0 overflow-hidden border-r border-(--bg-surface-tertiary) last:border-r-0 flex items-stretch',
     isActive
-      ? 'bg-(--bg-surface-base) border-b border-transparent'
+      ? 'bg-(--bg-surface-base) border-b border-b-transparent'
       : 'bg-(--bg-surface-secondary) border-b border-(--bg-surface-tertiary)',
   );
 
@@ -213,8 +215,8 @@ export function FolderTab({
     </AnimatePresence>
   );
 
-  return (
-    <div className={cn(wrapperClasses, isActive && 'flex-1')}>
+  const content = (
+    <>
       <TabsPrimitive.Trigger value={value} disabled={disabled} asChild>
         <button type="button" className={buttonClasses}>
           <span className="flex items-center gap-1.5 px-2">
@@ -224,6 +226,8 @@ export function FolderTab({
         </button>
       </TabsPrimitive.Trigger>
       {actionsContent}
-    </div>
+    </>
   );
+
+  return <div className={wrapperClasses}>{content}</div>;
 }

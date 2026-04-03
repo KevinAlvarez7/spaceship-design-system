@@ -82,64 +82,59 @@ export function ArtifactPanelV2({
 
       <div className="flex flex-col flex-1 min-h-0 p-4">
 
-        {/* ── Unified panel: tabs + content share one shadow border ── */}
-        <div className="flex flex-col flex-1 min-h-0 rounded-lg shadow-border overflow-hidden">
+        {/* ── Folder tab bar ── */}
+        <FolderTabs
+          value={activeId}
+          onChange={onSelect}
+          surface="shadow-border"
+          leadingAction={leadingAction}
+          toolbar={toolbar}
+        >
+          {artifacts.map(artifact => (
+            <FolderTab
+              key={artifact.id}
+              value={artifact.id}
+              leadingIcon={
+                changedIds?.has(artifact.id)
+                  ? <span className="size-1.5 rounded-full bg-(--bg-interactive-error-default) blink-dot" />
+                  : TYPE_ICON[artifact.type]
+              }
+            >
+              {ARTIFACT_TYPE_LABEL[artifact.type]}
+            </FolderTab>
+          ))}
+        </FolderTabs>
 
-          {/* Folder tab bar — no shadow of its own; wrapper handles it */}
-          <FolderTabs
-            value={activeId}
-            onChange={onSelect}
-            surface="default"
-            leadingAction={leadingAction}
-            toolbar={toolbar}
-          >
-            {artifacts.map(artifact => (
-              <FolderTab
-                key={artifact.id}
-                value={artifact.id}
-                leadingIcon={
-                  changedIds?.has(artifact.id)
-                    ? <span className="size-1.5 rounded-full bg-(--bg-interactive-error-default) blink-dot" />
-                    : TYPE_ICON[artifact.type]
-                }
-              >
-                {ARTIFACT_TYPE_LABEL[artifact.type]}
-              </FolderTab>
-            ))}
-          </FolderTabs>
+        {/* ── Content card ── */}
+        <div className="flex flex-col flex-1 min-h-0 rounded-b-lg shadow-border bg-(--bg-surface-base) overflow-clip">
 
-          {/* Content area */}
-          <div className="flex flex-col flex-1 min-h-0 bg-(--bg-surface-base) overflow-clip">
-
-            {/* Scrollable content + shimmer overlay */}
-            <div className="relative flex flex-1 min-h-0">
-              <div
-                ref={contentRef}
-                className="flex flex-1 min-h-0 overflow-auto"
-              >
-                <ArtifactContentRenderer artifact={activeArtifact} />
-              </div>
-
-              {/* Shimmer sweep — remounts on every shimmerKey change, replaying entrance animation */}
-              {shimmerKey > 0 && (
-                <motion.div
-                  key={shimmerKey}
-                  className="absolute inset-0 pointer-events-none overflow-hidden z-10"
-                  initial={{ opacity: 0.7 }}
-                  animate={{ opacity: 0 }}
-                  transition={{ duration: 1.5 }}
-                >
-                  <motion.div
-                    className="absolute inset-y-0 w-1/3 bg-linear-to-r from-transparent via-white/15 to-transparent"
-                    initial={{ x: '-100%' }}
-                    animate={{ x: '400%' }}
-                    transition={{ duration: 1, ease: 'linear' }}
-                  />
-                </motion.div>
-              )}
+          {/* Scrollable content + shimmer overlay */}
+          <div className="relative flex flex-1 min-h-0">
+            <div
+              ref={contentRef}
+              className="flex flex-1 min-h-0 overflow-auto"
+            >
+              <ArtifactContentRenderer artifact={activeArtifact} />
             </div>
-          </div>
 
+            {/* Shimmer sweep — remounts on every shimmerKey change, replaying entrance animation */}
+            {shimmerKey > 0 && (
+              <motion.div
+                key={shimmerKey}
+                className="absolute inset-0 pointer-events-none overflow-hidden z-10"
+                initial={{ opacity: 0.7 }}
+                animate={{ opacity: 0 }}
+                transition={{ duration: 1.5 }}
+              >
+                <motion.div
+                  className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/15 to-transparent"
+                  initial={{ x: '-100%' }}
+                  animate={{ x: '400%' }}
+                  transition={{ duration: 1, ease: 'linear' }}
+                />
+              </motion.div>
+            )}
+          </div>
         </div>
       </div>
     </div>

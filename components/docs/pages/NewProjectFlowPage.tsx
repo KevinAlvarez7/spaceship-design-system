@@ -18,7 +18,7 @@ import {
 import type { ClarificationQuestion, ClarificationAnswer } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { GridBackground, SpaceshipLogoScene } from '@/components/effects';
-import { ArtifactPanelV2, ArtifactToolbarDropdown, ChatPanel } from '@/components/patterns';
+import { ArtifactPanelV2, ArtifactToolbarDropdown, ChatPanel, ShareableLink } from '@/components/patterns';
 import type { Artifact, ArtifactStatus } from '@/components/patterns';
 import { springs } from '@/tokens';
 import { useMediaQuery } from '@/lib/use-media-query';
@@ -41,6 +41,7 @@ import {
   IMPL_PLAN_CONTENT,
   IMPL_PLAN_CONTENT_REVISED,
   PROTOTYPE_ARTIFACT,
+  PREVIEW_ARTIFACT,
   IMPLEMENTATION_TASKS,
 } from '@/app/_shared/clarification-chat.mock';
 
@@ -105,6 +106,20 @@ function DocumentToolbar() {
     <div className="flex items-center justify-between w-full p-2">
       <ArtifactToolbarDropdown label="Version 1">{VERSION_ITEMS}</ArtifactToolbarDropdown>
       <Button variant="success" size="sm" trailingIcon={<Copy />}>Copy</Button>
+    </div>
+  );
+}
+
+function PreviewToolbar() {
+  const [domain, setDomain] = useState('');
+  return (
+    <div className="flex items-center w-full p-2 gap-2">
+      <ArtifactToolbarDropdown label="v2 (latest)">{VERSION_ITEMS}</ArtifactToolbarDropdown>
+      <ShareableLink
+        value={domain}
+        onChange={setDomain}
+        className="shadow-none rounded bg-(--bg-surface-primary) flex-1 min-w-0"
+      />
     </div>
   );
 }
@@ -408,6 +423,7 @@ export function NewProjectFlowPage({ initialPhase = 'homepage' }: NewProjectFlow
         schedule(() => {
           setPhase('done');
           addArtifact(PROTOTYPE_ARTIFACT);
+          addArtifact(PREVIEW_ARTIFACT);
         }, 1000);
       }
     }, 2000);
@@ -421,11 +437,11 @@ export function NewProjectFlowPage({ initialPhase = 'homepage' }: NewProjectFlow
 
   const activeArtifact = artifacts.find(a => a.id === activeArtifactId);
 
-  const toolbar = activeArtifact?.type === 'prototype'
-    ? <PrototypeToolbar />
-    : activeArtifact
-      ? <DocumentToolbar />
-      : undefined;
+  const toolbar =
+    activeArtifact?.type === 'prototype' ? <PrototypeToolbar /> :
+    activeArtifact?.type === 'preview'   ? <PreviewToolbar /> :
+    activeArtifact                        ? <DocumentToolbar /> :
+    undefined;
 
   // ── Footer state derivation ───────────────────────────────────────────────
 
@@ -612,11 +628,12 @@ export function NewProjectFlowPage({ initialPhase = 'homepage' }: NewProjectFlow
               {/* ── Mobile layout (<768px) ───────────────────────────────── */}
               {isMobile && (
                 <main className="flex flex-1 min-h-0 overflow-hidden">
-                  <motion.div
+                  <div
                     className="flex shrink-0 h-full"
-                    style={{ width: '200%' }}
-                    animate={{ x: mobileView === 'artifact' && artifacts.length > 0 ? '-50%' : '0%' }}
-                    transition={springs.gentle}
+                    style={{
+                      width: '200%',
+                      transform: mobileView === 'artifact' && artifacts.length > 0 ? 'translateX(-50%)' : 'translateX(0%)',
+                    }}
                   >
                     {/* Chat panel — left half */}
                     <div className="w-1/2 h-full flex flex-col min-h-0">
@@ -654,7 +671,7 @@ export function NewProjectFlowPage({ initialPhase = 'homepage' }: NewProjectFlow
                         />
                       </div>
                     )}
-                  </motion.div>
+                  </div>
                 </main>
               )}
 
