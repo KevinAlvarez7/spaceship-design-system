@@ -35,7 +35,7 @@ export function ShareableLink({
     <div className="flex items-center gap-1 w-full">
       <div
         className={cn(
-          'flex items-center gap-2 rounded-lg shadow-border bg-(--bg-surface-base) px-1.5 py-1.5 overflow-hidden flex-1 min-w-0',
+          'flex items-center gap-2 rounded-lg shadow-border bg-(--bg-surface-base) p-1 overflow-hidden flex-1 min-w-0',
           className,
         )}
       >
