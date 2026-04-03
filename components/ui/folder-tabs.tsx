@@ -133,7 +133,7 @@ export function FolderTabs({
           </TabsPrimitive.List>
         </LayoutGroup>
         {toolbar && (
-          <div className="shrink-0 bg-(--bg-surface-secondary) border-b border-(--bg-surface-tertiary)">
+          <div className="shrink-0 bg-(--bg-surface-base) border-b border-(--bg-surface-tertiary)">
             {toolbar}
           </div>
         )}
