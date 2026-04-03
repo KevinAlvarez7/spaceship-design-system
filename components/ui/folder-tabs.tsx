@@ -65,6 +65,10 @@ export interface FolderTabsProps extends VariantProps<typeof folderTabsVariants>
   disableMotion?: boolean;
   layoutId?: string;
   activeActions?: ReactNode;
+  /** Action or nav element rendered before the tab list, separated by a right border. */
+  leadingAction?: ReactNode;
+  /** Optional row rendered below the tab strip — e.g. version selector, action bar. */
+  toolbar?: ReactNode;
   children: ReactNode;
   className?: string;
 }
@@ -97,6 +101,8 @@ export function FolderTabs({
   disableMotion = false,
   surface,
   activeActions,
+  leadingAction,
+  toolbar,
   children,
   className,
 }: FolderTabsProps) {
@@ -118,9 +124,19 @@ export function FolderTabs({
           <TabsPrimitive.List
             className={cn(folderTabsVariants({ surface }), className)}
           >
+            {leadingAction && (
+              <div className="shrink-0 flex items-center self-stretch border-r border-(--bg-surface-tertiary)">
+                {leadingAction}
+              </div>
+            )}
             {children}
           </TabsPrimitive.List>
         </LayoutGroup>
+        {toolbar && (
+          <div className="shrink-0 bg-(--bg-surface-secondary) border-b border-(--bg-surface-tertiary)">
+            {toolbar}
+          </div>
+        )}
       </TabsPrimitive.Root>
     </FolderTabsContext.Provider>
   );
