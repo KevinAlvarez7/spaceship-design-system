@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { RadioGroup, RadioItem } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 const meta = {
   title: 'Components/RadioGroup',
@@ -42,6 +43,31 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'Group',     padding: '—',         gap: '—', radius: 'rounded-xl' },
+  { part: 'RadioItem', padding: 'px-4 py-3', gap: '—', radius: 'rounded-lg' },
+  { part: 'Indicator', padding: '—',         gap: '—', radius: 'rounded-full', note: 'w-5 h-5 fixed size' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/radio-group.tsx"
+      preview={
+        <RadioGroup defaultValue="option-a">
+          <RadioItem value="option-a">Option A</RadioItem>
+          <RadioItem value="option-b">Option B</RadioItem>
+          <RadioItem value="option-c">Option C</RadioItem>
+        </RadioGroup>
+      }
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
+
 export const ShadowBorder: Story = {
   args: { surface: 'shadow-border' },
 };
@@ -75,3 +101,4 @@ export const Controlled: Story = {
     );
   },
 };
+

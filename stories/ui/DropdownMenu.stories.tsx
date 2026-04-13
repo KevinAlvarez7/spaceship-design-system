@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Copy, Trash2, Edit, Share, Settings } from 'lucide-react';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 import {
   Button,
   DropdownMenu,
@@ -43,6 +44,24 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'Content',   padding: 'p-1',         gap: '—',     radius: 'rounded' },
+  { part: 'Item',      padding: 'px-2 py-1.5', gap: 'gap-2', radius: 'rounded-md' },
+  { part: 'Separator', padding: 'my-1',         gap: '—',     radius: '—', note: '1px horizontal divider' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/dropdown-menu.tsx"
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
+
 export const WithDisabledItems: Story = {
   render: () => (
     <DropdownMenu>
@@ -58,3 +77,4 @@ export const WithDisabledItems: Story = {
     </DropdownMenu>
   ),
 };
+

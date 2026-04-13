@@ -8,6 +8,7 @@ import {
   ModalDescription,
   ModalFooter,
 } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 function ModalDemo({ surface }: { surface?: 'default' | 'shadow-border' }) {
   const [open, setOpen] = useState(false);
@@ -45,6 +46,36 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'Modal',       padding: 'p-3', gap: 'gap-8', radius: 'rounded-lg' },
+  { part: 'ModalHeader', padding: 'p-1', gap: 'gap-2', radius: '—' },
+  { part: 'ModalFooter', padding: '—',   gap: 'gap-3', radius: '—' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/modal.tsx"
+      preview={
+        <Modal open disableMotion>
+          <ModalHeader>
+            <ModalTitle>Delete project?</ModalTitle>
+            <ModalDescription>This action cannot be undone.</ModalDescription>
+          </ModalHeader>
+          <ModalFooter>
+            <Button variant="secondary" disableMotion>Cancel</Button>
+            <Button variant="destructive" disableMotion>Delete</Button>
+          </ModalFooter>
+        </Modal>
+      }
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
+
 export const WithLongContent: Story = {
   render: () => {
     const [open, setOpen] = useState(false);
@@ -71,3 +102,4 @@ export const WithLongContent: Story = {
     );
   },
 };
+

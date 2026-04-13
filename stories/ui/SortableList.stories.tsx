@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { SortableList } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 const INITIAL_ITEMS = [
   'Set up authentication',
@@ -33,6 +34,28 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'Container',    padding: '—',         gap: '—',     radius: 'rounded-xl' },
+  { part: 'SortableItem', padding: 'px-4 py-3', gap: 'gap-3', radius: 'rounded-lg' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/sortable-list.tsx"
+      preview={
+        <div className="w-80">
+          <SortableList items={INITIAL_ITEMS.slice(0, 3)} onReorder={() => {}} />
+        </div>
+      }
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
 
 export const DefaultSurface: Story = {
   args: { surface: 'default' },
@@ -68,3 +91,4 @@ export const CustomRender: Story = {
     );
   },
 };
+

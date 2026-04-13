@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { CheckboxGroup, CheckboxItem } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 const meta = {
   title: 'Components/CheckboxGroup',
@@ -42,6 +43,31 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'Group',        padding: '—',         gap: '—', radius: 'rounded-xl' },
+  { part: 'CheckboxItem', padding: 'px-4 py-3', gap: '—', radius: 'rounded-lg' },
+  { part: 'Indicator',    padding: '—',         gap: '—', radius: 'rounded-sm', note: 'w-5 h-5 fixed size' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/checkbox-group.tsx"
+      preview={
+        <CheckboxGroup defaultValue={['option-a']}>
+          <CheckboxItem value="option-a">Option A</CheckboxItem>
+          <CheckboxItem value="option-b">Option B</CheckboxItem>
+          <CheckboxItem value="option-c">Option C</CheckboxItem>
+        </CheckboxGroup>
+      }
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
+
 export const ShadowBorder: Story = {
   args: { surface: 'shadow-border' },
 };
@@ -79,3 +105,4 @@ export const Controlled: Story = {
     );
   },
 };
+

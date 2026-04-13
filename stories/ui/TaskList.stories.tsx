@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { TaskList } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 const TASKS = [
   'Set up project structure and configure TypeScript',
@@ -54,6 +55,29 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'Container', padding: '—',         gap: '—',     radius: 'rounded' },
+  { part: 'Header',    padding: 'p-3',       gap: '—',     radius: '—' },
+  { part: 'Body',      padding: 'px-4 py-4', gap: 'gap-3', radius: '—' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/task-list.tsx"
+      preview={
+        <div className="w-80">
+          <TaskList items={TASKS.slice(0, 3)} completedCount={0} defaultExpanded disableMotion />
+        </div>
+      }
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
+
 export const InProgress: Story = {
   args: { completedCount: 3, isActive: true, updatedAt: 'Just now' },
 };
@@ -69,3 +93,4 @@ export const ShadowBorder: Story = {
 export const Collapsed: Story = {
   args: { defaultExpanded: false },
 };
+
