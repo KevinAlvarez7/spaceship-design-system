@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { ChatInputBox } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 const meta = {
   title: 'Components/ChatInputBox',
@@ -48,6 +49,24 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'ChatInputBox',  padding: 'p-3', radius: 'rounded-lg' },
+  { part: 'Textarea wrap', padding: 'p-1', radius: '—' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/chat-input-box.tsx"
+      preview={<ChatInputBox placeholder="Explore any problems, prototype any ideas…" />}
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
+
 export const Small: Story = {
   args: { size: 'sm' },
 };
@@ -71,3 +90,4 @@ export const Controlled: Story = {
     );
   },
 };
+

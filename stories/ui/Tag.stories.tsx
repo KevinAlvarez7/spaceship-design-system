@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Circle } from 'lucide-react';
 import { Tag } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 const meta = {
   title: 'Components/Tag',
@@ -44,6 +45,29 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'Tag', variant: 'size=sm', padding: 'px-2 py-1', radius: 'rounded-full' },
+  { part: 'Tag', variant: 'size=md', padding: 'px-3 py-1', radius: 'rounded-full' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/tag.tsx"
+      preview={
+        <div className="flex gap-2">
+          <Tag size="sm">Small</Tag>
+          <Tag size="md">Medium</Tag>
+        </div>
+      }
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
+
 export const AllVariants: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">
@@ -86,3 +110,4 @@ export const ShadowBorder: Story = {
     </div>
   ),
 };
+

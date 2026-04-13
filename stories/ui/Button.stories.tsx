@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Rocket, Star, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { EXCLUDE_MOTION_PROPS } from '../_helpers/motion-argtypes';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 const meta = {
   title: 'Components/Button',
@@ -63,6 +64,34 @@ type Story = StoryObj<typeof meta>;
 
 // ─── Default ─────────────────────────────────────────────────────────────────
 export const Default: Story = {};
+
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'Button', variant: 'size=sm',      padding: 'py-1.5 px-2.5',  gap: 'gap-1',  radius: 'rounded' },
+  { part: 'Button', variant: 'size=md',      padding: 'py-2 px-3',      gap: 'gap-1',  radius: 'rounded-sm' },
+  { part: 'Button', variant: 'size=lg',      padding: 'py-2.5 px-3.5',  gap: 'gap-2',  radius: 'rounded-md' },
+  { part: 'Button', variant: 'size=icon-sm', padding: '—',              gap: '—',       radius: 'rounded',    note: 'h-8 w-8 fixed size' },
+  { part: 'Button', variant: 'size=icon-md', padding: '—',              gap: '—',       radius: 'rounded-sm', note: 'h-9 w-9 fixed size' },
+  { part: 'Button', variant: 'size=icon-lg', padding: '—',              gap: '—',       radius: 'rounded-md', note: 'h-11 w-11 fixed size' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/button.tsx"
+      preview={
+        <div className="flex gap-2">
+          <Button size="sm" disableMotion>Sm</Button>
+          <Button size="md" disableMotion>Md</Button>
+          <Button size="lg" disableMotion>Lg</Button>
+        </div>
+      }
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
 
 // ─── All Variants ─────────────────────────────────────────────────────────────
 export const AllVariants: Story = {

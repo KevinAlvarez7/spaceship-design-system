@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { Code, Eye, Settings } from 'lucide-react';
 import { TabBar, TabBarItem } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 const meta = {
   title: 'Components/TabBar',
@@ -38,6 +39,35 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+function TabBarPreview() {
+  const [value, setValue] = useState('a');
+  return (
+    <TabBar value={value} onChange={setValue}>
+      <TabBarItem value="a">Files</TabBarItem>
+      <TabBarItem value="b">Preview</TabBarItem>
+    </TabBar>
+  );
+}
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'TabBar',      padding: 'p-1',         gap: 'gap-0.5', radius: 'rounded-lg' },
+  { part: 'TabBarItem',  padding: 'px-3 py-1.5', gap: 'gap-1.5', radius: 'rounded-md' },
+  { part: 'Active pill', padding: '—',            gap: '—',       radius: 'rounded-md', note: 'shared layout motion element' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/tab-bar.tsx"
+      preview={<TabBarPreview />}
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
 
 export const ShadowBorder: Story = {
   args: { surface: 'shadow-border' },
@@ -78,3 +108,4 @@ export const WithDisabled: Story = {
     </TabBar>
   ),
 };
+
