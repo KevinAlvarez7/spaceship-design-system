@@ -61,13 +61,11 @@ const meta = {
     layout: 'centered',
     docs: { description: { component: 'Multi-step clarification form with single-select, multi-select, and ranked question types.' } },
   },
-  decorators: [
-    (Story) => (
-      <div className="w-(--sizing-chat-default)">
-        <Story />
-      </div>
-    ),
-  ],
+  render: (args) => (
+    <div className="w-(--sizing-chat-default)">
+      <ClarificationCard {...args} />
+    </div>
+  ),
   argTypes: {
     surface: {
       control: { type: 'select' },
@@ -115,7 +113,6 @@ export const Composition: Story = {
     />
   ),
   parameters: { controls: { disable: true }, actions: { disable: true }, layout: 'fullscreen' },
-  decorators: [],
 };
 
 export const MultiSelect: Story = {

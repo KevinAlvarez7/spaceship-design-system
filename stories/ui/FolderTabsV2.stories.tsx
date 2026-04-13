@@ -12,13 +12,6 @@ const meta = {
     layout: 'centered',
     docs: { description: { component: 'Folder-style tab navigation with shared layout animation for the active indicator and optional leading action slot.' } },
   },
-  decorators: [
-    (Story) => (
-      <div className="w-96">
-        <Story />
-      </div>
-    ),
-  ],
   argTypes: {
     surface:        { control: { type: 'select' }, options: ['default', 'shadow-border'], table: { category: 'Variants' } },
     disableMotion:  { control: 'boolean', table: { category: 'Motion' } },
@@ -31,11 +24,13 @@ const meta = {
     disableMotion: false,
   },
   render: (args) => (
-    <FolderTabsV2 {...args}>
-      <FolderTabV2 value="v1">Version 1</FolderTabV2>
-      <FolderTabV2 value="v2">Version 2</FolderTabV2>
-      <FolderTabV2 value="v3">Version 3</FolderTabV2>
-    </FolderTabsV2>
+    <div className="w-96">
+      <FolderTabsV2 {...args}>
+        <FolderTabV2 value="v1">Version 1</FolderTabV2>
+        <FolderTabV2 value="v2">Version 2</FolderTabV2>
+        <FolderTabV2 value="v3">Version 3</FolderTabV2>
+      </FolderTabsV2>
+    </div>
   ),
 } satisfies Meta<typeof FolderTabsV2>;
 
@@ -72,7 +67,6 @@ export const Composition: Story = {
     />
   ),
   parameters: { controls: { disable: true }, actions: { disable: true }, layout: 'fullscreen' },
-  decorators: [],
 };
 
 // ─── Shadow Border ────────────────────────────────────────────────────────────

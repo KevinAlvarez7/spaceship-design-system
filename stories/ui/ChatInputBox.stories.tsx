@@ -11,13 +11,11 @@ const meta = {
     layout: 'centered',
     docs: { description: { component: 'Auto-expanding textarea for chat interfaces with send/stop controls and keyboard submission.' } },
   },
-  decorators: [
-    (Story) => (
-      <div className="w-(--sizing-chat-default)">
-        <Story />
-      </div>
-    ),
-  ],
+  render: (args) => (
+    <div className="w-(--sizing-chat-default)">
+      <ChatInputBox {...args} />
+    </div>
+  ),
   argTypes: {
     surface: {
       control: { type: 'select' },
@@ -65,7 +63,6 @@ export const Composition: Story = {
     />
   ),
   parameters: { controls: { disable: true }, actions: { disable: true }, layout: 'fullscreen' },
-  decorators: [],
 };
 
 export const Small: Story = {

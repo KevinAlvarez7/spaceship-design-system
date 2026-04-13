@@ -25,13 +25,6 @@ const meta = {
     layout: 'centered',
     docs: { description: { component: 'Approve/reject decision card for gating AI-generated plans before execution.' } },
   },
-  decorators: [
-    (Story) => (
-      <div className="w-(--sizing-chat-default)">
-        <Story />
-      </div>
-    ),
-  ],
   argTypes: {
     surface: {
       control: { type: 'select' },
@@ -52,11 +45,13 @@ const meta = {
     disableMotion: false,
   },
   render: (args) => (
-    <ApprovalCard {...args}>
-      <div className="prose prose-sm max-w-none">
-        <p className="text-sm whitespace-pre-line">{PLAN_CONTENT}</p>
-      </div>
-    </ApprovalCard>
+    <div className="w-(--sizing-chat-default)">
+      <ApprovalCard {...args}>
+        <div className="prose prose-sm max-w-none">
+          <p className="text-sm whitespace-pre-line">{PLAN_CONTENT}</p>
+        </div>
+      </ApprovalCard>
+    </div>
   ),
 } satisfies Meta<typeof ApprovalCard>;
 
@@ -92,7 +87,6 @@ export const Composition: Story = {
     />
   ),
   parameters: { controls: { disable: true }, actions: { disable: true }, layout: 'fullscreen' },
-  decorators: [],
 };
 
 export const CustomLabels: Story = {

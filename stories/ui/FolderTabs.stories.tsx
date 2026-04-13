@@ -13,13 +13,6 @@ const meta = {
     layout: 'centered',
     docs: { description: { component: 'Tab navigation styled as folder tabs with animated underline indicator and optional icon support.' } },
   },
-  decorators: [
-    (Story) => (
-      <div className="w-96">
-        <Story />
-      </div>
-    ),
-  ],
   argTypes: {
     surface: {
       control: { type: 'select' },
@@ -36,11 +29,13 @@ const meta = {
     disableMotion: false,
   },
   render: (args) => (
-    <FolderTabs {...args}>
-      <FolderTab value="v1">Version 1</FolderTab>
-      <FolderTab value="v2">Version 2</FolderTab>
-      <FolderTab value="v3">Version 3</FolderTab>
-    </FolderTabs>
+    <div className="w-96">
+      <FolderTabs {...args}>
+        <FolderTab value="v1">Version 1</FolderTab>
+        <FolderTab value="v2">Version 2</FolderTab>
+        <FolderTab value="v3">Version 3</FolderTab>
+      </FolderTabs>
+    </div>
   ),
 } satisfies Meta<typeof FolderTabs>;
 
@@ -74,7 +69,6 @@ export const Composition: Story = {
     />
   ),
   parameters: { controls: { disable: true }, actions: { disable: true }, layout: 'fullscreen' },
-  decorators: [],
 };
 
 export const ShadowBorder: Story = {

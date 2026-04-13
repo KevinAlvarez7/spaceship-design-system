@@ -20,13 +20,11 @@ const meta = {
     layout: 'centered',
     docs: { description: { component: 'Animated task progress list with status indicators (pending, active, done) and staggered entry.' } },
   },
-  decorators: [
-    (Story) => (
-      <div className="w-80">
-        <Story />
-      </div>
-    ),
-  ],
+  render: (args) => (
+    <div className="w-80">
+      <TaskList {...args} />
+    </div>
+  ),
   argTypes: {
     surface: {
       control: { type: 'select' },
@@ -76,7 +74,6 @@ export const Composition: Story = {
     />
   ),
   parameters: { controls: { disable: true }, actions: { disable: true }, layout: 'fullscreen' },
-  decorators: [],
 };
 
 export const InProgress: Story = {
