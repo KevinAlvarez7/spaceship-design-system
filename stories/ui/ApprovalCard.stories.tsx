@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ApprovalCard } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 const PLAN_CONTENT = `**Phase 1: Database schema**
 - Create users, projects, and tasks tables
@@ -64,6 +65,35 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'ApprovalCard', padding: '—',         gap: 'gap-4',  radius: '—',          note: 'outer flex column' },
+  { part: 'Card shell',   padding: '—',          gap: '—',      radius: 'rounded-lg', note: 'resizable card with overflow-hidden' },
+  { part: 'Drag handle',  padding: 'py-2',       gap: '—',      radius: '—' },
+  { part: 'Header',       padding: 'px-3 py-2',  gap: '—',      radius: '—' },
+  { part: 'Content area', padding: 'p-4',        gap: '—',      radius: '—',          note: 'scrollable viewport' },
+  { part: 'Action row',   padding: 'px-3 py-3',  gap: '—',      radius: 'rounded',    note: 'approve / reject buttons' },
+  { part: 'Reject form',  padding: 'p-3',        gap: 'gap-3',  radius: 'rounded',    note: 'request changes expanded state' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/approval-card.tsx"
+      preview={
+        <div className="w-(--sizing-chat-default)">
+          <ApprovalCard approveLabel="Approve plan" rejectLabel="Request changes" disableMotion>
+            <p className="text-sm">Review this plan before proceeding.</p>
+          </ApprovalCard>
+        </div>
+      }
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
+
 export const CustomLabels: Story = {
   args: {
     approveLabel: 'Looks good, proceed',
@@ -74,3 +104,4 @@ export const CustomLabels: Story = {
 export const DefaultSurface: Story = {
   args: { surface: 'default' },
 };
+

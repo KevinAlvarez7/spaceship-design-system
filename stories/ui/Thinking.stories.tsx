@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Thinking, ThinkingDots, ThinkingShip, ThinkingLogo, ThinkingSaucer } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 const meta = {
   title: 'Components/Thinking',
@@ -40,6 +41,30 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'ThinkingDots',    variant: 'surface=default',         padding: '—',           radius: '—' },
+  { part: 'ThinkingDots',    variant: 'surface=shadow-border',   padding: '—',           radius: 'rounded-sm', note: 'pill container' },
+  { part: 'ThinkingShip',    variant: 'surface=default',         padding: '—',           radius: '—' },
+  { part: 'ThinkingShip',    variant: 'surface=shadow-border',   padding: '—',           radius: 'rounded-sm', note: 'pill container' },
+  { part: 'ThinkingSaucer',  variant: 'surface=default',         padding: '—',           radius: '—' },
+  { part: 'ThinkingSaucer',  variant: 'surface=shadow-border',   padding: '—',           radius: 'rounded-sm', note: 'pill container' },
+  { part: 'Thinking',        variant: 'surface=default',         padding: '—',           radius: '—',           gap: 'gap-2' },
+  { part: 'Thinking',        variant: 'surface=shadow-border',   padding: 'px-2 py-0.5', radius: 'rounded-full', gap: 'gap-2' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/thinking.tsx"
+      preview={<Thinking disableMotion>Thinking</Thinking>}
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
+
 export const TextScramble: Story = {
   args: { textScramble: true },
 };
@@ -68,3 +93,4 @@ export const Indicators: Story = {
     </div>
   ),
 };
+

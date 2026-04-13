@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ChatThread, ChatBubble, ChatMessage } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 function ThreadDemo({ bare }: { bare?: boolean }) {
   return (
@@ -35,6 +36,32 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'ChatThread',   padding: 'px-6 pt-5 pb-3', gap: 'gap-6', radius: '—' },
+  { part: 'Scrollbar',    padding: 'px-0.5 py-2',     gap: '—',     radius: '—', note: 'w-2 track' },
+  { part: 'Scroll thumb', padding: '—',                gap: '—',     radius: 'rounded-full' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/chat-thread.tsx"
+      preview={
+        <div className="w-(--sizing-chat-default)">
+          <ChatThread>
+            <ChatBubble>Build me a landing page</ChatBubble>
+            <ChatMessage content="I'll create a compelling landing page for you." />
+          </ChatThread>
+        </div>
+      }
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
+
 export const BareMode: Story = {
   args: { bare: true },
 };
@@ -49,3 +76,4 @@ export const SingleExchange: Story = {
     </div>
   ),
 };
+

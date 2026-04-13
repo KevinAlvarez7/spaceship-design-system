@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ChatMessage } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 const SAMPLE_MARKDOWN = `Here's a simple React counter component:
 
@@ -37,6 +38,30 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'ChatMessage',      padding: '—',    radius: '—',          note: 'full-width text container' },
+  { part: 'Inline code',      padding: 'px-1', radius: 'rounded-sm', note: 'markdown `code` spans' },
+  { part: 'Streaming cursor', padding: '—',    radius: 'rounded-sm', note: 'w-0.5 h-5 blinking bar' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/chat-message.tsx"
+      preview={
+        <ChatMessage
+          content="Hello! I can help you build anything. What would you like to create today?"
+          disableMotion
+        />
+      }
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
+
 export const Streaming: Story = {
   args: { isStreaming: true, content: 'I\'m thinking about this…' },
 };
@@ -50,3 +75,4 @@ export const LongResponse: Story = {
     content: `I'll help you build a complete dashboard. Here's my plan:\n\n1. **Authentication** — JWT-based login with refresh tokens\n2. **Layout** — Responsive sidebar + main content area\n3. **Charts** — Real-time data visualization using Recharts\n4. **API** — REST endpoints with Next.js Route Handlers\n\nShall I start with the authentication layer?`,
   },
 };
+

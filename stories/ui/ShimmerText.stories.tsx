@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ShimmerText, ShimmerDots } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 const shimmerTextMeta = {
   title: 'Components/ShimmerText',
@@ -23,6 +24,22 @@ type Story = StoryObj<typeof shimmerTextMeta>;
 
 export const Default: Story = {};
 
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'ShimmerText', padding: '—', radius: '—', note: 'inline text element — no padding or radius' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/shimmer-text.tsx"
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
+
 export const LongText: Story = {
   args: {
     children: 'Processing your request with great care and attention to detail, analysing all the nuances…',
@@ -41,3 +58,4 @@ export const TextWithDots: Story = {
     </div>
   ),
 };
+

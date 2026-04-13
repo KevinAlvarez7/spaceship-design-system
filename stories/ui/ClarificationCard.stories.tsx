@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ClarificationCard, type ClarificationQuestion } from '@/components/ui';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 
 const SINGLE_QUESTION: ClarificationQuestion[] = [
   {
@@ -20,6 +21,22 @@ const MULTI_QUESTIONS: ClarificationQuestion[] = [
     label: 'Which features do you need?',
     options: ['Authentication', 'Database', 'File uploads', 'Email notifications', 'Payments'],
   },
+  {
+    type: 'rank',
+    label: 'Rank these priorities from most to least important',
+    items: ['Performance', 'Developer experience', 'Accessibility', 'Bundle size'],
+  },
+];
+
+const MULTI_SELECT_QUESTION: ClarificationQuestion[] = [
+  {
+    type: 'multi',
+    label: 'Which features do you need?',
+    options: ['Authentication', 'Database', 'File uploads', 'Email notifications', 'Payments'],
+  },
+];
+
+const RANK_QUESTION: ClarificationQuestion[] = [
   {
     type: 'rank',
     label: 'Rank these priorities from most to least important',
@@ -73,6 +90,41 @@ type Story = StoryObj<typeof meta>;
 
 export const SingleSelect: Story = {};
 
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'ClarificationCard', padding: '—',        gap: '—',     radius: 'rounded-lg', note: 'from CVA base in clarification-card-shared.tsx' },
+  { part: 'Drag handle',       padding: 'py-2',      gap: '—',     radius: '—' },
+  { part: 'Content zone',      padding: 'px-4',      gap: 'gap-3', radius: '—' },
+  { part: 'Option row',        padding: 'p-3',       gap: 'gap-4', radius: 'rounded-md' },
+  { part: 'Number badge',      padding: '—',         gap: '—',     radius: 'rounded',    note: 'w-6 h-6 fixed size' },
+  { part: 'Status footer',     padding: 'p-2',       gap: '—',     radius: '—' },
+  { part: 'Button footer',     padding: 'p-3',       gap: 'gap-2', radius: '—' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/clarification-card.tsx"
+      preview={
+        <div className="w-(--sizing-chat-default)">
+          <ClarificationCard questions={SINGLE_QUESTION} disableMotion />
+        </div>
+      }
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
+
+export const MultiSelect: Story = {
+  args: { questions: MULTI_SELECT_QUESTION },
+};
+
+export const Rank: Story = {
+  args: { questions: RANK_QUESTION },
+};
+
 export const MultiStep: Story = {
   args: { questions: MULTI_QUESTIONS },
 };
@@ -84,3 +136,4 @@ export const WithFreeText: Story = {
 export const DefaultSurface: Story = {
   args: { surface: 'default' },
 };
+

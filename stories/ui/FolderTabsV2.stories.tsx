@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
 import { FileText, Settings, Star } from 'lucide-react';
 import { Button, FolderTabsV2, FolderTabV2 } from '@/components/ui';
 
@@ -44,6 +45,34 @@ type Story = StoryObj<typeof meta>;
 // ─── Default ──────────────────────────────────────────────────────────────────
 
 export const Default: Story = {};
+
+// ─── Composition ──────────────────────────────────────────────────────────────
+
+const COMPOSITION: CompositionEntry[] = [
+  { part: 'FolderTabsV2', padding: '—',           gap: '—',     radius: '—',           note: 'inline-flex items-end container' },
+  { part: 'Tab list',     padding: 'px-1 pt-1',   gap: 'gap-1', radius: '—' },
+  { part: 'FolderTabV2',  variant: 'with text',   padding: 'px-2.5 py-1', gap: 'gap-1.5', radius: '—' },
+  { part: 'FolderTabV2',  variant: 'icon-only',   padding: '—',            gap: '—',        radius: '—', note: 'size-7 fixed' },
+  { part: 'Active pill',  padding: '—',           gap: '—',     radius: 'rounded-t-lg', note: 'absolute inset-0 layout element' },
+];
+
+export const Composition: Story = {
+  render: () => (
+    <CompositionTable
+      entries={COMPOSITION}
+      sourcePath="components/ui/folder-tabs-v2.tsx"
+      preview={
+        <div className="w-96">
+          <FolderTabsV2 defaultValue="v1">
+            <FolderTabV2 value="v1">Version 1</FolderTabV2>
+            <FolderTabV2 value="v2">Version 2</FolderTabV2>
+          </FolderTabsV2>
+        </div>
+      }
+    />
+  ),
+  parameters: { controls: { disable: true }, actions: { disable: true } },
+};
 
 // ─── Shadow Border ────────────────────────────────────────────────────────────
 
@@ -99,3 +128,4 @@ export const Controlled: Story = {
     );
   },
 };
+
