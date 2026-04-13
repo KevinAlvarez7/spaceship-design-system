@@ -249,7 +249,7 @@ export function CompositionTable({
 
   // ─── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col gap-4 p-6">
+    <div className="flex flex-col gap-4 p-6 w-full">
       {/* ── Table ── */}
       <div className="overflow-x-auto rounded-lg border border-zinc-200">
         <table className="w-full text-sm">
