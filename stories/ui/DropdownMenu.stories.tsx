@@ -59,7 +59,7 @@ export const Composition: Story = {
       sourcePath="components/ui/dropdown-menu.tsx"
     />
   ),
-  parameters: { controls: { disable: true }, actions: { disable: true } },
+  parameters: { controls: { disable: true }, actions: { disable: true }, layout: 'fullscreen' },
 };
 
 export const WithDisabledItems: Story = {

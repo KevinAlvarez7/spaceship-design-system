@@ -62,7 +62,7 @@ export const Composition: Story = {
       preview={<Thinking disableMotion>Thinking</Thinking>}
     />
   ),
-  parameters: { controls: { disable: true }, actions: { disable: true } },
+  parameters: { controls: { disable: true }, actions: { disable: true }, layout: 'fullscreen' },
 };
 
 export const TextScramble: Story = {

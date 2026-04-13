@@ -37,7 +37,7 @@ export const Composition: Story = {
       sourcePath="components/ui/shimmer-text.tsx"
     />
   ),
-  parameters: { controls: { disable: true }, actions: { disable: true } },
+  parameters: { controls: { disable: true }, actions: { disable: true }, layout: 'fullscreen' },
 };
 
 export const LongText: Story = {

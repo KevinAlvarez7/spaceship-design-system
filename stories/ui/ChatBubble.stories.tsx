@@ -44,7 +44,7 @@ export const Composition: Story = {
       preview={<ChatBubble>Make me a dashboard for tracking my workouts</ChatBubble>}
     />
   ),
-  parameters: { controls: { disable: true }, actions: { disable: true } },
+  parameters: { controls: { disable: true }, actions: { disable: true }, layout: 'fullscreen' },
 };
 
 export const LongMessage: Story = {

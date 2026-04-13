@@ -64,7 +64,7 @@ export const Composition: Story = {
       preview={<ChatInputBox placeholder="Explore any problems, prototype any ideas…" />}
     />
   ),
-  parameters: { controls: { disable: true }, actions: { disable: true } },
+  parameters: { controls: { disable: true }, actions: { disable: true }, layout: 'fullscreen' },
 };
 
 export const Small: Story = {

@@ -71,7 +71,7 @@ export const Composition: Story = {
       }
     />
   ),
-  parameters: { controls: { disable: true }, actions: { disable: true } },
+  parameters: { controls: { disable: true }, actions: { disable: true }, layout: 'fullscreen' },
 };
 
 // ─── Shadow Border ────────────────────────────────────────────────────────────
