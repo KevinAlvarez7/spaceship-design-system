@@ -6,41 +6,33 @@
  * Springs used
  *   snappy  visualDuration: 0.2s, bounce: 0  (ζ = 1.0)  — all animations
  *
- * Architecture: the main button is ALWAYS mounted (never unmounts).
- * AnimatePresence handles only the textarea and Cancel entering/exiting.
- * The button repositions via `layout`, label via `layout="position"`.
- * No layoutId — no element swaps, no ghost copies.
+ * Surface treatment ownership
+ *   Collapsed  →  button owns bg + shadow + rounded-sm (container is invisible)
+ *   Open       →  container owns bg + shadow + rounded-sm (button has neither)
+ *   The handoff is instant on state flip; no visual pop because both are bg-surface-base.
  *
  * ─── Idle (collapsed) ────────────────────────────────────────────────────────
- *   Container wraps a single full-width button (bg-surface-base, shadow-border).
- *   Button:  hover → bg surface-primary  (CSS transition-colors, 200ms)
- *            press → bg surface-secondary (CSS transition-colors, 200ms)
+ *   Button is full-width, carries its own shadow-border + rounded-sm.
+ *   hover  → bg: surface-base → surface-primary  (CSS transition-colors, 200ms)
+ *   press  → bg: surface-base → surface-secondary (CSS transition-colors, 200ms)
  *
- * ─── Open (trigger → form) ───────────────────────────────────────────────────
+ * ─── Open (click trigger) ────────────────────────────────────────────────────
  *   Textarea enter  (AnimatePresence)
  *     0 → ~200ms  height 0 → auto, opacity 0 → 1  (spring: snappy)
- *     Container grows naturally as content pushes button row down.
  *
  *   Cancel enter  (AnimatePresence mode="popLayout")
  *     0 → ~200ms  opacity 0 → 1  (spring: snappy)
- *     Immediately takes flex-1 space, shrinking the main button.
+ *     Takes flex-1, immediately shrinking the main button's layout width.
  *
- *   Main button resize  (layout)
- *     0 → ~200ms  width full → flex-1 compact  (spring: snappy)
- *     Button stays mounted — no unmount/remount.
+ *   Main button resize  (motion.button layout)
+ *     0 → ~200ms  w-full → flex-1  (spring: snappy)
+ *     Button stays mounted — no unmount/remount, no ghost copy.
  *
  *   Label reposition  (layout="position")
- *     0 → ~200ms  xy position only — no width/height stretch  (spring: snappy)
+ *     0 → ~200ms  xy only, no text stretch  (spring: snappy)
  *
- *   Icon swap  Pencil → ArrowUp  (instant, no animation)
+ *   Icon swap  Pencil → ArrowUp  (instant)
  *   Textarea auto-focused via useEffect.
- *
- * ─── Hover / active (expanded form) ─────────────────────────────────────────
- *   Submit button
- *     hover  → bg surface-primary   (CSS transition-colors, 200ms)
- *     press  → bg surface-secondary (CSS transition-colors, 200ms)
- *   Cancel button
- *     tap    → scale 1 → 0.96 → 1  (spring: interactive, DS Button)
  *
  * ─── Close (cancel or submit) ────────────────────────────────────────────────
  *   Textarea exit  (AnimatePresence)
@@ -48,13 +40,10 @@
  *
  *   Cancel exit  (AnimatePresence mode="popLayout")
  *     0ms         popped to position:absolute (freed from layout flow)
- *     0 → ~200ms  opacity 1 → 0  (spring: snappy, fades at last position)
+ *     0 → ~200ms  opacity 1 → 0  (spring: snappy)
  *
- *   Main button resize  (layout, reverse)
- *     0 → ~200ms  width flex-1 compact → full  (spring: snappy)
- *
- *   Label reposition  (layout="position", reverse)
- *     0 → ~200ms  xy position only  (spring: snappy)
+ *   Main button resize  (motion.button layout, reverse)
+ *     0 → ~200ms  flex-1 → w-full  (spring: snappy)
  *
  *   Icon swap  ArrowUp → Pencil  (instant)
  * ───────────────────────────────────────────────────────────────────────────── */
@@ -69,18 +58,19 @@ import { springs } from '@/tokens/motion';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-/** Base classes for the always-mounted main button. */
-const BUTTON_CLASSES = cn(
+/** Shape + color classes shared by the button in both states. */
+const BUTTON_SHAPE = [
   'flex items-center justify-between',
-  'p-3 gap-1 flex-1',
+  'p-3 gap-1',
   'cursor-pointer select-none',
   'font-sans [font-weight:var(--font-weight-semibold)]',
   '[font-size:var(--font-size-sm)] leading-(--line-height-sm)',
   '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0 [&>svg]:[stroke-width:2.75]',
   'text-(--text-primary)',
+  'bg-(--bg-surface-base)',
   'hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary)',
   'transition-colors duration-(--duration-base)',
-);
+];
 
 // ─── CVA ──────────────────────────────────────────────────────────────────────
 
@@ -130,7 +120,6 @@ export function FeedbackForm({
   const textareaRef         = useRef<HTMLTextAreaElement>(null);
   const hasShadow           = (surface ?? 'shadow-border') === 'shadow-border';
 
-  // Auto-focus textarea when form opens.
   useEffect(() => {
     if (open) textareaRef.current?.focus();
   }, [open]);
@@ -146,7 +135,6 @@ export function FeedbackForm({
     setOpen(false);
   }
 
-  // ── Shared classes ────────────────────────────────────────────────────────
   const textareaClasses = cn(
     'w-full resize-none p-1',
     'font-(family-name:--font-family-secondary)',
@@ -155,39 +143,50 @@ export function FeedbackForm({
     'bg-transparent outline-none',
   );
 
-  const containerClasses = cn(
-    'flex flex-col overflow-hidden',
-    'bg-(--bg-surface-base)',
-    hasShadow && 'shadow-(--shadow-border)',
-  );
-
   // ── Static path ───────────────────────────────────────────────────────────
   if (disableMotion) {
+    if (!open) {
+      return (
+        <div className={cn(feedbackFormVariants({ surface }), className)}>
+          <button
+            onClick={() => setOpen(true)}
+            className={cn(
+              BUTTON_SHAPE,
+              'w-full rounded-sm',
+              hasShadow && 'shadow-(--shadow-border)',
+            )}
+          >
+            <span>{submitLabel}</span>
+            <Pencil aria-hidden="true" />
+          </button>
+        </div>
+      );
+    }
     return (
       <div className={cn(feedbackFormVariants({ surface }), className)}>
-        <div className={containerClasses} style={{ borderRadius: 4 }}>
-          {open && (
-            <div className="px-3 pt-3 pb-2">
-              <textarea
-                ref={textareaRef}
-                placeholder={placeholder}
-                rows={3}
-                className={textareaClasses}
-              />
-            </div>
-          )}
+        <div className={cn(
+          'flex flex-col rounded-sm overflow-hidden',
+          'bg-(--bg-surface-base)',
+          hasShadow && 'shadow-(--shadow-border)',
+        )}>
+          <div className="px-3 pt-3 pb-2">
+            <textarea
+              ref={textareaRef}
+              placeholder={placeholder}
+              rows={3}
+              className={textareaClasses}
+            />
+          </div>
           <div className="flex items-center gap-1">
-            {open && (
-              <Button variant="secondary" surface="flat" size="md" onClick={handleCancel} disableMotion className="flex-1 p-3">
-                Cancel
-              </Button>
-            )}
+            <Button variant="secondary" surface="flat" size="md" onClick={handleCancel} disableMotion className="flex-1 p-3">
+              Cancel
+            </Button>
             <button
-              onClick={open ? handleSubmit : () => setOpen(true)}
-              className={BUTTON_CLASSES}
+              onClick={handleSubmit}
+              className={cn(BUTTON_SHAPE, 'flex-1')}
             >
               <span>{submitLabel}</span>
-              {open ? <ArrowUp aria-hidden="true" /> : <Pencil aria-hidden="true" />}
+              <ArrowUp aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -196,12 +195,23 @@ export function FeedbackForm({
   }
 
   // ── Motion path ───────────────────────────────────────────────────────────
+  // Surface treatment ownership:
+  //   !open → button is full-width and owns rounded + shadow
+  //    open → container owns rounded + shadow; overflow-hidden clips the textarea
   return (
     <div className={cn(feedbackFormVariants({ surface }), className)}>
       <MotionConfig transition={springs.snappy}>
-        <div className={containerClasses} style={{ borderRadius: 4 }}>
+        <div
+          className={cn(
+            open && [
+              'flex flex-col rounded-sm overflow-hidden',
+              'bg-(--bg-surface-base)',
+              hasShadow && 'shadow-(--shadow-border)',
+            ],
+          )}
+        >
 
-          {/* ── Textarea — enters/exits ── */}
+          {/* ── Textarea — enters/exits via height animation ── */}
           <AnimatePresence initial={false}>
             {open && (
               <motion.div
@@ -223,8 +233,7 @@ export function FeedbackForm({
             )}
           </AnimatePresence>
 
-          {/* ── Button row — always mounted ── */}
-          {/* relative: scopes popLayout absolute positioning of exiting Cancel. */}
+          {/* ── Button row — relative scopes popLayout's absolute exit ── */}
           <div className="relative flex items-center gap-1">
             <AnimatePresence mode="popLayout" initial={false}>
               {open && (
@@ -241,10 +250,18 @@ export function FeedbackForm({
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Main button — always mounted, repositions via layout */}
             <motion.button
               layout
               onClick={open ? handleSubmit : () => setOpen(true)}
-              className={BUTTON_CLASSES}
+              className={cn(
+                BUTTON_SHAPE,
+                !open ? [
+                  'w-full rounded-sm',
+                  hasShadow && 'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow ease-(--ease-in-out)',
+                ] : 'flex-1',
+              )}
               style={{ willChange: 'transform' }}
             >
               <motion.span layout="position">{submitLabel}</motion.span>
