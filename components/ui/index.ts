@@ -35,6 +35,9 @@ export type { ClarificationQuestion, ClarificationAnswer } from './clarification
 export { ApprovalCard, approvalCardVariants } from './approval-card';
 export type { ApprovalCardProps } from './approval-card';
 
+export { FeedbackForm, feedbackFormVariants } from './feedback-form';
+export type { FeedbackFormProps } from './feedback-form';
+
 export { TaskList, taskListVariants } from './task-list';
 export type { TaskListProps } from './task-list';
 
