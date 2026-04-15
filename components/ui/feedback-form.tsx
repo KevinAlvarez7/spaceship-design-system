@@ -1,5 +1,65 @@
 'use client';
 
+/* ─────────────────────────────────────────────────────────────────────────────
+ * ANIMATION STORYBOARD — FeedbackForm
+ *
+ * Springs used
+ *   snappy  visualDuration: 0.2s, bounce: 0  (ζ = 1.0)  — opacity fades,
+ *           layoutId morph, button position morph
+ *   gentle  stiffness: 160, damping: 24     (ζ ≈ 0.95)  — label reposition
+ *           (MotionConfig default, overridden per-element by snappy)
+ *
+ * ─── Idle (collapsed) ────────────────────────────────────────────────────────
+ *   Trigger button
+ *     hover  → bg: surface-base → surface-primary  (CSS transition-colors, 200ms)
+ *     active → bg: surface-base → surface-secondary (CSS transition-colors, 200ms)
+ *
+ * ─── Open (trigger → form) ───────────────────────────────────────────────────
+ *   AnimatePresence mode="popLayout" initial={false}
+ *
+ *   Trigger exit
+ *     0ms        popped to position:absolute (removed from layout flow)
+ *     0 → ~200ms opacity  1 → 0             (spring: snappy)
+ *
+ *   Form enter
+ *     0ms        container snaps to form height (outer div is not a motion element)
+ *     0 → ~200ms opacity  0 → 1             (spring: snappy)
+ *
+ *   Button morph  (shared layoutId)
+ *     0 → ~200ms position + size  full-width → flex-1 compact  (spring: snappy)
+ *     0 → ~200ms borderRadius  4px → 4px  (interpolated via inline style)
+ *
+ *   Label reposition  (layout="position")
+ *     0 → ~300ms xy position only — no width/height stretch  (spring: gentle)
+ *
+ *   After state settles
+ *     textarea auto-focused via useEffect
+ *
+ * ─── Hover / active (expanded form) ─────────────────────────────────────────
+ *   Submit button
+ *     hover  → bg: primary-default → primary-hover   (CSS transition-colors, 200ms)
+ *     active → bg: primary-default → primary-pressed (CSS transition-colors, 200ms)
+ *   Cancel button
+ *     tap    → scale 1 → 0.96 → 1                    (spring: interactive, DS Button)
+ *
+ * ─── Close (cancel or submit) ────────────────────────────────────────────────
+ *   Reverse of Open — exact mirror
+ *
+ *   Form exit
+ *     0ms        popped to position:absolute
+ *     0 → ~200ms opacity  1 → 0             (spring: snappy)
+ *
+ *   Trigger enter
+ *     0ms        container snaps to trigger height
+ *     0 → ~200ms opacity  0 → 1             (spring: snappy)
+ *
+ *   Button morph  (shared layoutId, reverse direction)
+ *     0 → ~200ms position + size  flex-1 compact → full-width  (spring: snappy)
+ *
+ *   Label reposition  (layout="position", reverse)
+ *     0 → ~300ms xy position only            (spring: gentle)
+ * ───────────────────────────────────────────────────────────────────────────── */
+
 import { useRef, useState, useEffect, useId } from 'react';
 import { motion, AnimatePresence, LayoutGroup, MotionConfig } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
