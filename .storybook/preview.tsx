@@ -1,7 +1,6 @@
 import type { Preview, Renderer } from '@storybook/react';
 import { withThemeByDataAttribute } from '@storybook/addon-themes';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
-
 import '../styles/globals.css';
 
 const preview: Preview = {

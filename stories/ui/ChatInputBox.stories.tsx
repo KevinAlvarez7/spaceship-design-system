@@ -73,19 +73,21 @@ export const Disabled: Story = {
   args: { disabled: true },
 };
 
+function ControlledDemo() {
+  const [value, setValue] = useState('');
+  return (
+    <div className="w-(--sizing-chat-default) flex flex-col gap-3">
+      <ChatInputBox
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onSubmit={(v) => { setValue(''); alert(`Submitted: ${v}`); }}
+      />
+      <p className="text-xs text-zinc-400">Characters: {value.length}</p>
+    </div>
+  );
+}
+
 export const Controlled: Story = {
-  render: () => {
-    const [value, setValue] = useState('');
-    return (
-      <div className="w-(--sizing-chat-default) flex flex-col gap-3">
-        <ChatInputBox
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onSubmit={(v) => { setValue(''); alert(`Submitted: ${v}`); }}
-        />
-        <p className="text-xs text-zinc-400">Characters: {value.length}</p>
-      </div>
-    );
-  },
+  render: () => <ControlledDemo />,
 };
 

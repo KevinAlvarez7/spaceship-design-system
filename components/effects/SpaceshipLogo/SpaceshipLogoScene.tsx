@@ -44,6 +44,11 @@ export interface SpaceshipLogoSceneProps {
   beamSkewRange?: number;
   disableMotion?: boolean;
   decorations?: SceneDecoration[];
+  domeColor?: string;
+  discColor?: string;
+  bellyColor?: string;
+  beamColor?: string;
+  outlineOpacity?: number;
   className?: string;
 }
 
@@ -70,6 +75,11 @@ export function SpaceshipLogoScene({
   beamSkewRange = 15,
   disableMotion = false,
   decorations = DEFAULT_DECORATIONS,
+  domeColor = '#F9C600',
+  discColor = '#3C7DFF',
+  bellyColor = '#F9614D',
+  beamColor = '#26E6B5',
+  outlineOpacity = 0.1,
   className,
 }: SpaceshipLogoSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -96,6 +106,9 @@ export function SpaceshipLogoScene({
 
   // Position scale — all decoration offsets authored at width=180
   const ps = width / 180;
+
+  // Below Navbar size (<32px) get full outline opacity for legibility at small sizes
+  const effectiveOutlineOpacity = width < 32 ? 1 : outlineOpacity;
 
   // Mouse-flee + beam visibility logic
   useEffect(() => {
@@ -144,10 +157,10 @@ export function SpaceshipLogoScene({
 
   const beamSvg = (
     <svg width={beamW} height={beamH} viewBox="0 0 68 88" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d={BEAM_PATHS.cone} fill="#26E6B5" fillOpacity="0.5" />
-      <path d={BEAM_PATHS.coneOutline} stroke="black" strokeOpacity="0.1" strokeWidth="4" fill="none" />
-      <ellipse cx="34" cy="76" rx="34" ry="12" fill="#26E6B5" />
-      <path d={BEAM_PATHS.ellipseOutline} stroke="black" strokeOpacity="0.1" strokeWidth="4" fill="none" />
+      <path d={BEAM_PATHS.cone} fill={beamColor} fillOpacity="0.5" />
+      <path d={BEAM_PATHS.coneOutline} stroke="black" strokeOpacity={effectiveOutlineOpacity} strokeWidth="4" fill="none" />
+      <ellipse cx="34" cy="76" rx="34" ry="12" fill={beamColor} />
+      <path d={BEAM_PATHS.ellipseOutline} stroke="black" strokeOpacity={effectiveOutlineOpacity} strokeWidth="4" fill="none" />
     </svg>
   );
 
@@ -219,7 +232,7 @@ export function SpaceshipLogoScene({
         </div>
         {behindDecorations.map((d, i) => renderDecoration(d, i, 5, false))}
         <div style={{ position: 'relative', zIndex: 10 }}>
-          <SpaceshipLogoV2 width={width} interactive={false} showBeam={false} disableMotion />
+          <SpaceshipLogoV2 width={width} interactive={false} showBeam={false} disableMotion domeColor={domeColor} discColor={discColor} bellyColor={bellyColor} outlineOpacity={outlineOpacity} />
         </div>
         {frontDecorations.map((d, i) => renderDecoration(d, i, 15, false))}
       </div>
@@ -249,7 +262,7 @@ export function SpaceshipLogoScene({
           </motion.div>
         </motion.div>
         <div style={{ position: 'relative', zIndex: 10 }}>
-          <SpaceshipLogoV2 width={width} interactive={false} showBeam={false} />
+          <SpaceshipLogoV2 width={width} interactive={false} showBeam={false} domeColor={domeColor} discColor={discColor} bellyColor={bellyColor} outlineOpacity={outlineOpacity} />
         </div>
       </motion.div>
       {frontDecorations.map((d, i) => renderDecoration(d, i, 15, true))}

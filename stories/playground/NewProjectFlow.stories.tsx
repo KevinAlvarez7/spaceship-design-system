@@ -1,4 +1,6 @@
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { InterfaceKit } from 'interface-kit/react';
 import { NewProjectFlowPage } from '@/components/docs/pages/NewProjectFlowPage';
 
 // ─── Meta ─────────────────────────────────────────────────────────────────────
@@ -25,6 +27,12 @@ const meta = {
   // Provides an explicit flex-col h-screen context so `flex-1` in the page
   // component resolves to the full viewport height inside Storybook's iframe.
   decorators: [
+    (Story) => (
+      <>
+        <Story />
+        {process.env.NODE_ENV === 'development' && <InterfaceKit />}
+      </>
+    ),
     (Story) => (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <Story />

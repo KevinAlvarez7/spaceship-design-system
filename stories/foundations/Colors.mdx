@@ -1,11 +1,11 @@
-import { Meta, ColorPalette, ColorItem } from '@storybook/addon-docs/blocks';
+import { Meta } from '@storybook/addon-docs/blocks';
 import { colorPrimitives, colorSemantic } from '@/tokens';
 
 <Meta title="Foundations/Colors" />
 
 export const primitiveScales = colorPrimitives.reduce((acc, t) => {
-  if (!acc[t.scale]) acc[t.scale] = {};
-  acc[t.scale][t.name] = `var(${t.cssVar})`;
+  if (!acc[t.scale]) acc[t.scale] = [];
+  acc[t.scale].push(t);
   return acc;
 }, {});
 
@@ -15,22 +15,38 @@ export const primitiveScales = colorPrimitives.reduce((acc, t) => {
 
 Raw palette values. Never reference these directly in components — use semantic tokens.
 
-<ColorPalette>
-  {Object.entries(primitiveScales).map(([scale, colors]) => (
-    <ColorItem key={scale} title={scale} subtitle="" colors={colors} />
+<div style={{ display: 'flex', flexDirection: 'column', gap: '24px', fontFamily: 'monospace', fontSize: '11px' }}>
+  {Object.entries(primitiveScales).map(([scale, tokens]) => (
+    <div key={scale}>
+      <div style={{ marginBottom: '8px', fontSize: '13px', fontWeight: '600', color: '#374151' }}>{scale}</div>
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        {tokens.map(t => (
+          <div key={t.name} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+            <div style={{ width: '80px', height: '48px', background: `var(${t.cssVar})`, borderRadius: '6px', border: '1px solid rgba(0,0,0,0.08)' }} />
+            <span style={{ color: '#6b7280', fontSize: '12px' }}>{t.name.split('-').pop()}</span>
+          </div>
+        ))}
+      </div>
+    </div>
   ))}
-</ColorPalette>
+</div>
 
 ## Semantic Tokens
 
 Semantic tokens wire primitives to intent. Use these in all components.
 
-{colorSemantic.map(group => (
-  <ColorPalette key={group.group}>
-    <ColorItem
-      title={group.group}
-      subtitle=""
-      colors={Object.fromEntries(group.tokens.map(t => [t.name, `var(${t.cssVar})`]))}
-    />
-  </ColorPalette>
-))}
+<div style={{ display: 'flex', flexDirection: 'column', gap: '24px', fontFamily: 'monospace', fontSize: '11px' }}>
+  {colorSemantic.map(group => (
+    <div key={group.group}>
+      <div style={{ marginBottom: '8px', fontSize: '13px', fontWeight: '600', color: '#374151' }}>{group.group}</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        {group.tokens.map(t => (
+          <div key={t.name} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: '48px', height: '48px', flexShrink: 0, background: `var(${t.cssVar})`, borderRadius: '6px', border: '1px solid rgba(0,0,0,0.08)' }} />
+            <span style={{ color: '#6b7280', fontSize: '16px' }}>{t.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>

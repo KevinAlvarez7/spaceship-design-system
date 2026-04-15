@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { InterfaceKit } from 'interface-kit/react';
 import { GridBackground } from '@/components/effects';
 
 const meta = {
@@ -30,6 +31,12 @@ const meta = {
     majorEvery: 0,
   },
   decorators: [
+    (Story) => (
+      <>
+        <Story />
+        {process.env.NODE_ENV === 'development' && <InterfaceKit />}
+      </>
+    ),
     (Story) => (
       <div className="relative w-full h-screen">
         <Story />

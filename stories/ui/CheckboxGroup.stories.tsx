@@ -90,19 +90,21 @@ export const WithDisabledItem: Story = {
   ),
 };
 
+function ControlledDemo() {
+  const [value, setValue] = useState(['option-a']);
+  return (
+    <div className="flex flex-col gap-3">
+      <CheckboxGroup value={value} onValueChange={setValue}>
+        <CheckboxItem value="option-a">Option A</CheckboxItem>
+        <CheckboxItem value="option-b">Option B</CheckboxItem>
+        <CheckboxItem value="option-c">Option C</CheckboxItem>
+      </CheckboxGroup>
+      <p className="text-sm text-zinc-500">Selected: {value.join(', ') || 'none'}</p>
+    </div>
+  );
+}
+
 export const Controlled: Story = {
-  render: () => {
-    const [value, setValue] = useState(['option-a']);
-    return (
-      <div className="flex flex-col gap-3">
-        <CheckboxGroup value={value} onValueChange={setValue}>
-          <CheckboxItem value="option-a">Option A</CheckboxItem>
-          <CheckboxItem value="option-b">Option B</CheckboxItem>
-          <CheckboxItem value="option-c">Option C</CheckboxItem>
-        </CheckboxGroup>
-        <p className="text-sm text-zinc-500">Selected: {value.join(', ') || 'none'}</p>
-      </div>
-    );
-  },
+  render: () => <ControlledDemo />,
 };
 

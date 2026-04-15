@@ -15,7 +15,7 @@
  * Run: node scripts/generate-tokens.mjs
  */
 
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -70,17 +70,6 @@ function buildVarToCollection() {
 
 const VAR_TO_COL = buildVarToCollection();
 
-function isRemoteCollection(cid) {
-  // Remote collections have long UUID-style prefixes
-  return cid.includes('/') && !cid.startsWith('VariableCollectionId:');
-}
-
-function isExcluded(varId) {
-  const cid = VAR_TO_COL[varId];
-  if (!cid) return true; // unknown → treat as excluded (remote)
-  if (isRemoteCollection(cid)) return true;
-  return EXCLUDED.has(cid);
-}
 
 /** Get the terminal value of a variable, following alias chains */
 function resolveToValue(varId) {
@@ -538,15 +527,6 @@ ${generateRadius()}
 
 // ─── Build tokens/colors.ts ───────────────────────────────────────────────────
 
-function hexForBrand(scaleName, shade) {
-  const col = ALL_COLS[COL.BRAND_PRIMITIVES];
-  const modeId = col.defaultModeId;
-  const name = `${scaleName}/${shade}`;
-  const vid = col.variableIds.find(id => ALL_VARS[id].name === name);
-  if (!vid) return '#000000';
-  const val = ALL_VARS[vid].valuesByMode[modeId];
-  return rgbToHex(val.r, val.g, val.b);
-}
 
 const BRAND_SCALES = [
   { label: 'Orbit Blue',    prefix: 'orbit-blue',    figmaName: 'Orbit Blue' },

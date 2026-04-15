@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { InterfaceKit } from 'interface-kit/react';
 import { Button } from '@/components/playground/button/v1';
 
 const meta = {
@@ -6,6 +7,14 @@ const meta = {
   component: Button,
   tags: ['experimental'],
   parameters: { layout: 'centered' },
+  decorators: [
+    (Story) => (
+      <>
+        <Story />
+        {process.env.NODE_ENV === 'development' && <InterfaceKit />}
+      </>
+    ),
+  ],
   args: {
     children: 'Button V1',
     variant: 'primary',

@@ -83,18 +83,20 @@ export const WithToolbar: Story = {
 
 // ─── With Change Indicators ───────────────────────────────────────────────────
 
+function WithChangeIndicatorsDemo() {
+  const [activeId, setActiveId] = useState(MOCK_ARTIFACTS[0].id);
+  return (
+    <div className="flex flex-col h-screen bg-(--bg-surface-secondary)">
+      <ArtifactPanelV2
+        artifacts={MOCK_ARTIFACTS}
+        activeId={activeId}
+        onSelect={setActiveId}
+        changedIds={new Set(['code'])}
+      />
+    </div>
+  );
+}
+
 export const WithChangeIndicators: Story = {
-  render: () => {
-    const [activeId, setActiveId] = useState(MOCK_ARTIFACTS[0].id);
-    return (
-      <div className="flex flex-col h-screen bg-(--bg-surface-secondary)">
-        <ArtifactPanelV2
-          artifacts={MOCK_ARTIFACTS}
-          activeId={activeId}
-          onSelect={setActiveId}
-          changedIds={new Set(['code'])}
-        />
-      </div>
-    );
-  },
+  render: () => <WithChangeIndicatorsDemo />,
 };

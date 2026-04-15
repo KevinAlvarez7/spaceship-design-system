@@ -83,20 +83,22 @@ export const WithIcons: Story = {
   ),
 };
 
+function ControlledDemo() {
+  const [value, setValue] = useState('preview');
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <TabBar value={value} onChange={setValue}>
+        <TabBarItem value="preview">Preview</TabBarItem>
+        <TabBarItem value="code">Code</TabBarItem>
+        <TabBarItem value="settings">Settings</TabBarItem>
+      </TabBar>
+      <p className="text-sm text-zinc-500">Active: {value}</p>
+    </div>
+  );
+}
+
 export const Controlled: Story = {
-  render: () => {
-    const [value, setValue] = useState('preview');
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <TabBar value={value} onChange={setValue}>
-          <TabBarItem value="preview">Preview</TabBarItem>
-          <TabBarItem value="code">Code</TabBarItem>
-          <TabBarItem value="settings">Settings</TabBarItem>
-        </TabBar>
-        <p className="text-sm text-zinc-500">Active: {value}</p>
-      </div>
-    );
-  },
+  render: () => <ControlledDemo />,
 };
 
 export const WithDisabled: Story = {

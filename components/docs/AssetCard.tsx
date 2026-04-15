@@ -61,7 +61,6 @@ export function AssetCard({ asset }: AssetCardProps) {
         {isAnimation ? (
           <AnimationPlayer asset={asset} />
         ) : (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={asset.filePath}
             alt={asset.name}

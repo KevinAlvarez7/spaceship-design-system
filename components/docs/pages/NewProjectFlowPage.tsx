@@ -349,7 +349,19 @@ export function NewProjectFlowPage({ initialPhase = 'homepage' }: NewProjectFlow
     ]);
     setStreamingId('msg-approved');
     setPhase('thinking');
-    schedule(() => setPhase('building'), 600);
+    schedule(() => {
+      setPhase('building');
+      setItems(prev => {
+        if (prev.some(i => i.kind === 'task-list' && i.id === 'live-tasks')) return prev;
+        return [...prev, {
+          kind: 'task-list',
+          id: 'live-tasks',
+          items: IMPLEMENTATION_TASKS,
+          completedCount: 0,
+          defaultExpanded: true,
+        }];
+      });
+    }, 600);
   }
 
   function handleReject() {
@@ -387,17 +399,6 @@ export function NewProjectFlowPage({ initialPhase = 'homepage' }: NewProjectFlow
 
   useEffect(() => {
     if (phase !== 'building') return;
-
-    setItems(prev => {
-      if (prev.some(i => i.kind === 'task-list' && i.id === 'live-tasks')) return prev;
-      return [...prev, {
-        kind: 'task-list',
-        id: 'live-tasks',
-        items: IMPLEMENTATION_TASKS,
-        completedCount: 0,
-        defaultExpanded: true,
-      }];
-    });
 
     let progress = 0;
     intervalRef.current = setInterval(() => {

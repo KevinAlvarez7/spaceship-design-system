@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { InterfaceKit } from 'interface-kit/react';
 import { ClarificationCardKeycap } from '@/components/ui';
 import { MOCK_CLARIFICATION_QUESTIONS } from '../_helpers/mocks';
 
@@ -17,6 +18,12 @@ const meta = {
   tags: ['experimental'],
   parameters: { layout: 'centered' },
   decorators: [
+    (Story) => (
+      <>
+        <Story />
+        {process.env.NODE_ENV === 'development' && <InterfaceKit />}
+      </>
+    ),
     (Story) => (
       <div className="w-(--sizing-chat-default)">
         <Story />

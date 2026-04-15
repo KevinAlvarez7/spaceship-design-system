@@ -61,34 +61,38 @@ export const DefaultSurface: Story = {
   args: { surface: 'default' },
 };
 
+function WithDividersDemo() {
+  const [items, setItems] = useState(INITIAL_ITEMS);
+  return (
+    <div className="w-80">
+      <SortableList items={items} onReorder={setItems} dividers />
+    </div>
+  );
+}
+
 export const WithDividers: Story = {
-  render: () => {
-    const [items, setItems] = useState(INITIAL_ITEMS);
-    return (
-      <div className="w-80">
-        <SortableList items={items} onReorder={setItems} dividers />
-      </div>
-    );
-  },
+  render: () => <WithDividersDemo />,
 };
 
+function CustomRenderDemo() {
+  const [items, setItems] = useState(INITIAL_ITEMS);
+  return (
+    <div className="w-80">
+      <SortableList
+        items={items}
+        onReorder={setItems}
+        renderItem={(item, index) => (
+          <span>
+            <span className="text-xs text-zinc-400 mr-2">{index + 1}.</span>
+            {item}
+          </span>
+        )}
+      />
+    </div>
+  );
+}
+
 export const CustomRender: Story = {
-  render: () => {
-    const [items, setItems] = useState(INITIAL_ITEMS);
-    return (
-      <div className="w-80">
-        <SortableList
-          items={items}
-          onReorder={setItems}
-          renderItem={(item, index) => (
-            <span>
-              <span className="text-xs text-zinc-400 mr-2">{index + 1}.</span>
-              {item}
-            </span>
-          )}
-        />
-      </div>
-    );
-  },
+  render: () => <CustomRenderDemo />,
 };
 

@@ -108,19 +108,21 @@ export const WithLeadingAction: Story = {
 
 // ─── Controlled ───────────────────────────────────────────────────────────────
 
+function ControlledDemo() {
+  const [value, setValue] = useState('v1');
+  return (
+    <div className="w-96 flex flex-col gap-3">
+      <FolderTabsV2 value={value} onChange={setValue}>
+        <FolderTabV2 value="v1">Version 1</FolderTabV2>
+        <FolderTabV2 value="v2">Version 2</FolderTabV2>
+        <FolderTabV2 value="v3">Version 3</FolderTabV2>
+      </FolderTabsV2>
+      <p className="text-sm text-zinc-500">Active: {value}</p>
+    </div>
+  );
+}
+
 export const Controlled: Story = {
-  render: () => {
-    const [value, setValue] = useState('v1');
-    return (
-      <div className="w-96 flex flex-col gap-3">
-        <FolderTabsV2 value={value} onChange={setValue}>
-          <FolderTabV2 value="v1">Version 1</FolderTabV2>
-          <FolderTabV2 value="v2">Version 2</FolderTabV2>
-          <FolderTabV2 value="v3">Version 3</FolderTabV2>
-        </FolderTabsV2>
-        <p className="text-sm text-zinc-500">Active: {value}</p>
-      </div>
-    );
-  },
+  render: () => <ControlledDemo />,
 };
 

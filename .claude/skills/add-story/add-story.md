@@ -119,6 +119,26 @@ export const Default: Story = {};
 - Import from `@/components/patterns` barrel for patterns
 - Width-constrained components (chat, card): add a decorator with `w-(--sizing-chat-default)` or appropriate width
 
+**Playground stories (`title: 'Playground/...'`):**
+Every playground story must include `<InterfaceKit />` as a sibling to `<Story />`, dev-only:
+
+```typescript
+import { InterfaceKit } from 'interface-kit/react';
+
+// In meta decorators — add as the FIRST (outermost) decorator:
+decorators: [
+  (Story) => (
+    <>
+      <Story />
+      {process.env.NODE_ENV === 'development' && <InterfaceKit />}
+    </>
+  ),
+  // ...any other existing decorators
+],
+```
+
+If the story already has other decorators, prepend the InterfaceKit decorator before them.
+
 ---
 
 ## Step 5 — Verify

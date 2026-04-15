@@ -86,19 +86,21 @@ export const WithDisabledItem: Story = {
   ),
 };
 
+function ControlledDemo() {
+  const [value, setValue] = useState('option-a');
+  return (
+    <div className="flex flex-col gap-3">
+      <RadioGroup value={value} onValueChange={setValue}>
+        <RadioItem value="option-a">Option A</RadioItem>
+        <RadioItem value="option-b">Option B</RadioItem>
+        <RadioItem value="option-c">Option C</RadioItem>
+      </RadioGroup>
+      <p className="text-sm text-zinc-500">Selected: {value}</p>
+    </div>
+  );
+}
+
 export const Controlled: Story = {
-  render: () => {
-    const [value, setValue] = useState('option-a');
-    return (
-      <div className="flex flex-col gap-3">
-        <RadioGroup value={value} onValueChange={setValue}>
-          <RadioItem value="option-a">Option A</RadioItem>
-          <RadioItem value="option-b">Option B</RadioItem>
-          <RadioItem value="option-c">Option C</RadioItem>
-        </RadioGroup>
-        <p className="text-sm text-zinc-500">Selected: {value}</p>
-      </div>
-    );
-  },
+  render: () => <ControlledDemo />,
 };
 

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { InterfaceKit } from 'interface-kit/react';
 import { Keycap, KeyCombo } from '@/components/ui';
 import { EXCLUDE_MOTION_PROPS } from '../_helpers/motion-argtypes';
 
@@ -7,6 +8,14 @@ const meta = {
   component: Keycap,
   tags: ['experimental'],
   parameters: { layout: 'centered' },
+  decorators: [
+    (Story) => (
+      <>
+        <Story />
+        {process.env.NODE_ENV === 'development' && <InterfaceKit />}
+      </>
+    ),
+  ],
   argTypes: {
     variant: {
       control: { type: 'select' },

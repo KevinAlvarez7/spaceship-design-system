@@ -1,14 +1,37 @@
 'use client';
 
+/* ─────────────────────────────────────────────────────────
+ * ANIMATION STORYBOARD — ApprovalCard
+ *
+ * Idle state
+ *   Approve row:   hover/tap → bg color instant (useAnimation.set)
+ *   Reject row:    hover/tap → bg color instant (useAnimation.set)
+ *
+ * "Request Changes" open  (family-dialog pattern)
+ *     0ms   outer container expands via layout animation (spring: snappy, ζ = 1.0)
+ *     0ms   button morphs from full-width trigger → compact submit via layout
+ *     0ms   label slides to new position (layout="position", no text stretch)
+ *     0ms   textarea reveals top-down (height: 0 → 104, spring: snappy)
+ *
+ * "Request Changes" close (cancel / submit)
+ *     0ms   textarea collapses (height: 104 → 0, spring: snappy)
+ *     0ms   button morphs from compact submit → full-width trigger via layout
+ *     0ms   outer container collapses via layout animation
+ *
+ * Drag resize
+ *   drag    → live height tracking (no spring)
+ *   release → snap to naturalH or maxH (spring: snappy, ζ = 1.0)
+ * ───────────────────────────────────────────────────────── */
+
 import { useRef, useState, useLayoutEffect, useEffect, useCallback } from 'react';
-import { motion, useAnimation, AnimatePresence, MotionConfig } from 'motion/react';
+import { motion, useAnimation, AnimatePresence, LayoutGroup, MotionConfig } from 'motion/react';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { CheckCircle, Pencil } from 'lucide-react';
+import { ArrowUp, CheckCircle, Pencil } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from './button';
 import { useDragResize } from './use-drag-resize';
-import { scales, springs } from '@/tokens/motion';
+import { springs } from '@/tokens/motion';
 import { resolveColor } from '@/lib/resolve-color';
 
 // ─── CVA ──────────────────────────────────────────────────────────────────────
@@ -35,12 +58,12 @@ export const approvalCardVariants = cva(
 const actionRowVariants = cva(
   [
     'flex items-center justify-between w-full',
-    'px-3 py-3',
-    'rounded',
+    'p-3 gap-1',
+    'rounded-sm',
     'cursor-pointer select-none',
-    'font-(family-name:--font-family-secondary)',
-    '[font-size:var(--font-size-base)] leading-6',
-    '[font-weight:var(--font-weight-regular)]',
+    'font-sans [font-weight:var(--font-weight-semibold)]',
+    '[font-size:var(--font-size-sm)] leading-(--line-height-sm)',
+    '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0 [&>svg]:[stroke-width:2.75]',
   ],
   {
     variants: {
@@ -55,7 +78,7 @@ const actionRowVariants = cva(
         ],
       },
       hasShadow: {
-        true:  'shadow-(--shadow-border)',
+        true:  'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow duration-(--duration-base) ease-(--ease-in-out)',
         false: '',
       },
     },
@@ -65,8 +88,6 @@ const actionRowVariants = cva(
 
 // ─── Color animation tokens ───────────────────────────────────────────────────
 
-const COLOR_TRANSITION   = { duration: 0.33, ease: 'easeOut' as const };
-const PRESSED_TRANSITION = { duration: 0.08, ease: 'easeOut' as const };
 
 const APPROVE_TOKENS = {
   default: '--bg-interactive-success-default',
@@ -74,11 +95,6 @@ const APPROVE_TOKENS = {
   pressed: '--bg-interactive-success-pressed',
 } as const;
 
-const REJECT_TOKENS = {
-  default: '--bg-surface-base',
-  hover:   '--bg-surface-primary',
-  pressed: '--bg-surface-secondary',
-} as const;
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -118,6 +134,7 @@ export function ApprovalCard({
 
   const hasShadow  = (surface ?? 'shadow-border') === 'shadow-border';
   const actionsRef = useRef<HTMLDivElement>(null);
+  const approveColorControls = useAnimation();
 
   // ── Card resize (drag handle) ──────────────────────────────────────────────
   // Subtract actions height + gap from available ceiling so card + actions never exceed viewport.
@@ -139,19 +156,16 @@ export function ApprovalCard({
     if (requestChangesOpen) textareaRef.current?.focus();
   }, [requestChangesOpen]);
 
-  // ── Action row color animations ────────────────────────────────────────────
-  const approveColorControls = useAnimation();
-  const rejectColorControls  = useAnimation();
+  // ── Approve row color animation ───────────────────────────────────────────
   const colorMountedRef = useRef(false);
 
   useEffect(() => {
     colorMountedRef.current = true;
-    if (!disableMotion) {
-      approveColorControls.set({ backgroundColor: resolveColor(APPROVE_TOKENS.default) });
-      rejectColorControls.set({ backgroundColor: resolveColor(REJECT_TOKENS.default) });
-    }
+    approveColorControls.set({ backgroundColor: resolveColor(APPROVE_TOKENS.default) });
     return () => { colorMountedRef.current = false; };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function handleOpenRequestChanges() { setRequestChangesOpen(true); }
 
   function handleCancel() {
     setRequestChangesOpen(false);
@@ -218,11 +232,11 @@ export function ApprovalCard({
             onClick={onApprove}
             className={cn(
               actionRowVariants({ intent: 'approve', hasShadow }),
-              'transition-colors duration-(--duration-base) ease-(--ease-in-out) hover:bg-(--bg-interactive-success-hover) active:bg-(--bg-interactive-success-pressed)',
+              'transition-colors duration-(--duration-base) ease-in-out hover:bg-(--bg-interactive-success-hover) active:bg-(--bg-interactive-success-pressed)',
             )}
           >
             <span>{approveLabel}</span>
-            <CheckCircle className="size-5 shrink-0" aria-hidden="true" />
+            <CheckCircle aria-hidden="true" />
           </button>
 
           {/* Request Changes — instant swap when disableMotion */}
@@ -231,11 +245,11 @@ export function ApprovalCard({
               onClick={() => setRequestChangesOpen(true)}
               className={cn(
                 actionRowVariants({ intent: 'reject', hasShadow }),
-                'transition-colors duration-(--duration-base) ease-(--ease-in-out) hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary)',
+                'transition-colors duration-(--duration-base) ease-in-out hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary)',
               )}
             >
               <span>{rejectLabel}</span>
-              <Pencil className="size-5 shrink-0" aria-hidden="true" />
+              <Pencil aria-hidden="true" />
             </button>
           ) : (
             <div className={cn('bg-(--bg-surface-base) rounded p-3 flex flex-col gap-3 overflow-hidden', hasShadow && 'shadow-border')}>
@@ -256,120 +270,120 @@ export function ApprovalCard({
 
         </div>
       ) : (
-        <MotionConfig transition={springs.snappy}>
+        <MotionConfig transition={springs.gentle}>
           <div ref={actionsRef} className="flex flex-col gap-2 px-px pt-px pb-2 -mx-px -mt-px -mb-2">
 
             {/* Approve */}
             <motion.button
               onClick={onApprove}
               className={actionRowVariants({ intent: 'approve', hasShadow })}
-              style={{ willChange: 'transform' }}
               animate={approveColorControls}
-              whileHover={{ scale: scales.prominent.hover }}
-              whileTap={{ scale: scales.prominent.tap }}
               transition={springs.interactive}
-              onHoverStart={() => {
-                if (colorMountedRef.current) approveColorControls.start({ backgroundColor: resolveColor(APPROVE_TOKENS.hover) }, COLOR_TRANSITION);
-              }}
-              onHoverEnd={() => {
-                if (colorMountedRef.current) approveColorControls.start({ backgroundColor: resolveColor(APPROVE_TOKENS.default) }, COLOR_TRANSITION);
-              }}
-              onTapStart={() => {
-                if (colorMountedRef.current) approveColorControls.start({ backgroundColor: resolveColor(APPROVE_TOKENS.pressed) }, PRESSED_TRANSITION);
-              }}
-              onTap={() => {
-                if (colorMountedRef.current) approveColorControls.start({ backgroundColor: resolveColor(APPROVE_TOKENS.hover) }, COLOR_TRANSITION);
-              }}
-              onTapCancel={() => {
-                if (colorMountedRef.current) approveColorControls.start({ backgroundColor: resolveColor(APPROVE_TOKENS.default) }, COLOR_TRANSITION);
-              }}
+              onHoverStart={() => { if (colorMountedRef.current) approveColorControls.set({ backgroundColor: resolveColor(APPROVE_TOKENS.hover) }); }}
+              onHoverEnd={() => { if (colorMountedRef.current) approveColorControls.set({ backgroundColor: resolveColor(APPROVE_TOKENS.default) }); }}
+              onTapStart={() => { if (colorMountedRef.current) approveColorControls.set({ backgroundColor: resolveColor(APPROVE_TOKENS.pressed) }); }}
+              onTap={() => { if (colorMountedRef.current) approveColorControls.set({ backgroundColor: resolveColor(APPROVE_TOKENS.hover) }); }}
+              onTapCancel={() => { if (colorMountedRef.current) approveColorControls.set({ backgroundColor: resolveColor(APPROVE_TOKENS.default) }); }}
             >
               <span>{approveLabel}</span>
-              <CheckCircle className="size-5 shrink-0" aria-hidden="true" />
+              <CheckCircle aria-hidden="true" />
             </motion.button>
 
-            {/* Request Changes — outer container + button both morph via layoutId (3-level) */}
-            <AnimatePresence mode="popLayout" initial={false}>
-              {!requestChangesOpen ? (
-                // Closed: outer wrapper gives container layoutId; shadow lives here
-                <motion.div
-                  key="reject-btn"
-                  layoutId="reject-panel"
-                  className={cn('rounded overflow-hidden w-full', hasShadow && 'shadow-border')}
-                  style={{ willChange: 'transform' }}
-                >
-                  <motion.button
-                    layoutId="reject-cta"
-                    onClick={() => setRequestChangesOpen(true)}
-                    className={actionRowVariants({ intent: 'reject', hasShadow: false })}
-                    style={{ willChange: 'transform' }}
-                    animate={rejectColorControls}
-                    whileHover={{ scale: scales.prominent.hover }}
-                    whileTap={{ scale: scales.prominent.tap }}
-                    transition={springs.interactive}
-                    onHoverStart={() => {
-                      if (colorMountedRef.current) rejectColorControls.start({ backgroundColor: resolveColor(REJECT_TOKENS.hover) }, COLOR_TRANSITION);
-                    }}
-                    onHoverEnd={() => {
-                      if (colorMountedRef.current) rejectColorControls.start({ backgroundColor: resolveColor(REJECT_TOKENS.default) }, COLOR_TRANSITION);
-                    }}
-                    onTapStart={() => {
-                      if (colorMountedRef.current) rejectColorControls.start({ backgroundColor: resolveColor(REJECT_TOKENS.pressed) }, PRESSED_TRANSITION);
-                    }}
-                    onTap={() => {
-                      if (colorMountedRef.current) rejectColorControls.start({ backgroundColor: resolveColor(REJECT_TOKENS.hover) }, COLOR_TRANSITION);
-                    }}
-                    onTapCancel={() => {
-                      if (colorMountedRef.current) rejectColorControls.start({ backgroundColor: resolveColor(REJECT_TOKENS.default) }, COLOR_TRANSITION);
-                    }}
-                  >
-                    <motion.span layoutId="reject-label">{rejectLabel}</motion.span>
-                    <Pencil className="size-5 shrink-0" aria-hidden="true" />
-                  </motion.button>
-                </motion.div>
-              ) : (
-                // Open: same layoutId on outer div; container morphs from button size to form size
-                <motion.div
-                  key="reject-form"
-                  layoutId="reject-panel"
-                  className={cn('bg-(--bg-surface-base) rounded p-3 flex flex-col gap-3 overflow-hidden', hasShadow && 'shadow-border')}
-                  style={{ willChange: 'transform' }}
-                >
-                  <textarea
-                    ref={textareaRef}
-                    value={changeMessage}
-                    onChange={e => setChangeMessage(e.target.value)}
-                    placeholder="Explain the changes you want to make..."
-                    rows={3}
-                    className={cn(
-                      'w-full resize-none p-1',
-                      'font-(family-name:--font-family-secondary)',
-                      '[font-size:var(--font-size-base)] leading-6',
-                      'text-(--text-primary) placeholder:text-(--text-placeholder)',
-                      'bg-transparent outline-none',
-                    )}
-                  />
-                  <div className="flex items-center justify-end gap-2">
-                    <Button variant="ghost" size="sm" onClick={handleCancel} disableMotion={false}>Cancel</Button>
-                    <motion.button
-                      layoutId="reject-cta"
-                      className={cn(
-                        'flex items-center justify-center gap-2',
-                        'px-3 py-2 rounded',
-                        'bg-(--bg-interactive-primary-default) text-(--text-inverse)',
-                        'font-(family-name:--font-family-secondary)',
-                        '[font-size:var(--font-size-sm)] leading-5',
-                        'font-medium',
-                      )}
-                      onClick={handleSubmit}
-                      style={{ willChange: 'transform' }}
+            {/* Request Changes — family-dialog pattern.
+              * One persistent motion.button with `layout` morphs between full-width
+              * trigger and compact submit. `layout="position"` on the label span
+              * lets the text slide to its new position without stretching.
+              * LayoutGroup coordinates the layout animations with AnimatePresence. */}
+            <LayoutGroup>
+              <motion.div
+                layout
+                className={cn(
+                  'flex flex-col rounded-sm',
+                  requestChangesOpen && cn('bg-(--bg-surface-base)', hasShadow && 'shadow-border'),
+                )}
+                style={{ borderRadius: 4 }}
+                transition={springs.snappy}
+              >
+                {/* Textarea — fades in when open */}
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {requestChangesOpen && (
+                    <motion.div
+                      key="form-body"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 104 }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={springs.snappy}
+                      className="overflow-hidden"
                     >
-                      <motion.span layoutId="reject-label">{rejectLabel}</motion.span>
-                    </motion.button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                      <div className="px-3 pt-3 pb-2">
+                        <textarea
+                          ref={textareaRef}
+                          value={changeMessage}
+                          onChange={e => setChangeMessage(e.target.value)}
+                          placeholder="Explain the changes you want to make..."
+                          rows={3}
+                          className={cn(
+                            'w-full resize-none p-1',
+                            'font-(family-name:--font-family-secondary)',
+                            '[font-size:var(--font-size-base)] leading-6',
+                            'text-(--text-primary) placeholder:text-(--text-placeholder)',
+                            'bg-transparent outline-none',
+                          )}
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Action row — conditional renders share layoutId for shared-element morph */}
+                <div className={cn('flex items-center', requestChangesOpen ? 'justify-end gap-2 px-3 pb-3' : '')}>
+                  {requestChangesOpen && (
+                    <Button variant="ghost" size="sm" onClick={handleCancel}>Cancel</Button>
+                  )}
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    {!requestChangesOpen ? (
+                      <motion.button
+                        key="trigger"
+                        layoutId="request-btn"
+                        onClick={handleOpenRequestChanges}
+                        className={cn(
+                          actionRowVariants({ intent: 'reject', hasShadow }),
+                          'hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary) transition-colors duration-(--duration-base)',
+                        )}
+                        style={{ borderRadius: 4 }}
+                        transition={springs.snappy}
+                      >
+                        <motion.span layoutId="request-label">{rejectLabel}</motion.span>
+                        <Pencil aria-hidden="true" />
+                      </motion.button>
+                    ) : (
+                      <motion.button
+                        key="submit"
+                        layoutId="request-btn"
+                        layoutDependency={false}
+                        onClick={handleSubmit}
+                        className={cn(
+                          'inline-flex items-center gap-1',
+                          'rounded-sm cursor-pointer select-none',
+                          'font-sans font-semibold',
+                          '[font-size:var(--font-size-sm)] leading-(--line-height-sm)',
+                          'py-1.5 px-2.5',
+                          'bg-(--bg-surface-base) text-(--text-primary)',
+                          '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0 [&>svg]:stroke-[2.75]',
+                          'hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary) transition-colors duration-(--duration-base)',
+                          hasShadow && 'shadow-border',
+                        )}
+                        style={{ borderRadius: 4 }}
+                        transition={springs.snappy}
+                      >
+                        <motion.span layoutId="request-label">{rejectLabel}</motion.span>
+                        <ArrowUp aria-hidden="true" />
+                      </motion.button>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            </LayoutGroup>
 
           </div>
         </MotionConfig>

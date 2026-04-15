@@ -32,21 +32,23 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const WithChangedIndicators: Story = {
-  render: () => {
-    const [activeId, setActiveId] = useState(MOCK_ARTIFACTS[0].id);
-    return (
-      <div className="flex flex-col h-screen">
-        <ArtifactSegmentedControl
-          artifacts={MOCK_ARTIFACTS}
-          activeId={activeId}
-          onSelect={setActiveId}
-          changedIds={new Set(['code'])}
-        />
-        <div className="flex-1 p-6 bg-zinc-50 flex items-center justify-center text-sm text-zinc-400">
-          The "code" tab has a change indicator
-        </div>
+function WithChangedIndicatorsDemo() {
+  const [activeId, setActiveId] = useState(MOCK_ARTIFACTS[0].id);
+  return (
+    <div className="flex flex-col h-screen">
+      <ArtifactSegmentedControl
+        artifacts={MOCK_ARTIFACTS}
+        activeId={activeId}
+        onSelect={setActiveId}
+        changedIds={new Set(['code'])}
+      />
+      <div className="flex-1 p-6 bg-zinc-50 flex items-center justify-center text-sm text-zinc-400">
+        The &quot;code&quot; tab has a change indicator
       </div>
-    );
-  },
+    </div>
+  );
+}
+
+export const WithChangedIndicators: Story = {
+  render: () => <WithChangedIndicatorsDemo />,
 };

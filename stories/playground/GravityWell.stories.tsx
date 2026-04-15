@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { InterfaceKit } from 'interface-kit/react';
 import { GravityWellBackground } from '@/components/effects';
 
 const meta = {
@@ -33,6 +34,12 @@ const meta = {
     disableMouse: false,
   },
   decorators: [
+    (Story) => (
+      <>
+        <Story />
+        {process.env.NODE_ENV === 'development' && <InterfaceKit />}
+      </>
+    ),
     (Story) => (
       <div className="relative w-full h-screen">
         <Story />

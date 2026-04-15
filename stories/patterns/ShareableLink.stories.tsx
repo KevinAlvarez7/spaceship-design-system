@@ -27,33 +27,37 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+function CustomSuffixDemo() {
+  const [value, setValue] = useState('my-project');
+  return (
+    <div className="w-96">
+      <ShareableLink
+        value={value}
+        onChange={setValue}
+        suffix=".example.com"
+        shareLabel="Publish"
+      />
+    </div>
+  );
+}
+
 export const CustomSuffix: Story = {
-  render: () => {
-    const [value, setValue] = useState('my-project');
-    return (
-      <div className="w-96">
-        <ShareableLink
-          value={value}
-          onChange={setValue}
-          suffix=".example.com"
-          shareLabel="Publish"
-        />
-      </div>
-    );
-  },
+  render: () => <CustomSuffixDemo />,
 };
 
+function EmptyDemo() {
+  const [value, setValue] = useState('');
+  return (
+    <div className="w-96">
+      <ShareableLink
+        value={value}
+        onChange={setValue}
+        placeholder="your-project-name"
+      />
+    </div>
+  );
+}
+
 export const Empty: Story = {
-  render: () => {
-    const [value, setValue] = useState('');
-    return (
-      <div className="w-96">
-        <ShareableLink
-          value={value}
-          onChange={setValue}
-          placeholder="your-project-name"
-        />
-      </div>
-    );
-  },
+  render: () => <EmptyDemo />,
 };

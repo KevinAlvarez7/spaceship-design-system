@@ -1,15 +1,8 @@
-import dynamic from 'next/dynamic';
+import { lazy, Suspense } from 'react';
 import { type AssetEntry } from '@/assets';
 
-const LottiePlayer = dynamic(() => import('./players/LottiePlayer'), {
-  ssr: false,
-  loading: () => <AnimationFallback label="Loading Lottie…" />,
-});
-
-const RivePlayer = dynamic(() => import('./players/RivePlayer'), {
-  ssr: false,
-  loading: () => <AnimationFallback label="Loading Rive…" />,
-});
+const LottiePlayer = lazy(() => import('./players/LottiePlayer'));
+const RivePlayer = lazy(() => import('./players/RivePlayer'));
 
 interface AnimationPlayerProps {
   asset: AssetEntry;
@@ -25,16 +18,15 @@ function AnimationFallback({ label }: { label: string }) {
 
 export function AnimationPlayer({ asset }: AnimationPlayerProps) {
   if (asset.format === 'lottie') {
-    return <LottiePlayer src={asset.filePath} />;
+    return <Suspense fallback={<AnimationFallback label="Loading Lottie…" />}><LottiePlayer src={asset.filePath} /></Suspense>;
   }
 
   if (asset.format === 'rive') {
-    return <RivePlayer src={asset.filePath} />;
+    return <Suspense fallback={<AnimationFallback label="Loading Rive…" />}><RivePlayer src={asset.filePath} /></Suspense>;
   }
 
   if (asset.format === 'svg-anim') {
     return (
-      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={asset.filePath}
         alt={asset.name}

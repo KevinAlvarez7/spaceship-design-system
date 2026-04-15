@@ -663,6 +663,10 @@ const randBetween = (min: number, max: number) => min + Math.random() * (max - m
 /** Pick a random element from an array. */
 const randPick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
+// ─── Size → px map (mirrors outline-opacity threshold logic) ─────────────────
+
+const SAUCER_SIZE_PX = { lg: 24, xl: 28 } as const;
+
 // ─── CVA ──────────────────────────────────────────────────────────────────────
 
 export const thinkingSaucerVariants = cva(
@@ -740,18 +744,22 @@ export function ThinkingSaucer({
 
     run();
     return () => { cancelled = true; };
-  }, [disableMotion, animateEl]);
+  }, [disableMotion, animateEl, scope]);
 
   const wrapperClass = cn(thinkingSaucerVariants({ size, surface }), className);
+
+  // <20px → 1, 20–24px → 0.5, ≥28px → 0.25
+  const px = SAUCER_SIZE_PX[size ?? 'lg'];
+  const effectiveOutlineOpacity = px < 20 ? 1 : px < 28 ? 0.5 : 0.25;
 
   const svg = (
     <svg aria-hidden="true" {...props} viewBox="0 0 32 32" width="100%" height="100%" fill="none">
       <path d={SAUCER_PATHS.bellyFill}    fill="var(--effect-thinking-ship-belly)" />
-      <path d={SAUCER_PATHS.bellyOutline} fill="black" fillOpacity={0.25} />
+      <path d={SAUCER_PATHS.bellyOutline} fill="black" fillOpacity={effectiveOutlineOpacity} />
       <path d={SAUCER_PATHS.discFill}     fill="var(--effect-thinking-ship-body)" />
-      <path d={SAUCER_PATHS.discOutline}  fill="black" fillOpacity={0.25} />
+      <path d={SAUCER_PATHS.discOutline}  fill="black" fillOpacity={effectiveOutlineOpacity} />
       <path d={SAUCER_PATHS.domeFill}     fill="var(--effect-thinking-ship-dome)" />
-      <path d={SAUCER_PATHS.domeOutline}  fill="black" fillOpacity={0.25} />
+      <path d={SAUCER_PATHS.domeOutline}  fill="black" fillOpacity={effectiveOutlineOpacity} />
     </svg>
   );
 

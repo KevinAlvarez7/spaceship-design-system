@@ -81,8 +81,8 @@ export const springs = {
  * Named scale presets — import directly into DS components.
  */
 export const scales = {
-  prominent: { hover: 0.99, tap: 0.96 },
-  subtle:    { hover: 0.99, tap: 0.96 },
+  prominent: { hover: 1, tap: 0.96 },
+  subtle:    { hover: 1, tap: 0.96 },
 } satisfies Record<string, ScalePreset>;
 
 // ─── Stagger presets ─────────────────────────────────────────────────────────

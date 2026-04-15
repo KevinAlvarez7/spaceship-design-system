@@ -12,7 +12,17 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Build artifacts and dead legacy code:
+    "storybook-static/**",
+    "packages/**",
   ]),
+  // Disable Next.js-specific rules — this is a Storybook-only project.
+  {
+    rules: {
+      "@next/next/no-img-element": "off",
+      "@next/next/no-html-link-for-pages": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

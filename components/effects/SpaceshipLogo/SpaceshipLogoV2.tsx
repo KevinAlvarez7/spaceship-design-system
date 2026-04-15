@@ -76,6 +76,11 @@ export interface SpaceshipLogoV2Props {
   beamSkewRange?: number;
   disableMotion?: boolean;
   showBeam?: boolean;
+  domeColor?: string;
+  discColor?: string;
+  bellyColor?: string;
+  beamColor?: string;
+  outlineOpacity?: number;
   className?: string;
   onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
 }
@@ -91,6 +96,11 @@ export function SpaceshipLogoV2({
   beamSkewRange = 15,
   disableMotion = false,
   showBeam = true,
+  domeColor = '#F9C600',
+  discColor = '#3C7DFF',
+  bellyColor = '#F9614D',
+  beamColor = '#26E6B5',
+  outlineOpacity = 0.1,
   className,
   onMouseEnter,
 }: SpaceshipLogoV2Props) {
@@ -104,6 +114,9 @@ export function SpaceshipLogoV2({
   const x = useSpring(rawX, { stiffness: 80, damping: 18 });
   const y = useSpring(rawY, { stiffness: 80, damping: 18 });
   const rotate = useTransform(x, [-maxDisplacement, maxDisplacement], [-30, 30]);
+
+  // Below Navbar size (<32px) get full outline opacity for legibility at small sizes
+  const effectiveOutlineOpacity = width < 32 ? 1 : outlineOpacity;
 
   // Derived dimensions (saucer natural viewBox = 129×94, beam natural viewBox = 68×88)
   const scale = width / 129;
@@ -162,10 +175,10 @@ export function SpaceshipLogoV2({
 
   const beamSvg = (
     <svg width={beamW} height={beamH} viewBox="0 0 68 88" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d={PATHS.beamCone} fill="#26E6B5" fillOpacity="0.5" />
-      <path d={PATHS.beamConeOutline} stroke="black" strokeOpacity="0.1" strokeWidth="4" fill="none" />
-      <ellipse cx="34" cy="76" rx="34" ry="12" fill="#26E6B5" />
-      <path d={PATHS.beamEllipseOutline} stroke="black" strokeOpacity="0.1" strokeWidth="4" fill="none" />
+      <path d={PATHS.beamCone} fill={beamColor} fillOpacity="0.5" />
+      <path d={PATHS.beamConeOutline} stroke="black" strokeOpacity={effectiveOutlineOpacity} strokeWidth="4" fill="none" />
+      <ellipse cx="34" cy="76" rx="34" ry="12" fill={beamColor} />
+      <path d={PATHS.beamEllipseOutline} stroke="black" strokeOpacity={effectiveOutlineOpacity} strokeWidth="4" fill="none" />
     </svg>
   );
 
@@ -175,22 +188,24 @@ export function SpaceshipLogoV2({
         <ShadowFilter id="v2-shadow" />
       </defs>
       <g filter="url(#v2-shadow)">
-        <path d={PATHS.redBelly} fill="#F9614D" />
-        <path d={PATHS.redBellyOutline} fill="black" fillOpacity="0.1" />
-        <path d={PATHS.blueDisc} fill="#3C7DFF" />
-        <path d={PATHS.blueDiscOutline} fill="black" fillOpacity="0.1" />
-        <path d={PATHS.yellowDome} fill="#F9C600" />
-        <path d={PATHS.yellowDomeOutline} fill="black" fillOpacity="0.1" />
+        <path d={PATHS.redBelly} fill={bellyColor} />
+        <path d={PATHS.redBellyOutline} fill="black" fillOpacity={effectiveOutlineOpacity} />
+        <path d={PATHS.blueDisc} fill={discColor} />
+        <path d={PATHS.blueDiscOutline} fill="black" fillOpacity={effectiveOutlineOpacity} />
+        <path d={PATHS.yellowDome} fill={domeColor} />
+        <path d={PATHS.yellowDomeOutline} fill="black" fillOpacity={effectiveOutlineOpacity} />
       </g>
     </svg>
   );
+
+  const containerH = showBeam ? totalH : saucerH;
 
   if (disableMotion) {
     return (
       <div
         ref={containerRef}
         className={className}
-        style={{ width, height: totalH, position: 'relative' }}
+        style={{ width, height: containerH, position: 'relative' }}
       >
         {showBeam && (
           <div style={{ position: 'absolute', top: beamTop, left: beamLeft, zIndex: 0 }}>
@@ -208,7 +223,7 @@ export function SpaceshipLogoV2({
     <motion.div
       ref={containerRef}
       className={className}
-      style={{ x, y, rotate, width, height: totalH, position: 'relative' }}
+      style={{ x, y, rotate, width, height: containerH, position: 'relative' }}
     >
       {/* Beam layer — opacity wrapper keeps fade separate from the skew loop */}
       {showBeam && (

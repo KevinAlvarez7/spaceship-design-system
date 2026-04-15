@@ -30,17 +30,19 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+function WithLongTitleDemo() {
+  const [title, setTitle] = useState('This is a much longer project title that wraps');
+  return (
+    <div className="w-full max-w-md border border-zinc-200 rounded-lg overflow-hidden">
+      <EditableTitle
+        title={title}
+        onTitleChange={setTitle}
+        onMenuClick={() => {}}
+      />
+    </div>
+  );
+}
+
 export const WithLongTitle: Story = {
-  render: () => {
-    const [title, setTitle] = useState('This is a much longer project title that wraps');
-    return (
-      <div className="w-full max-w-md border border-zinc-200 rounded-lg overflow-hidden">
-        <EditableTitle
-          title={title}
-          onTitleChange={setTitle}
-          onMenuClick={() => {}}
-        />
-      </div>
-    );
-  },
+  render: () => <WithLongTitleDemo />,
 };
