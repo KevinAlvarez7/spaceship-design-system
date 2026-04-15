@@ -4,65 +4,63 @@
  * ANIMATION STORYBOARD — FeedbackForm
  *
  * Springs used
- *   snappy  visualDuration: 0.2s, bounce: 0  (ζ = 1.0)  — opacity fades,
- *           layoutId morph, button position morph
- *   gentle  stiffness: 160, damping: 24     (ζ ≈ 0.95)  — label reposition
- *           (MotionConfig default, overridden per-element by snappy)
+ *   snappy  visualDuration: 0.2s, bounce: 0  (ζ = 1.0)  — all animations
+ *
+ * Architecture: the main button is ALWAYS mounted (never unmounts).
+ * AnimatePresence handles only the textarea and Cancel entering/exiting.
+ * The button repositions via `layout`, label via `layout="position"`.
+ * No layoutId — no element swaps, no ghost copies.
  *
  * ─── Idle (collapsed) ────────────────────────────────────────────────────────
- *   Trigger button
- *     hover  → bg: surface-base → surface-primary  (CSS transition-colors, 200ms)
- *     active → bg: surface-base → surface-secondary (CSS transition-colors, 200ms)
+ *   Container wraps a single full-width button (bg-surface-base, shadow-border).
+ *   Button:  hover → bg surface-primary  (CSS transition-colors, 200ms)
+ *            press → bg surface-secondary (CSS transition-colors, 200ms)
  *
  * ─── Open (trigger → form) ───────────────────────────────────────────────────
- *   AnimatePresence mode="popLayout" initial={false}
+ *   Textarea enter  (AnimatePresence)
+ *     0 → ~200ms  height 0 → auto, opacity 0 → 1  (spring: snappy)
+ *     Container grows naturally as content pushes button row down.
  *
- *   Trigger exit
- *     0ms        popped to position:absolute (removed from layout flow)
- *     0 → ~200ms opacity  1 → 0             (spring: snappy)
+ *   Cancel enter  (AnimatePresence mode="popLayout")
+ *     0 → ~200ms  opacity 0 → 1  (spring: snappy)
+ *     Immediately takes flex-1 space, shrinking the main button.
  *
- *   Form enter
- *     0ms        container snaps to form height (outer div is not a motion element)
- *     0 → ~200ms opacity  0 → 1             (spring: snappy)
- *
- *   Button morph  (shared layoutId)
- *     0 → ~200ms position + size  full-width → flex-1 compact  (spring: snappy)
- *     color  unchanged — surface-base throughout (no color shift during morph)
+ *   Main button resize  (layout)
+ *     0 → ~200ms  width full → flex-1 compact  (spring: snappy)
+ *     Button stays mounted — no unmount/remount.
  *
  *   Label reposition  (layout="position")
- *     0 → ~300ms xy position only — no width/height stretch  (spring: gentle)
+ *     0 → ~200ms  xy position only — no width/height stretch  (spring: snappy)
  *
- *   After state settles
- *     textarea auto-focused via useEffect
+ *   Icon swap  Pencil → ArrowUp  (instant, no animation)
+ *   Textarea auto-focused via useEffect.
  *
  * ─── Hover / active (expanded form) ─────────────────────────────────────────
  *   Submit button
- *     hover  → bg: primary-default → primary-hover   (CSS transition-colors, 200ms)
- *     active → bg: primary-default → primary-pressed (CSS transition-colors, 200ms)
+ *     hover  → bg surface-primary   (CSS transition-colors, 200ms)
+ *     press  → bg surface-secondary (CSS transition-colors, 200ms)
  *   Cancel button
- *     tap    → scale 1 → 0.96 → 1                    (spring: interactive, DS Button)
+ *     tap    → scale 1 → 0.96 → 1  (spring: interactive, DS Button)
  *
  * ─── Close (cancel or submit) ────────────────────────────────────────────────
- *   Reverse of Open — exact mirror
+ *   Textarea exit  (AnimatePresence)
+ *     0 → ~200ms  height auto → 0, opacity 1 → 0  (spring: snappy)
  *
- *   Form exit
- *     0ms        popped to position:absolute
- *     0 → ~200ms opacity  1 → 0             (spring: snappy)
+ *   Cancel exit  (AnimatePresence mode="popLayout")
+ *     0ms         popped to position:absolute (freed from layout flow)
+ *     0 → ~200ms  opacity 1 → 0  (spring: snappy, fades at last position)
  *
- *   Trigger enter
- *     0ms        container snaps to trigger height
- *     0 → ~200ms opacity  0 → 1             (spring: snappy)
- *
- *   Button morph  (shared layoutId, reverse direction)
- *     0 → ~200ms position + size  flex-1 compact → full-width  (spring: snappy)
- *     color  unchanged — surface-base throughout
+ *   Main button resize  (layout, reverse)
+ *     0 → ~200ms  width flex-1 compact → full  (spring: snappy)
  *
  *   Label reposition  (layout="position", reverse)
- *     0 → ~300ms xy position only            (spring: gentle)
+ *     0 → ~200ms  xy position only  (spring: snappy)
+ *
+ *   Icon swap  ArrowUp → Pencil  (instant)
  * ───────────────────────────────────────────────────────────────────────────── */
 
-import { useRef, useState, useEffect, useId } from 'react';
-import { motion, AnimatePresence, LayoutGroup, MotionConfig } from 'motion/react';
+import { useRef, useState, useEffect } from 'react';
+import { motion, AnimatePresence, MotionConfig } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Pencil, ArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -71,39 +69,17 @@ import { springs } from '@/tokens/motion';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-/** Local CVA for the trigger (collapsed) and submit (expanded) button shapes. */
-const triggerVariants = cva(
-  [
-    'flex items-center justify-between w-full',
-    'p-3 gap-1',
-    'rounded-sm',
-    'cursor-pointer select-none',
-    'font-sans [font-weight:var(--font-weight-semibold)]',
-    '[font-size:var(--font-size-sm)] leading-(--line-height-sm)',
-    '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0 [&>svg]:[stroke-width:2.75]',
-  ],
-  {
-    variants: {
-      role: {
-        trigger: [
-          'bg-(--bg-surface-base)',
-          'text-(--text-primary)',
-        ],
-        submit: [
-          'bg-(--bg-surface-base)',
-          'text-(--text-primary)',
-          'hover:bg-(--bg-surface-primary)',
-          'active:bg-(--bg-surface-secondary)',
-          'transition-colors duration-(--duration-base)',
-        ],
-      },
-      hasShadow: {
-        true:  'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow duration-(--duration-base) ease-(--ease-in-out)',
-        false: '',
-      },
-    },
-    defaultVariants: { hasShadow: true },
-  },
+/** Base classes for the always-mounted main button. */
+const BUTTON_CLASSES = cn(
+  'flex items-center justify-between',
+  'p-3 gap-1 flex-1',
+  'cursor-pointer select-none',
+  'font-sans [font-weight:var(--font-weight-semibold)]',
+  '[font-size:var(--font-size-sm)] leading-(--line-height-sm)',
+  '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0 [&>svg]:[stroke-width:2.75]',
+  'text-(--text-primary)',
+  'hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary)',
+  'transition-colors duration-(--duration-base)',
 );
 
 // ─── CVA ──────────────────────────────────────────────────────────────────────
@@ -150,7 +126,6 @@ export function FeedbackForm({
   surface,
   className,
 }: FeedbackFormProps) {
-  const id                  = useId();
   const [open, setOpen]     = useState(false);
   const textareaRef         = useRef<HTMLTextAreaElement>(null);
   const hasShadow           = (surface ?? 'shadow-border') === 'shadow-border';
@@ -171,7 +146,7 @@ export function FeedbackForm({
     setOpen(false);
   }
 
-  // ── Textarea classes (shared between motion and static paths) ─────────────
+  // ── Shared classes ────────────────────────────────────────────────────────
   const textareaClasses = cn(
     'w-full resize-none p-1',
     'font-(family-name:--font-family-secondary)',
@@ -180,28 +155,18 @@ export function FeedbackForm({
     'bg-transparent outline-none',
   );
 
+  const containerClasses = cn(
+    'flex flex-col overflow-hidden',
+    'bg-(--bg-surface-base)',
+    hasShadow && 'shadow-(--shadow-border)',
+  );
+
   // ── Static path ───────────────────────────────────────────────────────────
   if (disableMotion) {
     return (
       <div className={cn(feedbackFormVariants({ surface }), className)}>
-        {!open ? (
-          <button
-            onClick={() => setOpen(true)}
-            className={cn(
-              triggerVariants({ role: 'trigger', hasShadow }),
-              'transition-colors duration-(--duration-base) ease-in-out',
-              'hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary)',
-            )}
-          >
-            <span>{submitLabel}</span>
-            <Pencil aria-hidden="true" />
-          </button>
-        ) : (
-          <div className={cn(
-            'flex flex-col rounded-sm overflow-hidden',
-            'bg-(--bg-surface-base)',
-            hasShadow && 'shadow-(--shadow-border)',
-          )}>
+        <div className={containerClasses} style={{ borderRadius: 4 }}>
+          {open && (
             <div className="px-3 pt-3 pb-2">
               <textarea
                 ref={textareaRef}
@@ -210,68 +175,41 @@ export function FeedbackForm({
                 className={textareaClasses}
               />
             </div>
-            <div className="flex items-center gap-2 px-3 pb-3">
-              <Button variant="secondary" surface="flat" size="md" onClick={handleCancel} disableMotion className="flex-1 py-3">
+          )}
+          <div className="flex items-center gap-1">
+            {open && (
+              <Button variant="secondary" surface="flat" size="md" onClick={handleCancel} disableMotion className="flex-1 p-3">
                 Cancel
               </Button>
-              <button
-                onClick={handleSubmit}
-                className={cn(triggerVariants({ role: 'submit', hasShadow: false }), 'flex-1')}
-              >
-                <span>{submitLabel}</span>
-                <ArrowUp aria-hidden="true" />
-              </button>
-            </div>
+            )}
+            <button
+              onClick={open ? handleSubmit : () => setOpen(true)}
+              className={BUTTON_CLASSES}
+            >
+              <span>{submitLabel}</span>
+              {open ? <ArrowUp aria-hidden="true" /> : <Pencil aria-hidden="true" />}
+            </button>
           </div>
-        )}
+        </div>
       </div>
     );
   }
 
   // ── Motion path ───────────────────────────────────────────────────────────
-  // relative: scopes mode="popLayout" absolute positioning of the exiting element.
   return (
-    <div className={cn(feedbackFormVariants({ surface }), 'relative', className)}>
-      <MotionConfig transition={springs.gentle}>
-        <LayoutGroup id={id}>
-          <AnimatePresence mode="popLayout" initial={false}>
-            {!open ? (
+    <div className={cn(feedbackFormVariants({ surface }), className)}>
+      <MotionConfig transition={springs.snappy}>
+        <div className={containerClasses} style={{ borderRadius: 4 }}>
 
-              /* ── Trigger — full-width, shadow visible ── */
-              <motion.button
-                key="trigger"
-                layoutId={`${id}-feedback-btn`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setOpen(true)}
-                className={cn(
-                  triggerVariants({ role: 'trigger', hasShadow }),
-                  'hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary)',
-                  'transition-colors duration-(--duration-base)',
-                )}
-                style={{ borderRadius: 4 }}
-                transition={springs.snappy}
-              >
-                <motion.span layout="position">{submitLabel}</motion.span>
-                <Pencil aria-hidden="true" />
-              </motion.button>
-
-            ) : (
-
-              /* ── Form — overflow-hidden clips internal content ── */
+          {/* ── Textarea — enters/exits ── */}
+          <AnimatePresence initial={false}>
+            {open && (
               <motion.div
-                key="form"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className={cn(
-                  'flex flex-col rounded-sm overflow-hidden',
-                  'bg-(--bg-surface-base)',
-                  hasShadow && 'shadow-(--shadow-border)',
-                )}
-                style={{ borderRadius: 4 }}
-                transition={springs.snappy}
+                key="textarea"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                style={{ overflow: 'hidden' }}
               >
                 <div className="px-3 pt-3 pb-2">
                   <textarea
@@ -281,27 +219,40 @@ export function FeedbackForm({
                     className={textareaClasses}
                   />
                 </div>
-                <div className="flex items-center gap-2 px-3 pb-3">
-                  <Button variant="secondary" surface="flat" size="md" onClick={handleCancel} className="flex-1 py-3">
-                    Cancel
-                  </Button>
-                  <motion.button
-                    layoutId={`${id}-feedback-btn`}
-                    layoutDependency={false}
-                    onClick={handleSubmit}
-                    className={cn(triggerVariants({ role: 'submit', hasShadow: false }), 'flex-1')}
-                    style={{ borderRadius: 4, willChange: 'transform' }}
-                    transition={springs.snappy}
-                  >
-                    <motion.span layout="position">{submitLabel}</motion.span>
-                    <ArrowUp aria-hidden="true" />
-                  </motion.button>
-                </div>
               </motion.div>
-
             )}
           </AnimatePresence>
-        </LayoutGroup>
+
+          {/* ── Button row — always mounted ── */}
+          {/* relative: scopes popLayout absolute positioning of exiting Cancel. */}
+          <div className="relative flex items-center gap-1">
+            <AnimatePresence mode="popLayout" initial={false}>
+              {open && (
+                <motion.div
+                  key="cancel"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex-1"
+                >
+                  <Button variant="secondary" surface="flat" size="md" onClick={handleCancel} className="w-full p-3">
+                    Cancel
+                  </Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <motion.button
+              layout
+              onClick={open ? handleSubmit : () => setOpen(true)}
+              className={BUTTON_CLASSES}
+              style={{ willChange: 'transform' }}
+            >
+              <motion.span layout="position">{submitLabel}</motion.span>
+              {open ? <ArrowUp aria-hidden="true" /> : <Pencil aria-hidden="true" />}
+            </motion.button>
+          </div>
+
+        </div>
       </MotionConfig>
     </div>
   );
