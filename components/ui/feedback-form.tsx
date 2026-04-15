@@ -27,7 +27,7 @@
  *
  *   Button morph  (shared layoutId)
  *     0 → ~200ms position + size  full-width → flex-1 compact  (spring: snappy)
- *     0 → ~200ms borderRadius  4px → 4px  (interpolated via inline style)
+ *     color  unchanged — surface-base throughout (no color shift during morph)
  *
  *   Label reposition  (layout="position")
  *     0 → ~300ms xy position only — no width/height stretch  (spring: gentle)
@@ -55,6 +55,7 @@
  *
  *   Button morph  (shared layoutId, reverse direction)
  *     0 → ~200ms position + size  flex-1 compact → full-width  (spring: snappy)
+ *     color  unchanged — surface-base throughout
  *
  *   Label reposition  (layout="position", reverse)
  *     0 → ~300ms xy position only            (spring: gentle)
@@ -89,10 +90,10 @@ const triggerVariants = cva(
           'text-(--text-primary)',
         ],
         submit: [
-          'bg-(--bg-interactive-primary-default)',
-          'text-(--text-inverse)',
-          'hover:bg-(--bg-interactive-primary-hover)',
-          'active:bg-(--bg-interactive-primary-pressed)',
+          'bg-(--bg-surface-base)',
+          'text-(--text-primary)',
+          'hover:bg-(--bg-surface-primary)',
+          'active:bg-(--bg-surface-secondary)',
           'transition-colors duration-(--duration-base)',
         ],
       },
