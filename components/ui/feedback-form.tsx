@@ -1,0 +1,247 @@
+'use client';
+
+import { useRef, useState, useEffect } from 'react';
+import { motion, AnimatePresence, LayoutGroup, MotionConfig } from 'motion/react';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { Pencil, ArrowUp } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Button } from './button';
+import { springs } from '@/tokens/motion';
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+/** Local CVA for the trigger (collapsed) and submit (expanded) button shapes. */
+const triggerVariants = cva(
+  [
+    'flex items-center justify-between w-full',
+    'p-3 gap-1',
+    'rounded-sm',
+    'cursor-pointer select-none',
+    'font-sans [font-weight:var(--font-weight-semibold)]',
+    '[font-size:var(--font-size-sm)] leading-(--line-height-sm)',
+    '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0 [&>svg]:[stroke-width:2.75]',
+  ],
+  {
+    variants: {
+      role: {
+        trigger: [
+          'bg-(--bg-surface-base)',
+          'text-(--text-primary)',
+        ],
+        submit: [
+          'bg-(--bg-interactive-primary-default)',
+          'text-(--text-inverse)',
+          'hover:bg-(--bg-interactive-primary-hover)',
+          'active:bg-(--bg-interactive-primary-pressed)',
+          'transition-colors duration-(--duration-base)',
+        ],
+      },
+      hasShadow: {
+        true:  'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow duration-(--duration-base) ease-(--ease-in-out)',
+        false: '',
+      },
+    },
+    defaultVariants: { hasShadow: true },
+  },
+);
+
+// ─── CVA ──────────────────────────────────────────────────────────────────────
+
+export const feedbackFormVariants = cva(
+  [
+    'flex flex-col',
+    'w-full',
+    'font-sans',
+  ],
+  {
+    variants: {
+      surface: {
+        default:         '',
+        'shadow-border': '',
+      },
+    },
+    defaultVariants: { surface: 'shadow-border' },
+  },
+);
+
+// ─── Props ────────────────────────────────────────────────────────────────────
+
+export interface FeedbackFormProps
+  extends VariantProps<typeof feedbackFormVariants> {
+  onSubmit?: (message?: string) => void;
+  onCancel?: () => void;
+  /** Label for the trigger button and submit button. Default: 'Request Changes' */
+  submitLabel?: string;
+  /** Textarea placeholder text. Default: "Describe the changes you'd like..." */
+  placeholder?: string;
+  disableMotion?: boolean;
+  className?: string;
+}
+
+// ─── FeedbackForm ─────────────────────────────────────────────────────────────
+
+export function FeedbackForm({
+  onSubmit,
+  onCancel,
+  submitLabel  = 'Request Changes',
+  placeholder  = "Describe the changes you'd like...",
+  disableMotion = false,
+  surface,
+  className,
+}: FeedbackFormProps) {
+  const [open, setOpen]     = useState(false);
+  const textareaRef         = useRef<HTMLTextAreaElement>(null);
+  const hasShadow           = (surface ?? 'shadow-border') === 'shadow-border';
+
+  // Auto-focus textarea when form opens.
+  useEffect(() => {
+    if (open) textareaRef.current?.focus();
+  }, [open]);
+
+  function handleCancel() {
+    setOpen(false);
+    onCancel?.();
+  }
+
+  function handleSubmit() {
+    const message = textareaRef.current?.value;
+    onSubmit?.(message || undefined);
+    setOpen(false);
+  }
+
+  // ── Textarea classes (shared between motion and static paths) ─────────────
+  const textareaClasses = cn(
+    'w-full resize-none p-1',
+    'font-(family-name:--font-family-secondary)',
+    '[font-size:var(--font-size-base)] leading-6',
+    'text-(--text-primary) placeholder:text-(--text-placeholder)',
+    'bg-transparent outline-none',
+  );
+
+  // ── Static path ───────────────────────────────────────────────────────────
+  if (disableMotion) {
+    return (
+      <div className={cn(feedbackFormVariants({ surface }), className)}>
+        {!open ? (
+          <button
+            onClick={() => setOpen(true)}
+            className={cn(
+              triggerVariants({ role: 'trigger', hasShadow }),
+              'transition-colors duration-(--duration-base) ease-in-out',
+              'hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary)',
+            )}
+          >
+            <span>{submitLabel}</span>
+            <Pencil aria-hidden="true" />
+          </button>
+        ) : (
+          <div className={cn(
+            'flex flex-col rounded-sm overflow-hidden',
+            'bg-(--bg-surface-base)',
+            hasShadow && 'shadow-(--shadow-border)',
+          )}>
+            <div className="px-3 pt-3 pb-2">
+              <textarea
+                ref={textareaRef}
+                placeholder={placeholder}
+                rows={3}
+                className={textareaClasses}
+              />
+            </div>
+            <div className="flex items-center gap-2 px-3 pb-3">
+              <Button variant="secondary" surface="flat" size="md" onClick={handleCancel} disableMotion className="flex-1 py-3">
+                Cancel
+              </Button>
+              <button
+                onClick={handleSubmit}
+                className={cn(triggerVariants({ role: 'submit', hasShadow: false }), 'flex-1')}
+                style={{ borderRadius: 4 }}
+              >
+                <span>{submitLabel}</span>
+                <ArrowUp aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── Motion path ───────────────────────────────────────────────────────────
+  // relative: scopes mode="popLayout" absolute positioning of the exiting element.
+  return (
+    <div className={cn(feedbackFormVariants({ surface }), 'relative', className)}>
+      <MotionConfig transition={springs.gentle}>
+        <LayoutGroup>
+          <AnimatePresence mode="popLayout" initial={false}>
+            {!open ? (
+
+              /* ── Trigger — full-width, shadow visible ── */
+              <motion.button
+                key="trigger"
+                layoutId="feedback-btn"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setOpen(true)}
+                className={cn(
+                  triggerVariants({ role: 'trigger', hasShadow }),
+                  'hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary)',
+                  'transition-colors duration-(--duration-base)',
+                )}
+                style={{ borderRadius: 4 }}
+                transition={springs.snappy}
+              >
+                <motion.span layout="position">{submitLabel}</motion.span>
+                <Pencil aria-hidden="true" />
+              </motion.button>
+
+            ) : (
+
+              /* ── Form — overflow-hidden clips internal content ── */
+              <motion.div
+                key="form"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className={cn(
+                  'flex flex-col rounded-sm overflow-hidden',
+                  'bg-(--bg-surface-base)',
+                  hasShadow && 'shadow-(--shadow-border)',
+                )}
+                style={{ borderRadius: 4 }}
+                transition={springs.snappy}
+              >
+                <div className="px-3 pt-3 pb-2">
+                  <textarea
+                    ref={textareaRef}
+                    placeholder={placeholder}
+                    rows={3}
+                    className={textareaClasses}
+                  />
+                </div>
+                <div className="flex items-center gap-2 px-3 pb-3">
+                  <Button variant="secondary" surface="flat" size="md" onClick={handleCancel} className="flex-1 py-3">
+                    Cancel
+                  </Button>
+                  <motion.button
+                    layoutId="feedback-btn"
+                    layoutDependency={false}
+                    onClick={handleSubmit}
+                    className={cn(triggerVariants({ role: 'submit', hasShadow: false }), 'flex-1')}
+                    style={{ borderRadius: 4, willChange: 'transform' }}
+                    transition={springs.snappy}
+                  >
+                    <motion.span layout="position">{submitLabel}</motion.span>
+                    <ArrowUp aria-hidden="true" />
+                  </motion.button>
+                </div>
+              </motion.div>
+
+            )}
+          </AnimatePresence>
+        </LayoutGroup>
+      </MotionConfig>
+    </div>
+  );
+}
