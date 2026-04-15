@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useId } from 'react';
 import { motion, AnimatePresence, LayoutGroup, MotionConfig } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Pencil, ArrowUp } from 'lucide-react';
@@ -89,6 +89,7 @@ export function FeedbackForm({
   surface,
   className,
 }: FeedbackFormProps) {
+  const id                  = useId();
   const [open, setOpen]     = useState(false);
   const textareaRef         = useRef<HTMLTextAreaElement>(null);
   const hasShadow           = (surface ?? 'shadow-border') === 'shadow-border';
@@ -155,7 +156,6 @@ export function FeedbackForm({
               <button
                 onClick={handleSubmit}
                 className={cn(triggerVariants({ role: 'submit', hasShadow: false }), 'flex-1')}
-                style={{ borderRadius: 4 }}
               >
                 <span>{submitLabel}</span>
                 <ArrowUp aria-hidden="true" />
@@ -172,14 +172,14 @@ export function FeedbackForm({
   return (
     <div className={cn(feedbackFormVariants({ surface }), 'relative', className)}>
       <MotionConfig transition={springs.gentle}>
-        <LayoutGroup>
+        <LayoutGroup id={id}>
           <AnimatePresence mode="popLayout" initial={false}>
             {!open ? (
 
               /* ── Trigger — full-width, shadow visible ── */
               <motion.button
                 key="trigger"
-                layoutId="feedback-btn"
+                layoutId={`${id}-feedback-btn`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -225,7 +225,7 @@ export function FeedbackForm({
                     Cancel
                   </Button>
                   <motion.button
-                    layoutId="feedback-btn"
+                    layoutId={`${id}-feedback-btn`}
                     layoutDependency={false}
                     onClick={handleSubmit}
                     className={cn(triggerVariants({ role: 'submit', hasShadow: false }), 'flex-1')}
