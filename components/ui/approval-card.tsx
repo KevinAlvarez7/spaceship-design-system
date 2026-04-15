@@ -271,7 +271,9 @@ export function ApprovalCard({
         </div>
       ) : (
         <MotionConfig transition={springs.gentle}>
-          <div ref={actionsRef} className="flex flex-col gap-2 px-px pt-px pb-2 -mx-px -mt-px -mb-2">
+          {/* relative: gives mode="popLayout" a positioned ancestor so popped
+            * elements stay in-place rather than flying to the viewport. */}
+          <div ref={actionsRef} className="relative flex flex-col gap-2 px-px pt-px pb-2 -mx-px -mt-px -mb-2">
 
             {/* Approve */}
             <motion.button
@@ -289,100 +291,85 @@ export function ApprovalCard({
               <CheckCircle aria-hidden="true" />
             </motion.button>
 
-            {/* Request Changes — family-dialog pattern.
-              * One persistent motion.button with `layout` morphs between full-width
-              * trigger and compact submit. `layout="position"` on the label span
-              * lets the text slide to its new position without stretching.
-              * LayoutGroup coordinates the layout animations with AnimatePresence. */}
+            {/* Request Changes — trigger and form swap via outer AnimatePresence.
+              * Trigger lives OUTSIDE any overflow container so its box-shadow renders.
+              * Form container carries overflow-hidden to clip internal content. */}
             <LayoutGroup>
-              <motion.div
-                layout
-                className={cn(
-                  'flex flex-col rounded-sm',
-                  requestChangesOpen && cn('bg-(--bg-surface-base)', hasShadow && 'shadow-border'),
-                )}
-                style={{ borderRadius: 4 }}
-                transition={springs.snappy}
-              >
-                {/* Textarea — fades in when open */}
-                <AnimatePresence mode="popLayout" initial={false}>
-                  {requestChangesOpen && (
-                    <motion.div
-                      key="form-body"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 104 }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={springs.snappy}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-3 pt-3 pb-2">
-                        <textarea
-                          ref={textareaRef}
-                          value={changeMessage}
-                          onChange={e => setChangeMessage(e.target.value)}
-                          placeholder="Explain the changes you want to make..."
-                          rows={3}
-                          className={cn(
-                            'w-full resize-none p-1',
-                            'font-(family-name:--font-family-secondary)',
-                            '[font-size:var(--font-size-base)] leading-6',
-                            'text-(--text-primary) placeholder:text-(--text-placeholder)',
-                            'bg-transparent outline-none',
-                          )}
-                        />
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+              <AnimatePresence mode="popLayout" initial={false}>
+                {!requestChangesOpen ? (
 
-                {/* Action row — conditional renders share layoutId for shared-element morph */}
-                <div className={cn('flex items-center', requestChangesOpen ? 'justify-end gap-2 px-3 pb-3' : '')}>
-                  {requestChangesOpen && (
-                    <Button variant="ghost" size="sm" onClick={handleCancel}>Cancel</Button>
-                  )}
-                  <AnimatePresence mode="popLayout" initial={false}>
-                    {!requestChangesOpen ? (
-                      <motion.button
-                        key="trigger"
-                        layoutId="request-btn"
-                        onClick={handleOpenRequestChanges}
+                  /* ── Trigger — standalone, shadow visible ── */
+                  <motion.button
+                    key="trigger"
+                    layoutId="request-btn"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={handleOpenRequestChanges}
+                    className={cn(
+                      actionRowVariants({ intent: 'reject', hasShadow }),
+                      'hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary) transition-colors duration-(--duration-base)',
+                    )}
+                    style={{ borderRadius: 4 }}
+                    transition={springs.snappy}
+                  >
+                    {rejectLabel}
+                    <Pencil aria-hidden="true" />
+                  </motion.button>
+
+                ) : (
+
+                  /* ── Form container — overflow-hidden scoped here ── */
+                  <motion.div
+                    key="form"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className={cn(
+                      'flex flex-col rounded-sm overflow-hidden',
+                      cn('bg-(--bg-surface-base)', hasShadow && 'shadow-border'),
+                    )}
+                    style={{ borderRadius: 4 }}
+                    transition={springs.snappy}
+                  >
+                    <div className="px-3 pt-3 pb-2">
+                      <textarea
+                        ref={textareaRef}
+                        value={changeMessage}
+                        onChange={e => setChangeMessage(e.target.value)}
+                        placeholder="Explain the changes you want to make..."
+                        rows={3}
                         className={cn(
-                          actionRowVariants({ intent: 'reject', hasShadow }),
-                          'hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary) transition-colors duration-(--duration-base)',
+                          'w-full resize-none p-1',
+                          'font-(family-name:--font-family-secondary)',
+                          '[font-size:var(--font-size-base)] leading-6',
+                          'text-(--text-primary) placeholder:text-(--text-placeholder)',
+                          'bg-transparent outline-none',
                         )}
-                        style={{ borderRadius: 4 }}
-                        transition={springs.snappy}
-                      >
-                        <motion.span layoutId="request-label">{rejectLabel}</motion.span>
-                        <Pencil aria-hidden="true" />
-                      </motion.button>
-                    ) : (
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 px-3 pb-3">
+                      <Button variant="secondary" surface="flat" size="md" onClick={handleCancel} className="flex-1 py-3">Cancel</Button>
                       <motion.button
-                        key="submit"
                         layoutId="request-btn"
                         layoutDependency={false}
                         onClick={handleSubmit}
                         className={cn(
-                          'inline-flex items-center gap-1',
-                          'rounded-sm cursor-pointer select-none',
-                          'font-sans font-semibold',
-                          '[font-size:var(--font-size-sm)] leading-(--line-height-sm)',
-                          'py-1.5 px-2.5',
-                          'bg-(--bg-surface-base) text-(--text-primary)',
-                          '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0 [&>svg]:stroke-[2.75]',
-                          'hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary) transition-colors duration-(--duration-base)',
-                          hasShadow && 'shadow-border',
+                          actionRowVariants({ intent: 'reject', hasShadow: false }),
+                          'flex-1 bg-(--bg-interactive-primary-default) text-(--text-inverse)',
+                          'hover:bg-(--bg-interactive-primary-hover) active:bg-(--bg-interactive-primary-pressed) transition-colors duration-(--duration-base)',
                         )}
                         style={{ borderRadius: 4 }}
                         transition={springs.snappy}
                       >
-                        <motion.span layoutId="request-label">{rejectLabel}</motion.span>
+                        {rejectLabel}
                         <ArrowUp aria-hidden="true" />
                       </motion.button>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </motion.div>
+                    </div>
+                  </motion.div>
+
+                )}
+              </AnimatePresence>
             </LayoutGroup>
 
           </div>
