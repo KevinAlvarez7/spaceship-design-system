@@ -31,7 +31,7 @@
  *   Label reposition  (layout="position")
  *     0 → ~200ms  xy only, no text stretch  (spring: snappy)
  *
- *   Icon swap  Pencil → ArrowUp  (instant)
+ *   Icon hidden, button turns primary-blue, label centers  (instant via transition-colors)
  *   Textarea auto-focused via useEffect.
  *
  * ─── Close (cancel or submit) ────────────────────────────────────────────────
@@ -45,13 +45,13 @@
  *   Main button resize  (motion.button layout, reverse)
  *     0 → ~200ms  flex-1 → w-full  (spring: snappy)
  *
- *   Icon swap  ArrowUp → Pencil  (instant)
+ *   Button returns to neutral bg + Pencil icon  (transition-colors)
  * ───────────────────────────────────────────────────────────────────────────── */
 
 import { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence, MotionConfig } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Pencil, ArrowUp } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from './button';
 import { springs } from '@/tokens/motion';
@@ -177,16 +177,20 @@ export function FeedbackForm({
               className={textareaClasses}
             />
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 px-3 pb-3">
             <Button variant="secondary" surface="flat" size="md" onClick={handleCancel} disableMotion className="flex-1 p-3">
               Cancel
             </Button>
             <button
               onClick={handleSubmit}
-              className={cn(BUTTON_SHAPE, 'flex-1')}
+              className={cn(
+                BUTTON_SHAPE,
+                'flex-1 justify-center',
+                'bg-(--bg-interactive-primary-default) text-(--text-inverse)',
+                'hover:bg-(--bg-interactive-primary-hover) active:bg-(--bg-interactive-primary-pressed)',
+              )}
             >
               <span>{submitLabel}</span>
-              <ArrowUp aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -234,7 +238,7 @@ export function FeedbackForm({
           </AnimatePresence>
 
           {/* ── Button row — relative scopes popLayout's absolute exit ── */}
-          <div className="relative flex items-center gap-1">
+          <div className={cn('relative flex items-center gap-1', open && 'px-3 pb-3')}>
             <AnimatePresence mode="popLayout" initial={false}>
               {open && (
                 <motion.div
@@ -251,21 +255,27 @@ export function FeedbackForm({
               )}
             </AnimatePresence>
 
-            {/* Main button — always mounted, repositions via layout */}
+            {/* Main button — always mounted, repositions via layout.
+              * Neutral when collapsed → primary-blue when open, centered with no icon. */}
             <motion.button
               layout
               onClick={open ? handleSubmit : () => setOpen(true)}
               className={cn(
                 BUTTON_SHAPE,
+                'transition-colors duration-(--duration-base)',
                 !open ? [
                   'w-full rounded-sm',
                   hasShadow && 'shadow-(--shadow-border) hover:shadow-(--shadow-border-hover) transition-shadow ease-(--ease-in-out)',
-                ] : 'flex-1',
+                ] : [
+                  'flex-1 justify-center',
+                  'bg-(--bg-interactive-primary-default) text-(--text-inverse)',
+                  'hover:bg-(--bg-interactive-primary-hover) active:bg-(--bg-interactive-primary-pressed)',
+                ],
               )}
               style={{ willChange: 'transform' }}
             >
               <motion.span layout="position">{submitLabel}</motion.span>
-              {open ? <ArrowUp aria-hidden="true" /> : <Pencil aria-hidden="true" />}
+              {!open && <Pencil aria-hidden="true" />}
             </motion.button>
           </div>
 

@@ -1,3 +1,4 @@
+import { optionLabel } from '@/components/ui';
 import type { ClarificationQuestion, ClarificationAnswer } from '@/components/ui';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -63,12 +64,12 @@ function answerToString(q: Question, ans: ClarificationAnswer): string {
   const opts = 'options' in q ? q.options : [];
   if (ans.type === 'single') {
     if (ans.index < 0) return 'Skipped';
-    const label = opts[ans.index] ?? 'Unknown';
+    const label = opts[ans.index] != null ? optionLabel(opts[ans.index]) : 'Unknown';
     return ans.freeText ? `${label}: ${ans.freeText}` : label;
   }
   if (ans.type === 'multi') {
     if (ans.indices.length === 0) return 'Skipped';
-    const labels = ans.indices.map(i => opts[i]).filter(Boolean).join(', ');
+    const labels = ans.indices.map(i => opts[i] != null ? optionLabel(opts[i]) : '').filter(Boolean).join(', ');
     return ans.freeText ? `${labels}: ${ans.freeText}` : labels;
   }
   if (ans.type === 'rank') {

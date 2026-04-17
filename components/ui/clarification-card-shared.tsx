@@ -3,16 +3,29 @@
 import { useState, useCallback, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Check } from 'lucide-react';
-import React from 'react';
+import React, { type ReactNode } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { springs } from '@/tokens';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
+/** A single option item — either a plain string or an object with an optional icon. */
+export type ClarificationOption = string | { label: string; icon?: ReactNode };
+
+/** Returns the display label of an option regardless of its form. */
+export function optionLabel(opt: ClarificationOption): string {
+  return typeof opt === 'string' ? opt : opt.label;
+}
+
+/** Returns the icon of an option, or undefined for plain strings. */
+export function optionIcon(opt: ClarificationOption): ReactNode | undefined {
+  return typeof opt === 'string' ? undefined : opt.icon;
+}
+
 export type ClarificationQuestion =
-  | { type?: 'single'; label: string; options: string[]; freeText?: boolean }
-  | { type: 'multi';   label: string; options: string[]; freeText?: boolean }
+  | { type?: 'single'; label: string; options: ClarificationOption[]; freeText?: boolean }
+  | { type: 'multi';   label: string; options: ClarificationOption[]; freeText?: boolean }
   | { type: 'rank';    label: string; items: string[] };
 
 export type ClarificationAnswer =
@@ -37,8 +50,13 @@ export const clarificationCardVariants = cva(
         default:         '',
         'shadow-border': 'shadow-(--shadow-border)',
       },
+      /** Heavier visual treatment for "mode-setter" cards (e.g. IntentGateCard, AcknowledgementGate). */
+      weight: {
+        default:   '',
+        prominent: 'shadow-(--shadow-border-hover) bg-(--bg-surface-primary)',
+      },
     },
-    defaultVariants: { surface: 'shadow-border' },
+    defaultVariants: { surface: 'shadow-border', weight: 'default' },
   }
 );
 
@@ -145,7 +163,7 @@ export function SummaryView({ questions, answers }: SummaryViewProps) {
           skipped = true;
         } else if (ans.type === 'single') {
           const opts   = 'options' in q ? q.options : [];
-          const chosen = opts[ans.index];
+          const chosen = opts[ans.index] !== undefined ? optionLabel(opts[ans.index]) : undefined;
           displayValue = ans.freeText ? `${chosen}: ${ans.freeText}` : (chosen ?? 'Skipped');
         } else if (ans.type === 'multi') {
           const opts = 'options' in q ? q.options : [];
@@ -153,7 +171,7 @@ export function SummaryView({ questions, answers }: SummaryViewProps) {
             displayValue = 'Skipped';
             skipped = true;
           } else {
-            const labels = ans.indices.map(i => opts[i]).filter(Boolean);
+            const labels = ans.indices.map(i => opts[i] !== undefined ? optionLabel(opts[i]) : '').filter(Boolean);
             displayValue = labels.join(', ');
             if (ans.freeText) displayValue += `: ${ans.freeText}`;
           }

@@ -29,8 +29,8 @@ export type { ClarificationCardKeycapProps } from './clarification-card-keycap';
 export { Keycap, KeyCombo, keycapVariants } from './keycap';
 export type { KeycapProps, KeyComboProps, KeycapVariant } from './keycap';
 
-export { clarificationCardVariants } from './clarification-card-shared';
-export type { ClarificationQuestion, ClarificationAnswer } from './clarification-card-shared';
+export { clarificationCardVariants, optionLabel, optionIcon } from './clarification-card-shared';
+export type { ClarificationQuestion, ClarificationAnswer, ClarificationOption } from './clarification-card-shared';
 
 export { ApprovalCard, approvalCardVariants } from './approval-card';
 export type { ApprovalCardProps } from './approval-card';

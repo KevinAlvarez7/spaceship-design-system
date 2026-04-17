@@ -47,6 +47,9 @@ interface ChatPanelProps {
     questions: ClarificationQuestion[];
     onSubmit: (answers: ClarificationAnswer[]) => void;
     surface?: 'default' | 'shadow-border';
+    submitLabel?: string;
+    onClose?: () => void;
+    weight?: 'default' | 'prominent';
   };
 
   /**
@@ -59,6 +62,9 @@ interface ChatPanelProps {
     onApprove: () => void;
     onReject: (message?: string) => void;
     surface?: 'default' | 'shadow-border';
+    title?: string;
+    approveLabel?: string;
+    rejectLabel?: string;
   };
 
   /** Extra content rendered above the footer input/card (e.g., TaskList). */
@@ -221,6 +227,9 @@ export function ChatPanel({
                         onApprove={approval.onApprove}
                         onReject={approval.onReject}
                         surface={approval.surface}
+                        title={approval.title}
+                        approveLabel={approval.approveLabel}
+                        rejectLabel={approval.rejectLabel}
                         disableMotion={disableMotion}
                         getMaxHeight={getApprovalMaxHeight}
                       >
@@ -234,6 +243,9 @@ export function ChatPanel({
                             questions={clarification.questions}
                             onSubmit={clarification.onSubmit}
                             surface={clarification.surface}
+                            submitLabel={clarification.submitLabel}
+                            onClose={clarification.onClose}
+                            weight={clarification.weight}
                             disableMotion={disableMotion}
                           />
                         ) : input ? (

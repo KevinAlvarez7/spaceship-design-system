@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ApprovalCard } from '@/components/ui';
 import { CompositionTable, type CompositionEntry } from '@/components/docs/CompositionTable';
@@ -98,5 +99,61 @@ export const CustomLabels: Story = {
 
 export const DefaultSurface: Story = {
   args: { surface: 'default' },
+};
+
+// ─── Measurement pattern stories ─────────────────────────────────────────────
+
+/** ApprovalCard configured as a security / acknowledgement gate. */
+export const AcknowledgementGate: Story = {
+  args: {
+    title: 'Security Review',
+    approveLabel: 'Yes, I accept and will proceed',
+    rejectLabel: 'I need to check with my team first',
+  },
+  render: (args) => (
+    <div className="w-(--sizing-chat-default)">
+      <ApprovalCard {...args}>
+        <p className="[font-size:var(--font-size-sm)] text-(--text-primary)">
+          Do you understand and accept the security risks outlined above?
+        </p>
+      </ApprovalCard>
+    </div>
+  ),
+};
+
+/** ApprovalCard configured as a quality signal gate inline below an AI artifact. */
+export const QualityGate: Story = {
+  args: {
+    title: 'Quality Check',
+    approveLabel: 'Yes, looks right',
+    rejectLabel: 'Needs changes',
+  },
+  render: (args) => (
+    <div className="w-(--sizing-chat-default)">
+      <ApprovalCard {...args}>
+        <p className="[font-size:var(--font-size-sm)] text-(--text-primary)">
+          Does this brief capture what you had in mind?
+        </p>
+      </ApprovalCard>
+    </div>
+  ),
+};
+
+/** ApprovalCard configured as a resolution prompt at session close or prototype reveal. */
+export const ResolutionPrompt: Story = {
+  args: {
+    title: 'Resolution Check',
+    approveLabel: 'Yes, ready to present',
+    rejectLabel: 'Not quite there yet',
+  },
+  render: (args) => (
+    <div className="w-(--sizing-chat-default)">
+      <ApprovalCard {...args}>
+        <p className="[font-size:var(--font-size-sm)] text-(--text-primary)">
+          Do you have enough to make a decision or present this?
+        </p>
+      </ApprovalCard>
+    </div>
+  ),
 };
 

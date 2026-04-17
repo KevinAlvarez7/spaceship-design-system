@@ -13,6 +13,8 @@ import {
   type ClarificationAnswer,
   SLIDE_EASE,
   optionRowClass,
+  optionLabel,
+  optionIcon,
   isIndexSelected,
   hasAnswer,
   statusText,
@@ -262,8 +264,13 @@ export function ClarificationCardKeycap({
                             Type another option
                           </span>
                         ) : (
-                          <span className="flex-1 [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-medium)] leading-none">
-                            {opt}
+                          <span className="flex-1 flex items-center gap-2 [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-medium)] leading-none">
+                            {optionIcon(opt) && (
+                              <span className="inline-flex shrink-0 [&>svg]:h-4 [&>svg]:w-4" aria-hidden="true">
+                                {optionIcon(opt)}
+                              </span>
+                            )}
+                            {optionLabel(opt)}
                           </span>
                         )}
 

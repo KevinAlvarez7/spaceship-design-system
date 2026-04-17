@@ -75,7 +75,8 @@ export function useDragResize({
     const currentStyle = el.style.height;
     el.style.height    = 'auto';
     const newH         = el.offsetHeight;
-    const cappedH      = maxNaturalHeight ? Math.min(newH, maxNaturalHeight) : newH;
+    const ceiling      = getMaxHeight ? getMaxHeight() : window.innerHeight * maxHeightRatio;
+    const cappedH      = Math.min(newH, ceiling, ...(maxNaturalHeight ? [maxNaturalHeight] : []));
 
     const oldH           = prevContentH.current;
     prevContentH.current = cappedH;
@@ -83,8 +84,8 @@ export function useDragResize({
 
     if (oldH === 0) {
       // Initial render — record height, restore, no animation.
-      // If content exceeds maxNaturalHeight, freeze at the cap before first paint.
-      if (maxNaturalHeight && newH > maxNaturalHeight) {
+      // If content exceeds the cap (maxNaturalHeight or viewport ceiling), freeze at cappedH.
+      if (newH > cappedH) {
         el.style.height = `${cappedH}px`;
         cardH.set(cappedH);
       } else {
@@ -118,8 +119,9 @@ export function useDragResize({
     },
     onPointerMove(e: React.PointerEvent) {
       if (!enabled || !isDragging.current) return;
-      const dy   = startY.current - e.clientY; // positive = dragged up = expand
-      const newH = Math.max(naturalH.current, Math.min(maxH.current, dragStartH.current + dy));
+      const dy    = startY.current - e.clientY; // positive = dragged up = expand
+      const floor = Math.min(naturalH.current, maxH.current);
+      const newH  = Math.max(floor, Math.min(maxH.current, dragStartH.current + dy));
       cardH.set(newH);
     },
     onPointerUp() {

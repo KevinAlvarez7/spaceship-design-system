@@ -15,6 +15,7 @@ import {
   Button,
   DropdownMenuItem,
 } from '@/components/ui';
+import { optionLabel } from '@/components/ui';
 import type { ClarificationQuestion, ClarificationAnswer } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { GridBackground, SpaceshipLogoScene } from '@/components/effects';
@@ -135,11 +136,11 @@ function buildAnswerMarkdown(questions: ClarificationQuestion[], answers: Clarif
     let value: string;
     if (ans.type === 'single') {
       if (ans.index < 0) return;
-      value = opts[ans.index] ?? '';
+      value = opts[ans.index] != null ? optionLabel(opts[ans.index]) : '';
       if (ans.freeText) value += `: ${ans.freeText}`;
     } else if (ans.type === 'multi') {
       if (ans.indices.length === 0) return;
-      value = ans.indices.map(idx => opts[idx]).filter(Boolean).join(', ');
+      value = ans.indices.map(idx => opts[idx] != null ? optionLabel(opts[idx]) : '').filter(Boolean).join(', ');
       if (ans.freeText) value += `: ${ans.freeText}`;
     } else {
       value = ans.order.map((item, n) => `${n + 1}. ${item}`).join(', ');

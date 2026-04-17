@@ -24,10 +24,10 @@
  * ───────────────────────────────────────────────────────── */
 
 import { useRef, useState, useLayoutEffect, useEffect, useCallback } from 'react';
-import { motion, useAnimation, AnimatePresence, LayoutGroup, MotionConfig } from 'motion/react';
+import { motion, useAnimation, AnimatePresence, MotionConfig } from 'motion/react';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { ArrowUp, CheckCircle, Pencil } from 'lucide-react';
+import { CheckCircle, Pencil } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from './button';
 import { useDragResize } from './use-drag-resize';
@@ -63,7 +63,7 @@ const actionRowVariants = cva(
     'cursor-pointer select-none',
     'font-sans [font-weight:var(--font-weight-semibold)]',
     '[font-size:var(--font-size-sm)] leading-(--line-height-sm)',
-    '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0 [&>svg]:[stroke-width:2.75]',
+    '[&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0 [&_svg]:[stroke-width:2.75]',
   ],
   {
     variants: {
@@ -270,9 +270,7 @@ export function ApprovalCard({
 
         </div>
       ) : (
-        <MotionConfig transition={springs.gentle}>
-          {/* relative: gives mode="popLayout" a positioned ancestor so popped
-            * elements stay in-place rather than flying to the viewport. */}
+        <MotionConfig transition={springs.snappy}>
           <div ref={actionsRef} className="relative flex flex-col gap-2 px-px pt-px pb-2 -mx-px -mt-px -mb-2">
 
             {/* Approve */}
@@ -291,46 +289,28 @@ export function ApprovalCard({
               <CheckCircle aria-hidden="true" />
             </motion.button>
 
-            {/* Request Changes — trigger and form swap via outer AnimatePresence.
-              * Trigger lives OUTSIDE any overflow container so its box-shadow renders.
-              * Form container carries overflow-hidden to clip internal content. */}
-            <LayoutGroup>
-              <AnimatePresence mode="popLayout" initial={false}>
-                {!requestChangesOpen ? (
+            {/* Request Changes — always-mounted button pattern (same as FeedbackForm).
+              * !open → button owns surface (bg + shadow + rounded).
+              *  open → container owns surface; overflow-hidden clips the textarea. */}
+            <div
+              className={cn(
+                requestChangesOpen && [
+                  'flex flex-col rounded-sm overflow-hidden',
+                  'bg-(--bg-surface-base)',
+                  hasShadow && 'shadow-(--shadow-border)',
+                ],
+              )}
+            >
 
-                  /* ── Trigger — standalone, shadow visible ── */
-                  <motion.button
-                    key="trigger"
-                    layoutId="request-btn"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onClick={handleOpenRequestChanges}
-                    className={cn(
-                      actionRowVariants({ intent: 'reject', hasShadow }),
-                      'hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary) transition-colors duration-(--duration-base)',
-                    )}
-                    style={{ borderRadius: 4 }}
-                    transition={springs.snappy}
-                  >
-                    {rejectLabel}
-                    <Pencil aria-hidden="true" />
-                  </motion.button>
-
-                ) : (
-
-                  /* ── Form container — overflow-hidden scoped here ── */
+              {/* ── Textarea — enters/exits via height animation ── */}
+              <AnimatePresence initial={false}>
+                {requestChangesOpen && (
                   <motion.div
-                    key="form"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className={cn(
-                      'flex flex-col rounded-sm overflow-hidden',
-                      cn('bg-(--bg-surface-base)', hasShadow && 'shadow-border'),
-                    )}
-                    style={{ borderRadius: 4 }}
-                    transition={springs.snappy}
+                    key="textarea"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    style={{ overflow: 'hidden' }}
                   >
                     <div className="px-3 pt-3 pb-2">
                       <textarea
@@ -348,29 +328,54 @@ export function ApprovalCard({
                         )}
                       />
                     </div>
-                    <div className="flex items-center gap-2 px-3 pb-3">
-                      <Button variant="secondary" surface="flat" size="md" onClick={handleCancel} className="flex-1 py-3">Cancel</Button>
-                      <motion.button
-                        layoutId="request-btn"
-                        layoutDependency={false}
-                        onClick={handleSubmit}
-                        className={cn(
-                          actionRowVariants({ intent: 'reject', hasShadow: false }),
-                          'flex-1 bg-(--bg-interactive-primary-default) text-(--text-inverse)',
-                          'hover:bg-(--bg-interactive-primary-hover) active:bg-(--bg-interactive-primary-pressed) transition-colors duration-(--duration-base)',
-                        )}
-                        style={{ borderRadius: 4 }}
-                        transition={springs.snappy}
-                      >
-                        {rejectLabel}
-                        <ArrowUp aria-hidden="true" />
-                      </motion.button>
-                    </div>
                   </motion.div>
-
                 )}
               </AnimatePresence>
-            </LayoutGroup>
+
+              {/* ── Button row — relative scopes popLayout's absolute exit ── */}
+              <div className={cn("relative flex items-center gap-2", requestChangesOpen && 'px-3 pb-3')}>
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {requestChangesOpen && (
+                    <motion.div
+                      key="cancel"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex-1"
+                    >
+                      <Button variant="secondary" surface="flat" size="md" onClick={handleCancel} className="w-full py-3">Cancel</Button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Main button — always mounted, repositions via layout.
+                  * Neutral when collapsed → primary-blue when open.
+                  * CSS transition-colors handles the color shift smoothly (no snap)
+                  * because the button stays mounted throughout. */}
+                <motion.button
+                  layout
+                  onClick={requestChangesOpen ? handleSubmit : handleOpenRequestChanges}
+                  className={cn(
+                    actionRowVariants({ intent: 'reject', hasShadow: !requestChangesOpen && hasShadow }),
+                    'transition-colors duration-(--duration-base)',
+                    !requestChangesOpen ? [
+                      'w-full rounded-sm',
+                      'hover:bg-(--bg-surface-primary) active:bg-(--bg-surface-secondary)',
+                      hasShadow && 'hover:shadow-(--shadow-border-hover) transition-shadow ease-(--ease-in-out)',
+                    ] : [
+                      'flex-1 justify-center',
+                      'bg-(--bg-interactive-primary-default) text-(--text-inverse)',
+                      'hover:bg-(--bg-interactive-primary-hover) active:bg-(--bg-interactive-primary-pressed)',
+                    ],
+                  )}
+                  style={{ willChange: 'transform', borderRadius: 4 }}
+                >
+                  <motion.span layout="position">{rejectLabel}</motion.span>
+                  {!requestChangesOpen && <Pencil aria-hidden="true" />}
+                </motion.button>
+              </div>
+
+            </div>
 
           </div>
         </MotionConfig>

@@ -1,0 +1,583 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Playground/Prototypes/Measuring What Matters" />
+
+# Measuring What Matters
+
+Three questions drive all measurement on Spaceship:
+
+1. **What did the user come to do?** — Intent
+2. **Did the AI artifacts match what they expected?** — Output quality
+3. **Did the user get what they came for?** — Resolution
+
+---
+
+## The Three User Intents
+
+Every session maps to one of three modes. These define what "success" looks like for that session.
+
+| Intent | The real job | Success looks like |
+|---|---|---|
+| **Validate** | Test an idea / build evidence for a tender or decision | Something shareable that helps them decide or convince |
+| **Explore** | Understand what the platform can do | Feels oriented — may or may not build |
+| **Build** | Make a working app for personal or team use | App is used after the session ends |
+
+---
+
+## Part 1 — Intent
+
+Intent is captured as the **first Q&A card** in every session. Compulsory, single-tap.
+
+**Question:** *"What are you here to do today?"*
+
+- Test or validate an idea
+- Explore what's possible
+- Build something specific
+
+**If Validate is selected**, show one follow-up:
+
+*"Are you validating a problem or a solution?"*
+
+- Validating a problem
+- Validating a solution
+
+This sub-type matters because the artifact a user needs is different in each case — problem validation produces a demo to surface pain, solution validation produces a prototype to pitch an approach before tendering.
+
+> Intent drives everything downstream — which resolution questions get asked, what security posture applies, and how the final artifact is framed.
+
+---
+
+## Part 2 — Output Quality
+
+Every AI-generated artifact in the flow has a quality gate. The gate appears inline below the artifact after it renders.
+
+### Rating format
+
+**3-point scale** for all quality gates — not stars, not binary.
+
+The "partial" state is critical. A user who says "needs edits" is telling us the Q&A didn't extract the right information. A user who says "missed the mark" is telling us something broke earlier. You lose that distinction with yes/no.
+
+The only exception is the Security Review — which is an **acknowledgement gate**, not a quality gate.
+
+---
+
+### Quality gates by artifact
+
+**Project Brief**
+> *"Does this brief capture what you had in mind?"*
+> - Yes, looks right
+> - Needs some edits
+> - This missed the mark
+
+What failure tells us: the Q&A questions weren't extracting the right information from the user.
+
+---
+
+**Options Card**
+> *"Were these options useful?"*
+> - Yes
+> - Somewhat
+> - Not really
+
+What failure tells us: the options generated don't match the user's intent type.
+
+On negative: optional free-text — *"What was missing?"*
+
+---
+
+**Security Review — Acknowledgement Gate**
+
+Users are not qualified to evaluate security quality. What matters is whether they **consciously understood and accepted** the risks.
+
+> *"Do you understand and accept the security risks outlined above?"*
+> - Yes, I accept and will proceed
+> - I need to check with my team first
+
+"I need to check with my team" is a real workflow state in a govt context — not a no. The build should pause and hold until they return and accept.
+
+---
+
+**Prototype**
+> *"Does this match what you described?"*
+> - Yes, looks right
+> - Partially
+> - Not really
+
+What failure tells us: the brief to build translation failed somewhere.
+
+On negative: optional free-text — *"What didn't match?"*
+
+---
+
+## Part 3 — Resolution
+
+Resolution signals are captured at three moments. The moments are fixed — every session hits them. What changes per intent is the question asked.
+
+---
+
+### Moment A — At prototype reveal
+
+Intent-aware. The question changes based on what the user said they came to do.
+
+| Intent | Question |
+|---|---|
+| Validate | *"Do you have enough to make a decision or present this?"* |
+| Explore | *"Did you find what you were looking for?"* |
+| Build | *"Is this ready to use or share with your team?"* |
+
+3-point scale: Yes / Getting there / Not quite
+
+On negative: optional free-text — *"What got in the way?"*
+
+---
+
+### Moment B — At session close
+
+Same question for all intents.
+
+> *"Did you get what you came for?"*
+> - Yes, got what I needed
+> - Partially — still in progress
+> - Not quite
+
+On negative: optional free-text — *"What got in the way?"*
+
+---
+
+### Moment C — 7 days post-session
+
+Delivered via email or surfaced in-chat on next login. Multi-select — multiple outcomes can be true.
+
+> *"How did it go with [Project Name]?"*
+> - Presented or shared it
+> - Helped us make a decision
+> - Still working on it
+> - Sparked a new idea
+> - Didn't end up using it
+
+---
+
+## Implicit Signals
+
+Captured passively — no user action or prompting required.
+
+### Sharing and export
+
+These are the strongest resolution indicators. If someone shares or exports, the session almost certainly delivered value.
+
+| Signal | What it tells us |
+|---|---|
+| Prototype link shared | High confidence the session resolved — they have something worth showing |
+| Artifact copied | Using the content outside the platform |
+| Artifact downloaded | Taking it somewhere — into a workflow or presentation |
+
+### Behavioural signals
+
+| Signal | What it tells us |
+|---|---|
+| Re-query within 5 mins of an output | Resolution failure — the answer didn't land |
+| Session stall (15+ mins no input) | Stuck or lost — friction point in the flow |
+| Returned to session the next day | Unresolved but still engaged |
+| Collaborators joined | Team utility — strong signal for Build intent |
+| Returned with a second user | Demoing to a stakeholder — strong Validate signal |
+
+### Downstream signals
+
+These connect session activity to real-world outcomes without asking the user to report anything manually.
+
+| Signal | How it's collected |
+|---|---|
+| Follow-up chat referencing the same project | Detect same project name or topic in subsequent sessions |
+| Email thread about the project | Detect project references in outbound or inbound email |
+| New session spawned from the same brief | Detect if a new session reuses or extends prior session output |
+
+These matter most for Validate intent — where the real outcome (a tender being raised, a decision being made) happens entirely outside Spaceship.
+
+---
+
+## User Journey — Full Flow with Data Collection Points
+
+The diagram below shows every step the user takes, every branching path, and every reject loop — annotated with which of the 3 measurement questions we're answering at each point.
+
+**Legend:**
+
+```
+  ┌─────────┐                                   [I] = INTENT
+  │ Phase   │  = user-facing step               [Q] = OUTPUT QUALITY
+  └─────────┘                                   [R] = RESOLUTION
+  ╔═════════╗
+  ║  GATE   ║  = measurement collection point   [*] = IMPLICIT signal
+  ╚═════════╝                                         (no prompt shown)
+  ─ ─ ─ ─ ─   = AI thinking / generation
+```
+
+---
+
+```
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                         HOMEPAGE                                    │
+  │                                                                     │
+  │  User sees: SpaceshipLogo + ChatInputBox                            │
+  │  "What ideas do you want to explore?"                               │
+  │                                                                     │
+  │  User types their project idea and hits Send.                       │
+  │                                                                     │
+  │  ╔═══════════════════════════════════════════════════════════╗       │
+  │  ║  [I] FREE-TEXT PROMPT                                    ║       │
+  │  ║  Raw problem statement in the user's own words.          ║       │
+  │  ║  e.g. "Build me a relief teacher booking system"         ║       │
+  │  ╚═══════════════════════════════════════════════════════════╝       │
+  └────────────────────────────────┬────────────────────────────────────┘
+                                   │
+                           ─ ─ ─ ─ ┼ ─ ─ ─ ─  AI thinking
+                                   │
+                                   ▼
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                       INTENT GATE                                   │
+  │                                                                     │
+  │  Assistant: "Before I start, let me understand how you want         │
+  │  to approach this so I can tailor the session."                     │
+  │                                                                     │
+  │  Footer: ClarificationCard (weight="prominent")                     │
+  │                                                                     │
+  │  ╔═══════════════════════════════════════════════════════════╗       │
+  │  ║  [I] INTENT SELECTION — single-tap, compulsory           ║       │
+  │  ║                                                          ║       │
+  │  ║  "What are you here to do today?"                        ║       │
+  │  ║    · Refine and test this idea for a project tender      ║       │
+  │  ║    · Explore the problem space first                     ║       │
+  │  ║    · Build a quick internal tool for the school          ║       │
+  │  ║                                                          ║       │
+  │  ║  DATA: intent path (tender / explore / build)            ║       │
+  │  ║  This shapes every question and gate downstream.         ║       │
+  │  ╚═══════════════════════════════════════════════════════════╝       │
+  └──────────────────────────┬──────────────────────────────────────────┘
+                             │
+                     ─ ─ ─ ─ ┼ ─ ─ ─ ─  AI thinking
+                             │
+            ┌────────────────┼────────────────┐
+            │                │                │
+            ▼                ▼                ▼
+        TENDER           EXPLORE           BUILD
+     (procurement)    (problem space)   (ship something)
+            │                │                │
+            └────────────────┼────────────────┘
+                             │
+                  All 3 paths share the same
+                  phase sequence below, with
+                  different content per path.
+                             │
+                             ▼
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                       CLARIFY 1                                     │
+  │                                                                     │
+  │  Footer: ClarificationCard — 5 problem-space questions              │
+  │                                                                     │
+  │  ╔═══════════════════════════════════════════════════════════╗       │
+  │  ║  [I] STRUCTURED PROBLEM CONTEXT                          ║       │
+  │  ║  Who is affected, what breaks, how often, current        ║       │
+  │  ║  workaround, scale of impact.                            ║       │
+  │  ╚═══════════════════════════════════════════════════════════╝       │
+  └────────────────────────────────┬────────────────────────────────────┘
+                                   │
+                           ─ ─ ─ ─ ┼ ─ ─ ─ ─  AI thinking
+                                   │
+                                   ▼
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                       CLARIFY 2                                     │
+  │                                                                     │
+  │  Footer: ClarificationCard — 5 solution-scoping questions           │
+  │                                                                     │
+  │  ╔═══════════════════════════════════════════════════════════╗       │
+  │  ║  [I] STRUCTURED SOLUTION INTENT                          ║       │
+  │  ║  MVP scope, feature ranking, constraints, must-haves.    ║       │
+  │  ║                                                          ║       │
+  │  ║  Intent is fully captured by end of clarify-2.           ║       │
+  │  ║  Everything after this is quality + resolution.          ║       │
+  │  ╚═══════════════════════════════════════════════════════════╝       │
+  └────────────────────────────────┬────────────────────────────────────┘
+                                   │
+                           ─ ─ ─ ─ ┼ ─ ─ ─ ─  AI generates Project Brief
+                                   │
+                                   ▼
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                      QUALITY GATE                                   │
+  │                                                                     │
+  │  Footer: ApprovalCard — brief content shown inside card             │
+  │  Title: "Quality Check"                                             │
+  │                                                                     │
+  │  ╔═══════════════════════════════════════════════════════════╗       │
+  │  ║  [Q] BRIEF ACCURACY                                     ║       │
+  │  ║  "Does this brief capture what you had in mind?"         ║       │
+  │  ║                                                          ║       │
+  │  ║  · approve "Yes, looks right"                            ║       │
+  │  ║  · reject  "Needs changes" + free-text message           ║       │
+  │  ║                                                          ║       │
+  │  ║  DATA: approve/reject + reject message text              ║       │
+  │  ║  [*] IMPLICIT: rejection cycle count (how many times     ║       │
+  │  ║      rejected before final approval)                     ║       │
+  │  ╚═══════════════════════════════════════════════════════════╝       │
+  │                                                                     │
+  │         ┌──── reject ────┐                                          │
+  │         │                │                                          │
+  │         ▼                │                                          │
+  │    QUALITY-REJECTED      │                                          │
+  │    User types feedback   │                                          │
+  │    via ChatInputBox      │                                          │
+  │         │                │                                          │
+  │     ─ ─ ┼ ─ ─  AI revises brief                                    │
+  │         │                │                                          │
+  │         └── loops back ──┘                                          │
+  │                                                                     │
+  │         approve ─────────┐                                          │
+  │                          │  Brief artifact appears in panel         │
+  └──────────────────────────┼──────────────────────────────────────────┘
+                             │
+                             ▼
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                    IMPL QUESTIONS                                    │
+  │                                                                     │
+  │  Footer: ClarificationCard — 5 implementation questions             │
+  │  Auth method, hosting, integrations, tooling, notifications.        │
+  │                                                                     │
+  │  No measurement gate here — pure information gathering.             │
+  └────────────────────────────────┬────────────────────────────────────┘
+                                   │
+                           ─ ─ ─ ─ ┼ ─ ─ ─ ─  AI generates Impl Plan
+                                   │            + Security Review
+                                   ▼
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                   ACKNOWLEDGEMENT GATE                              │
+  │                                                                     │
+  │  Footer: ApprovalCard — security/compliance review shown inside     │
+  │  Title: "Security Review"                                           │
+  │                                                                     │
+  │  ╔═══════════════════════════════════════════════════════════╗       │
+  │  ║  [Q] CONSCIOUS ACCEPTANCE — not a quality judgement      ║       │
+  │  ║  "Do you understand and accept the security risks        ║       │
+  │  ║   outlined above?"                                       ║       │
+  │  ║                                                          ║       │
+  │  ║  · approve (path-specific label, e.g. "Yes, I accept     ║       │
+  │  ║    the data requirements")                               ║       │
+  │  ║  · reject  (e.g. "I need to check with my team")        ║       │
+  │  ║    + free-text message                                   ║       │
+  │  ║                                                          ║       │
+  │  ║  DATA: approve/reject + message + cycle count            ║       │
+  │  ║  "Check with my team" = real workflow pause, not a no.   ║       │
+  │  ╚═══════════════════════════════════════════════════════════╝       │
+  │                                                                     │
+  │         ┌──── reject ────┐                                          │
+  │         ▼                │                                          │
+  │    ACK-REJECTED          │                                          │
+  │    User types concerns   │                                          │
+  │         │                │                                          │
+  │     ─ ─ ┼ ─ ─  AI addresses concerns                               │
+  │         └── loops back ──┘                                          │
+  │                                                                     │
+  │         approve ─────────┐                                          │
+  │                          │  Impl Plan artifact appears in panel     │
+  └──────────────────────────┼──────────────────────────────────────────┘
+                             │
+                             ▼
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                       BUILDING                                      │
+  │                                                                     │
+  │  TaskList in thread — 8 tasks, each completes every 2s.             │
+  │  User watches progress. No input required.                          │
+  │                                                                     │
+  │  ╔═══════════════════════════════════════════════════════════╗       │
+  │  ║  [*] IMPLICIT: task completion progress                  ║       │
+  │  ║  Did the build complete? How long did the user wait?     ║       │
+  │  ╚═══════════════════════════════════════════════════════════╝       │
+  │                                                                     │
+  │  On completion: assistant message + transition to resolution.       │
+  └────────────────────────────────┬────────────────────────────────────┘
+                                   │
+                                   ▼
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                    RESOLUTION PROMPT                                 │
+  │                                                                     │
+  │  Footer: ApprovalCard — "ready to present/share/use?" content       │
+  │  Title: "Resolution Check"                                          │
+  │                                                                     │
+  │  ╔═══════════════════════════════════════════════════════════╗       │
+  │  ║  [R] PRIMARY RESOLUTION — intent-aware question          ║       │
+  │  ║                                                          ║       │
+  │  ║  tender:  "Do you have enough to present at the          ║       │
+  │  ║           steering committee?"                           ║       │
+  │  ║  explore: "Is this enough to bring to your policy team?" ║       │
+  │  ║  build:   "Want to share it with your team?"             ║       │
+  │  ║                                                          ║       │
+  │  ║  · approve (path-specific, e.g. "Yes, ready to present")║       │
+  │  ║  · reject  (e.g. "Not quite there yet")                 ║       │
+  │  ║    + free-text message                                   ║       │
+  │  ║                                                          ║       │
+  │  ║  DATA: approve/reject + message + cycle count            ║       │
+  │  ║                                                          ║       │
+  │  ║  [Q] Also measures OUTPUT QUALITY — reject here means    ║       │
+  │  ║  the prototype wasn't good enough to act on.             ║       │
+  │  ╚═══════════════════════════════════════════════════════════╝       │
+  │                                                                     │
+  │         ┌──── reject ────┐                                          │
+  │         ▼                │                                          │
+  │    RESOLUTION-REJECTED   │                                          │
+  │    User explains what's  │                                          │
+  │    still missing         │                                          │
+  │         │                │                                          │
+  │     ─ ─ ┼ ─ ─  AI addresses gaps                                   │
+  │         └── loops back ──┘                                          │
+  │                                                                     │
+  │         approve ─────────┐                                          │
+  │                          │  Prototype + Preview artifacts appear     │
+  └──────────────────────────┼──────────────────────────────────────────┘
+                             │
+                             ▼
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                    ARTIFACT TOOLBAR                                  │
+  │                                                                     │
+  │  Available on all artifacts once they appear in the panel.          │
+  │                                                                     │
+  │  ╔═══════════════════════════════════════════════════════════╗       │
+  │  ║  [*] IMPLICIT SIGNALS — strongest resolution + quality   ║       │
+  │  ║                                                          ║       │
+  │  ║  [Share] click on Prototype                              ║       │
+  │  ║    → strongest resolution signal: user showed it to      ║       │
+  │  ║      others without being asked                          ║       │
+  │  ║    → also quality signal: good enough to present         ║       │
+  │  ║                                                          ║       │
+  │  ║  [Copy] click on Document artifacts                      ║       │
+  │  ║    → resolution signal: user extracted content for       ║       │
+  │  ║      use outside the platform                            ║       │
+  │  ║    → also quality signal: content worth keeping          ║       │
+  │  ╚═══════════════════════════════════════════════════════════╝       │
+  └────────────────────────────────┬────────────────────────────────────┘
+                                   │
+                                   ▼
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                   POST-SESSION NUDGE                                 │
+  │                                                                     │
+  │  Footer: ClarificationCard — multi-select                           │
+  │  Submit label: "Done"  /  X to dismiss                              │
+  │                                                                     │
+  │  ╔═══════════════════════════════════════════════════════════╗       │
+  │  ║  [R] SELF-REPORTED OUTCOME                               ║       │
+  │  ║  "How did it go with Spaceship?"                         ║       │
+  │  ║                                                          ║       │
+  │  ║  Multi-select — multiple can be true:                    ║       │
+  │  ║    · Presented or shared it with others      (strong)    ║       │
+  │  ║    · Helped us make a decision               (strong)    ║       │
+  │  ║    · Still working on it                     (weak)      ║       │
+  │  ║    · Sparked a new idea                      (adjacent)  ║       │
+  │  ║    · Didn't end up using it                  (failure)   ║       │
+  │  ║                                                          ║       │
+  │  ║  DATA: selected options array                            ║       │
+  │  ║  Dismiss via X = no data captured (acceptable).          ║       │
+  │  ╚═══════════════════════════════════════════════════════════╝       │
+  └────────────────────────────────┬────────────────────────────────────┘
+                                   │
+                                   ▼
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                         DONE                                        │
+  │                                                                     │
+  │  Session complete. Chat input enabled for follow-up.                │
+  │                                                                     │
+  │  ╔═══════════════════════════════════════════════════════════╗       │
+  │  ║  [*] DOWNSTREAM IMPLICIT SIGNALS (post-session)          ║       │
+  │  ║                                                          ║       │
+  │  ║  · Re-query within 5 mins       → resolution failure     ║       │
+  │  ║  · Session stall 15+ mins       → friction / stuck       ║       │
+  │  ║  · Returned next day            → unresolved, engaged    ║       │
+  │  ║  · Collaborators joined         → team utility (Build)   ║       │
+  │  ║  · Returned with second user    → demo (Validate)        ║       │
+  │  ║  · New session from same brief  → extending the work     ║       │
+  │  ╚═══════════════════════════════════════════════════════════╝       │
+  └─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Signal summary by dimension
+
+```
+  ┌────────────────────┬──────────────────────────────────────────────┐
+  │  [I] INTENT        │  Prompt → IntentGate → Clarify-1 → Clarify-2│
+  │  4 collection      │                                              │
+  │  points            │  Fully resolved before any artifact is built │
+  ├────────────────────┼──────────────────────────────────────────────┤
+  │  [Q] OUTPUT        │  QualityGate → AckGate → ResolutionPrompt   │
+  │  QUALITY           │  + [Copy] clicks + [Share] clicks            │
+  │  3 gates +         │  + rejection cycle counts at each gate       │
+  │  2 implicit        │                                              │
+  ├────────────────────┼──────────────────────────────────────────────┤
+  │  [R] RESOLUTION    │  ResolutionPrompt → PostSessionNudge         │
+  │  2 explicit +      │  + [Share] clicks + [Copy] clicks            │
+  │  2+ implicit       │  + downstream behavioural signals            │
+  └────────────────────┴──────────────────────────────────────────────┘
+```
+
+---
+
+### Artifact gating — nothing appears until approved
+
+```
+  Artifact              Gated by             Appears after
+  ────────────────────  ───────────────────  ─────────────────────
+  Project Brief         QualityGate approve  User says "looks right"
+  Implementation Plan   AckGate approve      User accepts security risks
+  Prototype + Preview   ResolutionPrompt     User says "ready to present"
+                        approve
+```
+
+---
+
+### Resolution signal strength ranking
+
+```
+  strongest                                                    weakest
+  ────────────────────────────────────────────────────────────────────
+  [Share]    nudge       Resolution   nudge       [Copy]    nudge
+  click      "Presented"  Approve     "Helped     click     "Still
+                                      decision"             working"
+  ─── [*] ──── [R] ─────── [R] ─────── [R] ────── [*] ────── [R] ──
+```
+
+---
+
+### Gaps — what we're not collecting yet
+
+```
+  Gap                           Why it matters
+  ─────────────────────────     ──────────────────────────────────────────
+  Session abandonment           User drops off mid-flow — which phase?
+  Time-in-phase                 Slow = struggling; fast = confident or
+                                disengaged
+  Artifact view time            Did they actually read the brief/plan?
+  Artifact tab switching        Which artifact did they reference most?
+  Re-opening a resolved session Did the output hold up after the session?
+  Sharing target (internal vs   "Shared" to a team = stronger signal than
+  public)                       shared to self
+```
+
+---
+
+## Who Sees This Data
+
+| Signal type | Audience |
+|---|---|
+| Intent, quality gates, resolution prompts | User-facing — collected through interaction |
+| Implicit signals (share, copy, stall, re-query) | Platform-level — invisible to user |
+| Session Health Dashboard | Spaceship team only — surfaces where agent prompts are underperforming, where users stall, which artifacts consistently fail quality gates |
+
+The Session Health Dashboard is an internal tool for the team to know what to improve in the agent — not something users see or interact with.
+
+---
+
+## Open Questions
+
+- How does the Acknowledgement Gate hold the flow — does it block all subsequent steps, or just the build trigger?
+- For the 7-day nudge — how do we avoid sending it if the user has already re-engaged with the project in-chat?
+- For Explore intent — if no prototype is built, what is the artifact that gets a quality gate at the end?
+
+---
+
+*Last updated: April 2026 — Kevin, Spaceship design*
