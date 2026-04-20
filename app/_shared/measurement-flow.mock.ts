@@ -25,9 +25,10 @@ export const MSG_BEFORE_INTENT =
 export const NUDGE_QUESTIONS: ClarificationQuestion[] = [
   {
     type: 'multi',
-    label: 'How did it go with Spaceship?',
+    label: 'What happened with your prototype?',
     options: [
-      'Presented or shared it with others',
+      'Tested or shared it with others for feedback',
+      'Helped in my project proposal',
       'Helped us make a decision',
       'Still working on it',
       'Sparked a new idea',
