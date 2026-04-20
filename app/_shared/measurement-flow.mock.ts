@@ -12,9 +12,9 @@ export const USER_PROMPT = 'Build me a relief teacher booking system for schools
 // first prompt and the assistant responds. Icons are applied in the page component.
 
 export const INTENT_GATE_LABELS = [
-  'Refine and test this idea for a project tender',
-  'Explore the problem space first',
-  'Build a quick internal tool for the school',
+  'Validate — "Prototype and test an idea before committing to a full build"',
+  'Explore — "See what AI can build for my idea"',
+  'Build — "Build a working tool for my team or myself"',
 ] as const;
 
 export const MSG_BEFORE_INTENT =

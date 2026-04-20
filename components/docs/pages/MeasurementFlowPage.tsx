@@ -728,7 +728,6 @@ export function MeasurementFlowPage({
     phase === 'intent-gate' ? {
       questions:   INTENT_OPTIONS,
       onSubmit:    handleIntentGateSubmit,
-      weight:      'prominent' as const,
       surface:     'shadow-border' as const,
     } :
     !pathData ? undefined :

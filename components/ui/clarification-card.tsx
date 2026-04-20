@@ -169,18 +169,27 @@ export function ClarificationCard({
                         rowClass,
                       )}
                     >
-                      {/* Number badge */}
-                      <span
-                        aria-hidden="true"
-                        className={cn(
-                          'flex items-center justify-center shrink-0 w-6 h-6 rounded',
-                          'bg-(--bg-surface-secondary)',
-                          '[font-size:var(--font-size-xs)] font-semibold',
-                          'text-(--text-secondary)',
-                        )}
-                      >
-                        {String(oi + 1)}
-                      </span>
+                      {/* Left indicator: icon if provided, otherwise number badge */}
+                      {icon ? (
+                        <span
+                          aria-hidden="true"
+                          className="flex items-center justify-center shrink-0 w-6 h-6 [&>svg]:h-4 [&>svg]:w-4"
+                        >
+                          {icon}
+                        </span>
+                      ) : (
+                        <span
+                          aria-hidden="true"
+                          className={cn(
+                            'flex items-center justify-center shrink-0 w-6 h-6 rounded',
+                            'bg-(--bg-surface-secondary)',
+                            '[font-size:var(--font-size-xs)] font-semibold',
+                            'text-(--text-secondary)',
+                          )}
+                        >
+                          {String(oi + 1)}
+                        </span>
+                      )}
 
                       {isInlineFreeText ? (
                         <input
@@ -205,12 +214,7 @@ export function ClarificationCard({
                           Type another option
                         </span>
                       ) : (
-                        <span className="flex-1 flex items-center gap-2 [font-size:var(--font-size-sm)] leading-snug">
-                          {icon && (
-                            <span className="inline-flex shrink-0 [&>svg]:h-4 [&>svg]:w-4" aria-hidden="true">
-                              {icon}
-                            </span>
-                          )}
+                        <span className="flex-1 [font-size:var(--font-size-sm)] leading-snug">
                           {label}
                         </span>
                       )}
