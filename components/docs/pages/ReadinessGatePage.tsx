@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { LayoutGroup, motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Folder, MessageSquare, Users, Copy, ArrowRight } from 'lucide-react';
+import { Folder, MessageSquare, Copy, ArrowRight } from 'lucide-react';
 import {
   ChatThread,
   ChatBubble,
@@ -13,7 +13,6 @@ import {
   Thinking,
   ThinkingSaucer,
   Button,
-  Modal,
   DropdownMenuItem,
 } from '@/components/ui';
 import { optionLabel } from '@/components/ui';
@@ -27,6 +26,8 @@ import { useMediaQuery } from '@/lib/use-media-query';
 import { ReadinessScoreCard } from '@/components/playground/readiness-gate/ReadinessScoreCard';
 import type { AssumptionRow, AssumptionStatus } from '@/components/playground/readiness-gate/ReadinessScoreCard';
 import { CitizenImpactCard } from '@/components/playground/readiness-gate/CitizenImpactCard';
+import { RenewalFlowPrototype } from '@/components/playground/shared/RenewalFlowPrototype';
+import { EvidenceDashboard } from '@/components/playground/shared/EvidenceDashboard';
 import { IMPACT_PERSONAS } from '@/app/_shared/citizen-voices.mock';
 import {
   RG_USER_MESSAGE,
@@ -47,7 +48,8 @@ type ThreadItem =
   | { kind: 'user-bubble'; id: string; content: string }
   | { kind: 'assistant-text'; id: string; content: string }
   | { kind: 'typing'; id: string }
-  | { kind: 'score-card'; id: string; rows: AssumptionRow[] };
+  | { kind: 'score-card'; id: string; rows: AssumptionRow[] }
+  | { kind: 'impact-card'; id: string };
 
 export type Phase =
   | 'homepage'
@@ -157,6 +159,7 @@ function buildInitialItems(phase: Phase, rows: AssumptionRow[]): ThreadItem[] {
     return [
       ...afterScore,
       { kind: 'assistant-text', id: 'msg-after-impact', content: RG_ASSISTANT_AFTER_IMPACT },
+      { kind: 'impact-card', id: 'impact-card' },
     ];
   }
 
@@ -164,6 +167,7 @@ function buildInitialItems(phase: Phase, rows: AssumptionRow[]): ThreadItem[] {
     return [
       ...afterScore,
       { kind: 'assistant-text', id: 'msg-after-impact', content: RG_ASSISTANT_AFTER_IMPACT },
+      { kind: 'impact-card', id: 'impact-card' },
       { kind: 'user-bubble', id: 'approve-gate', content: 'Approve — ship the service' },
       { kind: 'assistant-text', id: 'msg-approved', content: RG_ASSISTANT_AFTER_APPROVE },
     ];
@@ -173,13 +177,43 @@ function buildInitialItems(phase: Phase, rows: AssumptionRow[]): ThreadItem[] {
   return [
     ...afterScore,
     { kind: 'assistant-text', id: 'msg-after-impact', content: RG_ASSISTANT_AFTER_IMPACT },
+    { kind: 'impact-card', id: 'impact-card' },
     { kind: 'user-bubble', id: 'reject-gate', content: 'Request changes — needs more evidence' },
     { kind: 'assistant-text', id: 'msg-blocked', content: RG_ASSISTANT_AFTER_BLOCKED },
   ];
 }
 
+// Citizen-facing surfaces — the service prototype + the evidence dashboard.
+// The officer reviews these alongside the readiness report.
+const RG_WALKTHROUGH_ARTIFACT: Artifact = {
+  id:        'rg-walkthrough',
+  type:      'walkthrough',
+  title:     'Service Prototype',
+  status:    'complete',
+  updatedAt: 'just now',
+  content:   '',
+};
+
+const RG_DASHBOARD_ARTIFACT: Artifact = {
+  id:        'rg-dashboard',
+  type:      'dashboard',
+  title:     'Evidence Dashboard',
+  status:    'complete',
+  updatedAt: 'just now',
+  content:   '',
+};
+
 function buildInitialArtifacts(phase: Phase): Artifact[] {
-  return phase === 'gate-approved' ? [RG_REPORT_ARTIFACT] : [];
+  switch (phase) {
+    case 'citizen-impact-preview':
+    case 'gate-decision':
+    case 'gate-blocked':
+      return [RG_WALKTHROUGH_ARTIFACT, RG_DASHBOARD_ARTIFACT];
+    case 'gate-approved':
+      return [RG_WALKTHROUGH_ARTIFACT, RG_DASHBOARD_ARTIFACT, RG_REPORT_ARTIFACT];
+    default:
+      return [];
+  }
 }
 
 // ━━━ ReadinessGatePage ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -198,9 +232,8 @@ export function ReadinessGatePage({
   const [streamingId, setStreamingId]           = useState<string | null>(null);
   const [isArtifactOpen, setIsArtifactOpen]     = useState(true);
   const [mobileView, setMobileView]             = useState<'chat' | 'artifact'>('chat');
-  const [impactModalOpen, setImpactModalOpen]   = useState(false);
   // Whether the gate decision (approve/reject) appears as a footer overlay.
-  const showGate = phase === 'citizen-impact-preview' || phase === 'gate-decision';
+  const showGate = phase === 'gate-decision';
 
   const isMobile = useMediaQuery('(max-width: 767.98px)');
   const isMobileRef = useRef(false);
@@ -266,15 +299,22 @@ export function ReadinessGatePage({
         { kind: 'score-card', id: 'score-card', rows: newRows },
       ]);
       setStreamingId('msg-after-checklist');
+      setArtifacts([RG_WALKTHROUGH_ARTIFACT, RG_DASHBOARD_ARTIFACT]);
+      setActiveArtifactId(RG_DASHBOARD_ARTIFACT.id);
       schedule(() => {
         setItems(prev => [
           ...prev,
           { kind: 'assistant-text', id: 'msg-after-impact', content: RG_ASSISTANT_AFTER_IMPACT },
+          { kind: 'impact-card', id: 'impact-card' },
         ]);
         setStreamingId('msg-after-impact');
         setPhase('citizen-impact-preview');
       }, 800);
     }, 2500);
+  }
+
+  function handleAdvanceToGateDecision() {
+    setPhase('gate-decision');
   }
 
   // ── Gate decision handlers ───────────────────────────────────────────────
@@ -288,7 +328,7 @@ export function ReadinessGatePage({
         { kind: 'assistant-text', id: 'msg-approved', content: RG_ASSISTANT_AFTER_APPROVE },
       ]);
       setStreamingId('msg-approved');
-      setArtifacts([RG_REPORT_ARTIFACT]);
+      setArtifacts([RG_WALKTHROUGH_ARTIFACT, RG_DASHBOARD_ARTIFACT, RG_REPORT_ARTIFACT]);
       setActiveArtifactId(RG_REPORT_ARTIFACT.id);
       if (isMobileRef.current) setMobileView('artifact');
       setPhase('gate-approved');
@@ -333,33 +373,27 @@ export function ReadinessGatePage({
     surface:   'shadow-border' as const,
   } : undefined;
 
-  const headerTrailingSlot = (
-    <div className="flex items-center gap-2">
-      <Button
-        variant="secondary"
-        surface="shadow"
-        size="sm"
-        leadingIcon={<Users />}
-        onClick={() => setImpactModalOpen(true)}
-        aria-label="Preview citizen impact view"
-      >
-        Citizen view
+  const headerTrailingSlot = artifacts.length > 0 ? (
+    <Button
+      variant="secondary"
+      surface="shadow"
+      size="icon-md"
+      icon={<Folder />}
+      onClick={() => {
+        if (isMobile) setMobileView(mobileView === 'chat' ? 'artifact' : 'chat');
+        else setIsArtifactOpen(prev => !prev);
+      }}
+      aria-label={isArtifactOpen ? 'Hide artifacts' : 'Show artifacts'}
+    />
+  ) : undefined;
+
+  const footerAddon = phase === 'citizen-impact-preview' ? (
+    <div className="flex items-center justify-end gap-2 pb-2">
+      <Button variant="primary" size="sm" trailingIcon={<ArrowRight />} onClick={handleAdvanceToGateDecision}>
+        Continue to gate decision
       </Button>
-      {artifacts.length > 0 && (
-        <Button
-          variant="secondary"
-          surface="shadow"
-          size="icon-md"
-          icon={<Folder />}
-          onClick={() => {
-            if (isMobile) setMobileView(mobileView === 'chat' ? 'artifact' : 'chat');
-            else setIsArtifactOpen(prev => !prev);
-          }}
-          aria-label={isArtifactOpen ? 'Hide artifacts' : 'Show artifacts'}
-        />
-      )}
     </div>
-  );
+  ) : undefined;
 
   // Show a disabled placeholder input on terminal phases where no clarification
   // or approval card is present.
@@ -378,6 +412,7 @@ export function ReadinessGatePage({
     } : undefined,
     clarification: clarificationConfig,
     approval: approvalConfig,
+    footerAddon,
     headerTrailingSlot,
   };
 
@@ -425,18 +460,13 @@ export function ReadinessGatePage({
           return (
             <motion.div key={item.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={springs.interactive}>
               <ReadinessScoreCard rows={item.rows} />
-              {phase === 'citizen-impact-preview' && (
-                <div className="flex justify-end mt-3">
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    trailingIcon={<ArrowRight />}
-                    onClick={() => setImpactModalOpen(true)}
-                  >
-                    Preview citizen impact
-                  </Button>
-                </div>
-              )}
+            </motion.div>
+          );
+        }
+        if (item.kind === 'impact-card') {
+          return (
+            <motion.div key={item.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={springs.interactive}>
+              <CitizenImpactCard personas={IMPACT_PERSONAS} />
             </motion.div>
           );
         }
@@ -445,11 +475,18 @@ export function ReadinessGatePage({
     </ChatThread>
   );
 
+  const renderArtifactContent = (artifact: Artifact) => {
+    if (artifact.type === 'walkthrough') return <RenewalFlowPrototype />;
+    if (artifact.type === 'dashboard')   return <EvidenceDashboard />;
+    return null;
+  };
+
   const sharedArtifactProps = {
     artifacts,
     activeId: activeArtifactId,
     onSelect: setActiveArtifactId,
     toolbar: artifacts.length > 0 ? <ReportToolbar /> : undefined,
+    renderContent: renderArtifactContent,
   };
 
   return (
@@ -540,32 +577,6 @@ export function ReadinessGatePage({
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* ── Citizen impact modal ──────────────────────────────────────── */}
-        <Modal
-          open={impactModalOpen}
-          onClose={() => setImpactModalOpen(false)}
-          className="max-w-3xl max-h-[85vh] overflow-y-auto"
-        >
-          <CitizenImpactCard personas={IMPACT_PERSONAS} />
-          <div className="flex justify-end gap-2 mt-2">
-            <Button variant="secondary" size="sm" onClick={() => setImpactModalOpen(false)}>
-              Close
-            </Button>
-            {phase === 'citizen-impact-preview' && (
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => {
-                  setImpactModalOpen(false);
-                  setPhase('gate-decision');
-                }}
-              >
-                Continue to gate decision
-              </Button>
-            )}
-          </div>
-        </Modal>
       </div>
     </LayoutGroup>
   );

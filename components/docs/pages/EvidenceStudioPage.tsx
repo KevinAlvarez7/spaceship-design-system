@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { LayoutGroup, motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
-import { Folder, MessageSquare, Users, Copy, Send } from 'lucide-react';
+import { Folder, MessageSquare, Copy, Send } from 'lucide-react';
 import {
   ChatThread,
   ChatBubble,
@@ -13,7 +13,6 @@ import {
   Thinking,
   ShimmerDots,
   Button,
-  Modal,
   DropdownMenuItem,
 } from '@/components/ui';
 import { optionLabel } from '@/components/ui';
@@ -26,6 +25,8 @@ import { springs } from '@/tokens';
 import { useMediaQuery } from '@/lib/use-media-query';
 import { CitizenSurveyScene } from '@/components/playground/shared/CitizenSurveyScene';
 import { EvidenceQuoteCard } from '@/components/playground/shared/EvidenceQuoteCard';
+import { RenewalFlowPrototype } from '@/components/playground/shared/RenewalFlowPrototype';
+import { EvidenceDashboard } from '@/components/playground/shared/EvidenceDashboard';
 import { SUBMISSION_QUOTES, INTERVIEW_SNIPPETS } from '@/app/_shared/citizen-voices.mock';
 import type { CitizenQuote } from '@/app/_shared/citizen-voices.mock';
 import {
@@ -198,15 +199,37 @@ function buildInitialItems(phase: Phase): ThreadItem[] {
   ];
 }
 
+// Citizen-facing surfaces — prototype + dashboard. The prototype is what
+// citizens interact with; the dashboard is what officers review.
+const ES_WALKTHROUGH_ARTIFACT: Artifact = {
+  id:        'es-walkthrough',
+  type:      'walkthrough',
+  title:     'Service Prototype',
+  status:    'in-progress',
+  updatedAt: 'just now',
+  content:   '',
+};
+
+const ES_DASHBOARD_ARTIFACT: Artifact = {
+  id:        'es-dashboard',
+  type:      'dashboard',
+  title:     'Evidence Dashboard',
+  status:    'in-progress',
+  updatedAt: 'just now',
+  content:   '',
+};
+
 function buildInitialArtifacts(phase: Phase): Artifact[] {
   switch (phase) {
     case 'plan-tasks':
     case 'citizen-survey':
     case 'evidence-landing':
-      return [ES_PLAN_ARTIFACT];
+      return [ES_PLAN_ARTIFACT, { ...ES_WALKTHROUGH_ARTIFACT, status: 'in-progress' }];
     case 'evidence-log':
       return [
         { ...ES_PLAN_ARTIFACT, status: 'complete' as const },
+        { ...ES_WALKTHROUGH_ARTIFACT, status: 'complete' },
+        { ...ES_DASHBOARD_ARTIFACT, status: 'complete' },
         ES_EVIDENCE_LOG_ARTIFACT,
       ];
     default:
@@ -227,7 +250,6 @@ export function EvidenceStudioPage({ initialPhase = 'homepage' }: EvidenceStudio
   const [streamingId, setStreamingId]           = useState<string | null>(null);
   const [isArtifactOpen, setIsArtifactOpen]     = useState(true);
   const [mobileView, setMobileView]             = useState<'chat' | 'artifact'>('chat');
-  const [surveyModalOpen, setSurveyModalOpen]   = useState(false);
 
   const isMobile = useMediaQuery('(max-width: 767.98px)');
   const isMobileRef = useRef(false);
@@ -311,25 +333,26 @@ export function EvidenceStudioPage({ initialPhase = 'homepage' }: EvidenceStudio
       ]);
       setStreamingId('plan-ready');
       addArtifact(ES_PLAN_ARTIFACT);
+      addArtifact({ ...ES_WALKTHROUGH_ARTIFACT, status: 'in-progress' });
       setPhase('plan-tasks');
     }, randomThinkMs());
   }
 
   // ── Launch survey ────────────────────────────────────────────────────────
+  //
+  // Officer launches the prototype to citizens. Citizens use the prototype in
+  // their own context (the standalone citizen-survey story is their surface).
+  // Evidence comes back into the officer tool as quote cards in chat, plus the
+  // dashboard tab in the artifact panel.
 
   function handleLaunchSurvey() {
-    setSurveyModalOpen(true);
-  }
-
-  function handleSurveySubmit() {
-    setSurveyModalOpen(false);
     setItems(prev => [
       ...prev.map(item =>
         item.kind === 'task-list' && item.id === 'live-tasks'
           ? { ...item, completedCount: 2 }
           : item
       ),
-      { kind: 'user-bubble', id: 'launch-survey', content: 'Launched citizen survey' },
+      { kind: 'user-bubble', id: 'launch-survey', content: 'Launch prototype to citizens' },
       { kind: 'assistant-text', id: 'survey-launched', content: ES_ASSISTANT_SURVEY_LAUNCHED },
       { kind: 'evidence-landing', id: 'landing-indicator' },
     ]);
@@ -359,6 +382,8 @@ export function EvidenceStudioPage({ initialPhase = 'homepage' }: EvidenceStudio
       setStreamingId('evidence-summary');
       updateTaskProgress(ES_VALIDATION_TASKS.length);
       updateArtifactStatus(ES_PLAN_ARTIFACT.id, 'complete');
+      updateArtifactStatus(ES_WALKTHROUGH_ARTIFACT.id, 'complete');
+      addArtifact({ ...ES_DASHBOARD_ARTIFACT, status: 'complete' });
       addArtifact(ES_EVIDENCE_LOG_ARTIFACT);
       setPhase('evidence-log');
     }, 1500 * (EVIDENCE_POOL.slice(0, 5).length + 1));
@@ -373,33 +398,19 @@ export function EvidenceStudioPage({ initialPhase = 'homepage' }: EvidenceStudio
   // Allow launching the survey from plan-tasks via the input area
   const showLaunchButton = phase === 'plan-tasks';
 
-  const headerTrailingSlot = (
-    <div className="flex items-center gap-2">
-      <Button
-        variant="secondary"
-        surface="shadow"
-        size="sm"
-        leadingIcon={<Users />}
-        onClick={() => setSurveyModalOpen(true)}
-        aria-label="Preview citizen view"
-      >
-        Citizen view
-      </Button>
-      {artifacts.length > 0 && (
-        <Button
-          variant="secondary"
-          surface="shadow"
-          size="icon-md"
-          icon={<Folder />}
-          onClick={() => {
-            if (isMobile) setMobileView(mobileView === 'chat' ? 'artifact' : 'chat');
-            else setIsArtifactOpen(prev => !prev);
-          }}
-          aria-label={isArtifactOpen ? 'Hide artifacts' : 'Show artifacts'}
-        />
-      )}
-    </div>
-  );
+  const headerTrailingSlot = artifacts.length > 0 ? (
+    <Button
+      variant="secondary"
+      surface="shadow"
+      size="icon-md"
+      icon={<Folder />}
+      onClick={() => {
+        if (isMobile) setMobileView(mobileView === 'chat' ? 'artifact' : 'chat');
+        else setIsArtifactOpen(prev => !prev);
+      }}
+      aria-label={isArtifactOpen ? 'Hide artifacts' : 'Show artifacts'}
+    />
+  ) : undefined;
 
   const inputProp = phase !== 'pick-methods' ? {
     size: 'sm' as const,
@@ -495,11 +506,18 @@ export function EvidenceStudioPage({ initialPhase = 'homepage' }: EvidenceStudio
     </ChatThread>
   );
 
+  const renderArtifactContent = (artifact: Artifact) => {
+    if (artifact.type === 'walkthrough') return <RenewalFlowPrototype />;
+    if (artifact.type === 'dashboard')   return <EvidenceDashboard />;
+    return null;
+  };
+
   const sharedArtifactProps = {
     artifacts,
     activeId: activeArtifactId,
     onSelect: setActiveArtifactId,
     toolbar: artifacts.length > 0 ? <ArtifactToolbar /> : undefined,
+    renderContent: renderArtifactContent,
   };
 
   // ── Standalone citizen-survey view ───────────────────────────────────────
@@ -605,20 +623,6 @@ export function EvidenceStudioPage({ initialPhase = 'homepage' }: EvidenceStudio
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* ── Citizen survey modal ──────────────────────────────────────── */}
-        <Modal
-          open={surveyModalOpen}
-          onClose={() => setSurveyModalOpen(false)}
-          className="max-w-2xl max-h-[85vh] overflow-y-auto"
-        >
-          <div className="flex flex-col gap-4">
-            <p className="font-sans [font-size:var(--font-size-xs)] font-semibold uppercase tracking-wide text-(--text-tertiary)">
-              Preview — what a citizen sees
-            </p>
-            <CitizenSurveyScene onSubmit={handleSurveySubmit} />
-          </div>
-        </Modal>
       </div>
     </LayoutGroup>
   );

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { LayoutGroup, motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
-import { Folder, MessageSquare, Users, Copy } from 'lucide-react';
+import { Folder, MessageSquare, Copy } from 'lucide-react';
 import {
   ChatThread,
   ChatBubble,
@@ -11,7 +11,6 @@ import {
   ChatInputBox,
   Thinking,
   Button,
-  Modal,
   DropdownMenuItem,
 } from '@/components/ui';
 import { optionLabel } from '@/components/ui';
@@ -55,20 +54,6 @@ export interface HypothesisLabPageProps {
   /** Start the prototype at a specific phase for Storybook stories. Defaults to 'homepage'. */
   initialPhase?: Phase;
 }
-
-// ─── Markdown prose styles ────────────────────────────────────────────────────
-
-const PROSE_CLASS = [
-  'flex flex-col w-full font-(family-name:--font-family-mono)',
-  '[&_h2]:[font-size:var(--font-size-base)] [&_h2]:font-bold [&_h2]:text-(--text-primary) [&_h2]:mb-3 [&_h2:first-child]:mt-0',
-  '[&_h3]:[font-size:var(--font-size-sm)] [&_h3]:font-semibold [&_h3]:text-(--text-primary) [&_h3]:mt-4 [&_h3]:mb-2',
-  '[&_p]:[font-size:var(--font-size-sm)] [&_p]:leading-(--line-height-sm) [&_p]:text-(--text-secondary) [&_p]:mb-2 [&_p:last-child]:mb-0',
-  '[&_ul]:list-disc [&_ul]:pl-4 [&_ul]:space-y-1 [&_ul]:mb-2',
-  '[&_ol]:list-decimal [&_ol]:pl-4 [&_ol]:space-y-2 [&_ol]:mb-2',
-  '[&_li]:[font-size:var(--font-size-sm)] [&_li]:text-(--text-secondary)',
-  '[&_strong]:font-semibold [&_strong]:text-(--text-primary)',
-  '[&_hr]:my-4 [&_hr]:border-(--border-default)',
-].join(' ');
 
 // ─── Toolbar ──────────────────────────────────────────────────────────────────
 
@@ -181,7 +166,6 @@ export function HypothesisLabPage({ initialPhase = 'homepage' }: HypothesisLabPa
   const [streamingId, setStreamingId]           = useState<string | null>(null);
   const [isArtifactOpen, setIsArtifactOpen]     = useState(true);
   const [mobileView, setMobileView]             = useState<'chat' | 'artifact'>('chat');
-  const [citizenModalOpen, setCitizenModalOpen] = useState(false);
 
   const isMobile = useMediaQuery('(max-width: 767.98px)');
   const isMobileRef = useRef(false);
@@ -290,33 +274,19 @@ export function HypothesisLabPage({ initialPhase = 'homepage' }: HypothesisLabPa
 
   // ── Shared props ─────────────────────────────────────────────────────────
 
-  const headerTrailingSlot = (
-    <div className="flex items-center gap-2">
-      <Button
-        variant="secondary"
-        surface="shadow"
-        size="sm"
-        leadingIcon={<Users />}
-        onClick={() => setCitizenModalOpen(true)}
-        aria-label="Preview citizen view"
-      >
-        Citizen view
-      </Button>
-      {artifacts.length > 0 && (
-        <Button
-          variant="secondary"
-          surface="shadow"
-          size="icon-md"
-          icon={<Folder />}
-          onClick={() => {
-            if (isMobile) setMobileView(mobileView === 'chat' ? 'artifact' : 'chat');
-            else setIsArtifactOpen(prev => !prev);
-          }}
-          aria-label={isArtifactOpen ? 'Hide artifacts' : 'Show artifacts'}
-        />
-      )}
-    </div>
-  );
+  const headerTrailingSlot = artifacts.length > 0 ? (
+    <Button
+      variant="secondary"
+      surface="shadow"
+      size="icon-md"
+      icon={<Folder />}
+      onClick={() => {
+        if (isMobile) setMobileView(mobileView === 'chat' ? 'artifact' : 'chat');
+        else setIsArtifactOpen(prev => !prev);
+      }}
+      aria-label={isArtifactOpen ? 'Hide artifacts' : 'Show artifacts'}
+    />
+  ) : undefined;
 
   const sharedChatPanelProps = {
     title: 'Hypothesis Lab' as const,
@@ -494,23 +464,6 @@ export function HypothesisLabPage({ initialPhase = 'homepage' }: HypothesisLabPa
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* ── Citizen view modal ─────────────────────────────────────────── */}
-        <Modal
-          open={citizenModalOpen}
-          onClose={() => setCitizenModalOpen(false)}
-          className="max-w-2xl max-h-[85vh] overflow-y-auto"
-        >
-          <div className={PROSE_CLASS}>
-            <p className="font-sans [font-size:var(--font-size-xs)] font-semibold uppercase tracking-wide text-(--text-tertiary) mb-2">
-              Preview — what a citizen sees
-            </p>
-          </div>
-          <CitizenSubmissionCard
-            recentSubmissions={SUBMISSION_QUOTES}
-            onSubmit={() => setCitizenModalOpen(false)}
-          />
-        </Modal>
       </div>
     </LayoutGroup>
   );

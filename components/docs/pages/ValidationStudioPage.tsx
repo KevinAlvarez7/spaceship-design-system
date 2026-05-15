@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { LayoutGroup, motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Folder, MessageSquare, Users, Copy, ArrowRight } from 'lucide-react';
+import { Folder, MessageSquare, Copy, ArrowRight } from 'lucide-react';
 import {
   ChatThread,
   ChatBubble,
@@ -15,7 +15,6 @@ import {
   ThinkingSaucer,
   ShimmerDots,
   Button,
-  Modal,
   DropdownMenuItem,
 } from '@/components/ui';
 import { optionLabel } from '@/components/ui';
@@ -30,9 +29,10 @@ import { CitizenSubmissionCard } from '@/components/playground/shared/CitizenSub
 import { CitizenSurveyScene } from '@/components/playground/shared/CitizenSurveyScene';
 import { CitizenInterviewSnippet } from '@/components/playground/shared/CitizenInterviewSnippet';
 import { EvidenceQuoteCard } from '@/components/playground/shared/EvidenceQuoteCard';
+import { RenewalFlowPrototype } from '@/components/playground/shared/RenewalFlowPrototype';
+import { EvidenceDashboard } from '@/components/playground/shared/EvidenceDashboard';
 import { ReadinessScoreCard } from '@/components/playground/readiness-gate/ReadinessScoreCard';
-import { CitizenImpactCard } from '@/components/playground/readiness-gate/CitizenImpactCard';
-import { SUBMISSION_QUOTES, INTERVIEW_SNIPPETS, IMPACT_PERSONAS } from '@/app/_shared/citizen-voices.mock';
+import { SUBMISSION_QUOTES, INTERVIEW_SNIPPETS } from '@/app/_shared/citizen-voices.mock';
 import {
   HL_WHO_QUESTIONS,
   HL_PROBLEM_ASSUMPTION_QUESTIONS,
@@ -257,31 +257,55 @@ function buildInitialItems(phase: Phase): ThreadItem[] {
   ];
 }
 
+// Citizen-facing surfaces — the prototype and the metrics dashboard. These are
+// representations of the *service being validated*, not of the officer's tool.
+const VS_WALKTHROUGH_ARTIFACT: Artifact = {
+  id:        'vs-walkthrough',
+  type:      'walkthrough',
+  title:     'Service Prototype',
+  status:    'in-progress',
+  updatedAt: 'just now',
+  content:   '',
+};
+
+const VS_DASHBOARD_ARTIFACT: Artifact = {
+  id:        'vs-dashboard',
+  type:      'dashboard',
+  title:     'Evidence Dashboard',
+  status:    'in-progress',
+  updatedAt: 'just now',
+  content:   '',
+};
+
 function buildInitialArtifacts(phase: Phase): Artifact[] {
+  const brief = { ...VS_BRIEF_ARTIFACT, content: VS_BRIEF_CONTENT_V2, status: 'complete' as const };
+  const plan  = { ...VS_PLAN_ARTIFACT, status: 'complete' as const };
+
   switch (phase) {
     case 'brief-ready':
     case 'plan-methods':
-      return [{ ...VS_BRIEF_ARTIFACT, content: VS_BRIEF_CONTENT_V2, status: 'complete' }];
+      return [brief];
     case 'plan-tasks':
     case 'citizen-survey':
     case 'citizen-interview':
-      return [
-        { ...VS_BRIEF_ARTIFACT, content: VS_BRIEF_CONTENT_V2, status: 'complete' },
-        VS_PLAN_ARTIFACT,
-      ];
+      return [brief, plan, { ...VS_WALKTHROUGH_ARTIFACT, status: 'in-progress' }];
     case 'evidence-log':
     case 'readiness-gate':
     case 'approval':
       return [
-        { ...VS_BRIEF_ARTIFACT, content: VS_BRIEF_CONTENT_V2, status: 'complete' },
-        { ...VS_PLAN_ARTIFACT, status: 'complete' },
+        brief,
+        plan,
+        { ...VS_WALKTHROUGH_ARTIFACT, status: 'complete' },
+        { ...VS_DASHBOARD_ARTIFACT, status: 'complete' },
         VS_EVIDENCE_LOG_ARTIFACT,
       ];
     case 'shipping':
     case 'done':
       return [
-        { ...VS_BRIEF_ARTIFACT, content: VS_BRIEF_CONTENT_V2, status: 'complete' },
-        { ...VS_PLAN_ARTIFACT, status: 'complete' },
+        brief,
+        plan,
+        { ...VS_WALKTHROUGH_ARTIFACT, status: 'complete' },
+        { ...VS_DASHBOARD_ARTIFACT, status: 'complete' },
         VS_EVIDENCE_LOG_ARTIFACT,
         VS_READINESS_ARTIFACT,
       ];
@@ -303,7 +327,6 @@ export function ValidationStudioPage({ initialPhase = 'homepage' }: ValidationSt
   const [streamingId, setStreamingId]           = useState<string | null>(null);
   const [isArtifactOpen, setIsArtifactOpen]     = useState(true);
   const [mobileView, setMobileView]             = useState<'chat' | 'artifact'>('chat');
-  const [citizenModal, setCitizenModal]         = useState<'closed' | 'submit' | 'survey' | 'interview' | 'impact'>('closed');
 
   const isMobile = useMediaQuery('(max-width: 767.98px)');
   const isMobileRef = useRef(false);
@@ -429,25 +452,25 @@ export function ValidationStudioPage({ initialPhase = 'homepage' }: ValidationSt
       ]);
       setStreamingId('msg-after-plan');
       addArtifact(VS_PLAN_ARTIFACT);
+      addArtifact({ ...VS_WALKTHROUGH_ARTIFACT, status: 'in-progress' });
       schedule(() => setPhase('plan-tasks'), 600);
     }, randomThinkMs());
   }
 
   // ── Launch citizen survey ────────────────────────────────────────────────
+  //
+  // The officer launches the prototype to citizens. Citizens interact with it
+  // in their own context (the standalone citizen-survey story shows what they
+  // see). Here, evidence lands back in the officer's tool: chat quotes tick in,
+  // the walkthrough artifact picks up annotations, and the dashboard appears.
 
   function handleLaunchSurvey() {
-    setCitizenModal('survey');
-  }
-
-  function handleSurveySubmit() {
-    setCitizenModal('closed');
     setItems(prev => [
       ...prev,
-      { kind: 'user-bubble', id: 'launch-survey', content: 'Launched citizen survey' },
+      { kind: 'user-bubble', id: 'launch-survey', content: 'Launch prototype to citizens' },
       { kind: 'evidence-landing', id: 'landing-indicator' },
     ]);
 
-    // Tick evidence in
     SUBMISSION_QUOTES.slice(0, 3).forEach((q, i) => {
       schedule(() => {
         setItems(prev => [
@@ -466,6 +489,8 @@ export function ValidationStudioPage({ initialPhase = 'homepage' }: ValidationSt
       setStreamingId('msg-after-evidence');
       updateTaskProgress('live-tasks', ES_VALIDATION_TASKS.length);
       updateArtifactStatus(VS_PLAN_ARTIFACT.id, 'complete');
+      updateArtifactStatus(VS_WALKTHROUGH_ARTIFACT.id, 'complete');
+      addArtifact({ ...VS_DASHBOARD_ARTIFACT, status: 'complete' });
       addArtifact(VS_EVIDENCE_LOG_ARTIFACT);
       setPhase('evidence-log');
     }, 1500 * 4);
@@ -589,9 +614,6 @@ export function ValidationStudioPage({ initialPhase = 'homepage' }: ValidationSt
     ) :
     phase === 'evidence-log' ? (
       <div className="flex items-center justify-end gap-2 pb-2">
-        <Button variant="secondary" size="sm" leadingIcon={<Users />} onClick={() => setCitizenModal('interview')}>
-          View interview transcripts
-        </Button>
         <Button variant="primary" size="sm" trailingIcon={<ArrowRight />} onClick={handleAdvanceToReadiness}>
           Continue to readiness gate
         </Button>
@@ -599,9 +621,6 @@ export function ValidationStudioPage({ initialPhase = 'homepage' }: ValidationSt
     ) :
     phase === 'readiness-gate' ? (
       <div className="flex items-center justify-end gap-2 pb-2">
-        <Button variant="secondary" size="sm" leadingIcon={<Users />} onClick={() => setCitizenModal('impact')}>
-          Preview citizen impact
-        </Button>
         <Button variant="primary" size="sm" trailingIcon={<ArrowRight />} onClick={handleAdvanceToApproval}>
           Continue to gate decision
         </Button>
@@ -615,33 +634,19 @@ export function ValidationStudioPage({ initialPhase = 'homepage' }: ValidationSt
     phase === 'done'     ? 'Service launched · follow-ups scheduled.' :
     'Thinking...';
 
-  const headerTrailingSlot = (
-    <div className="flex items-center gap-2">
-      <Button
-        variant="secondary"
-        surface="shadow"
-        size="sm"
-        leadingIcon={<Users />}
-        onClick={() => setCitizenModal('submit')}
-        aria-label="Preview citizen view"
-      >
-        Citizen view
-      </Button>
-      {artifacts.length > 0 && (
-        <Button
-          variant="secondary"
-          surface="shadow"
-          size="icon-md"
-          icon={<Folder />}
-          onClick={() => {
-            if (isMobile) setMobileView(mobileView === 'chat' ? 'artifact' : 'chat');
-            else setIsArtifactOpen(prev => !prev);
-          }}
-          aria-label={isArtifactOpen ? 'Hide artifacts' : 'Show artifacts'}
-        />
-      )}
-    </div>
-  );
+  const headerTrailingSlot = artifacts.length > 0 ? (
+    <Button
+      variant="secondary"
+      surface="shadow"
+      size="icon-md"
+      icon={<Folder />}
+      onClick={() => {
+        if (isMobile) setMobileView(mobileView === 'chat' ? 'artifact' : 'chat');
+        else setIsArtifactOpen(prev => !prev);
+      }}
+      aria-label={isArtifactOpen ? 'Hide artifacts' : 'Show artifacts'}
+    />
+  ) : undefined;
 
   const sharedChatPanelProps = {
     title: 'Validation Studio' as const,
@@ -733,11 +738,18 @@ export function ValidationStudioPage({ initialPhase = 'homepage' }: ValidationSt
     </ChatThread>
   );
 
+  const renderArtifactContent = (artifact: Artifact) => {
+    if (artifact.type === 'walkthrough') return <RenewalFlowPrototype />;
+    if (artifact.type === 'dashboard')   return <EvidenceDashboard />;
+    return null;
+  };
+
   const sharedArtifactProps = {
     artifacts,
     activeId: activeArtifactId,
     onSelect: setActiveArtifactId,
     toolbar: artifacts.length > 0 ? <DocumentToolbar /> : undefined,
+    renderContent: renderArtifactContent,
   };
 
   // ── Standalone citizen views ─────────────────────────────────────────────
@@ -867,42 +879,6 @@ export function ValidationStudioPage({ initialPhase = 'homepage' }: ValidationSt
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* ── Citizen modal — variants ─────────────────────────────────── */}
-        <Modal
-          open={citizenModal !== 'closed'}
-          onClose={() => setCitizenModal('closed')}
-          className="max-w-3xl max-h-[85vh] overflow-y-auto"
-        >
-          <div className="flex flex-col gap-4">
-            <p className="font-sans [font-size:var(--font-size-xs)] font-semibold uppercase tracking-wide text-(--text-tertiary)">
-              Preview — what a citizen sees
-            </p>
-            {citizenModal === 'submit' && (
-              <CitizenSubmissionCard
-                recentSubmissions={SUBMISSION_QUOTES}
-                onSubmit={() => setCitizenModal('closed')}
-              />
-            )}
-            {citizenModal === 'survey' && (
-              <CitizenSurveyScene onSubmit={handleSurveySubmit} />
-            )}
-            {citizenModal === 'interview' && (
-              <CitizenInterviewSnippet
-                interviewee={{ name: 'Rajesh', context: 'Senior, 67, Bedok' }}
-                quotes={INTERVIEW_SNIPPETS}
-              />
-            )}
-            {citizenModal === 'impact' && (
-              <CitizenImpactCard personas={IMPACT_PERSONAS} />
-            )}
-            <div className="flex justify-end gap-2">
-              <Button variant="secondary" size="sm" onClick={() => setCitizenModal('closed')}>
-                Close
-              </Button>
-            </div>
-          </div>
-        </Modal>
       </div>
     </LayoutGroup>
   );

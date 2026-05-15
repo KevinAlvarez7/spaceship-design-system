@@ -7,6 +7,7 @@ import { FolderTabs, FolderTab } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { ArtifactContentRenderer } from './ArtifactContentRenderer';
 import {
+  type Artifact,
   type ArtifactNavigationProps,
   type ArtifactType,
   ARTIFACT_TYPE_LABEL,
@@ -24,6 +25,8 @@ const TYPE_ICON: Record<ArtifactType, ReactNode> = {
   proposal:       <FileText className="size-4" />,
   security:       <FileText className="size-4" />,
   prototype:      <AppWindow className="size-4" />,
+  walkthrough:    <AppWindow className="size-4" />,
+  dashboard:      <FileText className="size-4" />,
 };
 
 // ─── Props ─────────────────────────────────────────────────────────────────────
@@ -33,6 +36,11 @@ export interface ArtifactPanelV2Props extends ArtifactNavigationProps {
   toolbar?: ReactNode;
   /** Action button rendered before the tab list (e.g. mobile back-to-chat). */
   leadingAction?: ReactNode;
+  /**
+   * Optional renderer for custom-typed artifacts (e.g. walkthrough, dashboard).
+   * Return `null` or `undefined` to fall back to the default markdown renderer.
+   */
+  renderContent?: (artifact: Artifact) => ReactNode | null | undefined;
   className?: string;
 }
 
@@ -45,6 +53,7 @@ export function ArtifactPanelV2({
   changedIds,
   toolbar,
   leadingAction,
+  renderContent,
   className,
 }: ArtifactPanelV2Props) {
   const activeArtifact = artifacts.find(a => a.id === activeId) ?? artifacts[0];
@@ -114,7 +123,11 @@ export function ArtifactPanelV2({
               ref={contentRef}
               className="flex flex-1 min-h-0 overflow-auto"
             >
-              <ArtifactContentRenderer artifact={activeArtifact} />
+              {(() => {
+                const custom = renderContent?.(activeArtifact);
+                if (custom) return custom;
+                return <ArtifactContentRenderer artifact={activeArtifact} />;
+              })()}
             </div>
 
             {/* Shimmer sweep — remounts on every shimmerKey change, replaying entrance animation */}

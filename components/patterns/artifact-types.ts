@@ -12,7 +12,9 @@ export type ArtifactType =
   | 'brief'
   | 'proposal'
   | 'security'
-  | 'prototype';
+  | 'prototype'
+  | 'walkthrough'
+  | 'dashboard';
 
 export type ArtifactStatus = 'draft' | 'in-progress' | 'complete';
 
@@ -44,6 +46,8 @@ export const ARTIFACT_TYPE_LABEL: Record<ArtifactType, string> = {
   proposal:       'Proposal',
   security:       'Security Review',
   prototype:      'Prototype',
+  walkthrough:    'Service Prototype',
+  dashboard:      'Evidence Dashboard',
 };
 
 export const ARTIFACT_STATUS_VARIANT: Record<ArtifactStatus, 'neutral' | 'warning' | 'success'> = {
