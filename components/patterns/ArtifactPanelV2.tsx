@@ -106,7 +106,7 @@ export function ArtifactPanelV2({
         </FolderTabs>
 
         {/* ── Content card ── */}
-        <div className="flex flex-col flex-1 min-h-0 rounded-b-lg shadow-border bg-(--bg-surface-base) overflow-clip">
+        <div className="flex flex-col flex-1 min-h-0 rounded-none shadow-border bg-(--bg-surface-base) overflow-clip">
 
           {/* Scrollable content + shimmer overlay */}
           <div className="relative flex flex-1 min-h-0">

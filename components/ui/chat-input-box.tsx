@@ -14,7 +14,7 @@ const chatInputBoxVariants = cva(
     'max-w-(--sizing-chat-max)',
     'p-3',
     'bg-(--bg-surface-base)',
-    'rounded-lg',
+    'rounded-sm',
   ],
   {
     variants: {

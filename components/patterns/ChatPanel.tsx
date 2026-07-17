@@ -137,7 +137,14 @@ export function ChatPanel({
   }, []);
 
   return (
-    <div className={cn('flex flex-col min-h-0 flex-1 min-w-(--sizing-chat-min)', className)}>
+    <div
+      className={cn(
+        'flex flex-col min-h-0 flex-1 min-w-(--sizing-chat-min)',
+        // Grouped acrylic surface: solid-white base + translucent glass, blurred over the grid. 0px corners.
+        'rounded-none bg-(--bg-surface-glass) backdrop-blur-md',
+        className,
+      )}
+    >
 
       {/* ─── Scroll container — full height, rubber-bands on overscroll ──────────── */}
       <motion.div

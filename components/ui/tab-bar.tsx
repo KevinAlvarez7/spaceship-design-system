@@ -127,11 +127,11 @@ export function TabBarItem({
     <div className="relative">
       {isActive && (
         disableMotion ? (
-          <div className="absolute inset-0 rounded-md bg-(--bg-surface-base) shadow-(--shadow-border)" />
+          <div className="absolute inset-0 rounded-sm bg-(--bg-surface-base) shadow-(--shadow-border)" />
         ) : (
           <motion.div
             layoutId={layoutId}
-            className="absolute inset-0 rounded-md bg-(--bg-surface-base) shadow-(--shadow-border)"
+            className="absolute inset-0 rounded-sm bg-(--bg-surface-base) shadow-(--shadow-border)"
             transition={springs.interactive}
             style={{ willChange: 'transform' }}
           />
@@ -145,7 +145,7 @@ export function TabBarItem({
         <button
           type="button"
           className={cn(
-            'relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-md cursor-pointer',
+            'relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-sm cursor-pointer',
             'font-sans [font-size:var(--font-size-sm)] [font-weight:var(--font-weight-semibold)] whitespace-nowrap',
             'transition-colors duration-(--duration-fast) ease-(--ease-in-out)',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--border-input-focus)',

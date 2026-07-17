@@ -22,7 +22,7 @@ function IconSlot({ icon, sizeKey }: { icon: ReactNode; sizeKey: SizeKey }) {
 export const tagVariants = cva(
   [
     'inline-flex items-center gap-1',
-    'rounded-full',
+    'rounded-sm',
     'font-(family-name:--font-family-secondary)',
     '[font-weight:var(--font-weight-semibold)]',
     'leading-none',

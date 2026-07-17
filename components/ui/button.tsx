@@ -79,7 +79,7 @@ const buttonVariants = cva(
       size: {
         sm: [
           'py-1.5 px-2.5 gap-1',
-          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded',
+          '[font-size:var(--font-size-sm)] leading-(--line-height-sm) rounded-sm',
         ],
         md: [
           'py-2 px-3 gap-1',
@@ -87,11 +87,11 @@ const buttonVariants = cva(
         ],
         lg: [
           'py-2.5 px-3.5 gap-2',
-          '[font-size:var(--font-size-base)] leading-(--line-height-sm) rounded-md',
+          '[font-size:var(--font-size-base)] leading-(--line-height-sm) rounded-sm',
         ],
-        'icon-sm': 'h-8 w-8 p-0 rounded',
+        'icon-sm': 'h-8 w-8 p-0 rounded-sm',
         'icon-md': 'h-9 w-9 p-0 rounded-sm',
-        'icon-lg': 'h-11 w-11 p-0 rounded-md',
+        'icon-lg': 'h-11 w-11 p-0 rounded-sm',
       },
       surface: {
         flat:   '',

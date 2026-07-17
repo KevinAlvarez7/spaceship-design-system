@@ -18,6 +18,7 @@
   --color-text-inverse:           var(--text-inverse);
 
   --color-bg-surface-base:        var(--bg-surface-base);
+  --color-bg-surface-glass:       var(--bg-surface-glass);
   --color-bg-surface-primary:     var(--bg-surface-primary);
   --color-bg-surface-secondary:   var(--bg-surface-secondary);
   --color-bg-surface-tertiary:    var(--bg-surface-tertiary);
