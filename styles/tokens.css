@@ -147,6 +147,8 @@
   --bg-surface-base: var(--white);
   --bg-surface-paper: #ffffff;
   --bg-surface-fade: #fcfcfc;
+  /* Acrylic/glass surface — translucent white for backdrop-blur over the grid */
+  --bg-surface-glass: rgba(255, 255, 255, 0.72);
   --bg-interactive-primary-default: var(--primary-500);
   --bg-interactive-primary-hover: var(--primary-600);
   --bg-interactive-primary-pressed: var(--primary-700);
@@ -326,6 +328,7 @@
   --bg-surface-base:      var(--neutral-950);
   --bg-surface-paper:     var(--neutral-900);
   --bg-surface-fade:      var(--neutral-900);
+  --bg-surface-glass:     rgba(23, 23, 23, 0.72);
   --bg-surface-primary:   var(--neutral-900);
   --bg-surface-secondary: var(--neutral-800);
   --bg-surface-tertiary:  var(--neutral-700);

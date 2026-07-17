@@ -121,7 +121,7 @@ const ITEM_ICON_CLASSES = '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0 [&>svg]:[str
 
 export const dropdownMenuItemVariants = cva(
   [
-    'flex items-center gap-2 w-full px-2 py-1.5 rounded-md',
+    'flex items-center gap-2 w-full px-2 py-1.5 rounded-sm',
     'cursor-pointer outline-none select-none',
     'font-sans [font-size:var(--font-size-sm)] [line-height:var(--line-height-sm)]',
     'transition-colors duration-(--duration-base) ease-(--ease-in-out)',
