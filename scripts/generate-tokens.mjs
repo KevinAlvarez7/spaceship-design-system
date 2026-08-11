@@ -40,8 +40,6 @@ const COL = {
   TYPOGRAPHY:          'VariableCollectionId:102:524',
 };
 
-const EXCLUDED = new Set([COL.TAILWIND_COLORS, COL.TAILWIND_DIMENSIONS]);
-
 // Special vars from excluded collections that map to named tokens we define
 const WHITE_VAR_ID = 'VariableID:3:384';
 const BLACK_VAR_ID = 'VariableID:3:385';
@@ -188,14 +186,17 @@ function projectNameToCSSVar(name) {
 
 // ─── Section generators ───────────────────────────────────────────────────────
 
-/** Generate brand primitive CSS vars from the Collection */
+/** Generate brand primitive CSS vars from the Collection.
+ * Space White (the neutral scale, formerly hardcoded Zinc) now lives in
+ * this same Figma collection alongside the 5 accent scales — see the
+ * 2026-08-11 sync. All 6 scales share the same 12-step shade range. */
 function generateBrandPrimitives() {
   const col = ALL_COLS[COL.BRAND_PRIMITIVES];
   const modeId = col.defaultModeId;
   const lines = [];
 
-  const scales = ['Orbit Blue', 'Cosmic Lilac', 'Lumen Yellow', 'Nova Mint', 'Solar Coral'];
-  const shades = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'];
+  const scales = ['Orbit Blue', 'Cosmic Lilac', 'Lumen Yellow', 'Nova Mint', 'Solar Coral', 'Space White'];
+  const shades = ['25', '50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'];
 
   for (const scale of scales) {
     lines.push(`\n  /* ${scale} */`);
@@ -211,24 +212,17 @@ function generateBrandPrimitives() {
     }
   }
 
-  return lines.join('\n');
-}
-
-/** Generate neutral scale CSS vars (Zinc values from Tailwind Colors) */
-function generateNeutralScale() {
-  // Hard-coded Zinc values from Tailwind Colors (excluded collection)
-  const zinc = {
-    '50': '#fafafa', '100': '#f4f4f5', '200': '#e4e4e7', '300': '#d4d4d8',
-    '400': '#a1a1aa', '500': '#71717a', '600': '#52525b', '700': '#3f3f46',
-    '800': '#27272a', '900': '#18181b', '950': '#09090b',
-  };
-
-  const lines = [];
-  for (const [shade, hex] of Object.entries(zinc)) {
-    lines.push(`  --neutral-${shade}: ${hex};`);
-  }
-  lines.push('  --white: #ffffff;');
+  lines.push('\n  --white: #ffffff;');
   lines.push('  --black: #000000;');
+
+  // Deprecated alias — "Neutral (Zinc)" was this scale's old name, kept
+  // so existing --neutral-* references don't break. New code should
+  // reference --space-white-* directly.
+  lines.push('\n  /* Deprecated alias for --space-white-* — see comment above */');
+  for (const shade of shades) {
+    lines.push(`  --neutral-${shade}: var(--space-white-${shade});`);
+  }
+
   return lines.join('\n');
 }
 
@@ -245,26 +239,15 @@ function generateColourScheme() {
 
     if (val && typeof val === 'object' && val.type === 'VARIABLE_ALIAS') {
       const targetId = val.id;
-      const targetCid = VAR_TO_COL[targetId];
-
-      if (EXCLUDED.has(targetCid)) {
-        // secondary-* → point to neutral-*
-        // We know secondary-N maps to Zinc/N (same shade)
-        const shade = v.name.replace('secondary-', '');
-        if (v.name.startsWith('secondary-')) {
-          lines.push(`  ${cssVar}: var(--neutral-${shade});`);
-        } else {
-          // Unexpected: inline hex
-          lines.push(`  ${cssVar}: ${resolveHex(targetId)};`);
-        }
+      // primary-* → orbit-blue-*, secondary-* → space-white-*. Both scales
+      // live in BRAND_PRIMITIVES (not an excluded collection) as of the
+      // 2026-08-11 sync, so CSS_VAR_MAP always resolves them directly —
+      // no special-casing needed here anymore.
+      const cssVarTarget = CSS_VAR_MAP[targetId];
+      if (cssVarTarget) {
+        lines.push(`  ${cssVar}: var(${cssVarTarget});`);
       } else {
-        // primary-* → orbit-blue-*
-        const cssVarTarget = CSS_VAR_MAP[targetId];
-        if (cssVarTarget) {
-          lines.push(`  ${cssVar}: var(${cssVarTarget});`);
-        } else {
-          lines.push(`  ${cssVar}: ${resolveHex(targetId)};`);
-        }
+        lines.push(`  ${cssVar}: ${resolveHex(targetId)};`);
       }
     } else {
       // Direct value
@@ -414,19 +397,15 @@ const tokensCss = `/* ==========================================================
 
 :root {
 
-  /* ── Primitives — Brand Scales ───────────────────────────────
+  /* ── Primitives — Brand + Neutral Scales ─────────────────────
      Raw palette values. Never reference these in components.
-     Use semantic tokens instead.
+     Use semantic tokens instead. Space White (neutral scale) lives
+     in the same Figma collection as the 5 accent scales.
      ──────────────────────────────────────────────────────────── */
 ${generateBrandPrimitives()}
 
-  /* ── Primitives — Neutral Scale (Zinc) ──────────────────────
-     Basis for secondary-* and neutral surfaces.
-     ──────────────────────────────────────────────────────────── */
-${generateNeutralScale()}
-
   /* ── Aliases — Colour Scheme ────────────────────────────────
-     primary-* → Orbit Blue, secondary-* → Neutral (Zinc)
+     primary-* → Orbit Blue, secondary-* → Space White
      ──────────────────────────────────────────────────────────── */
 ${generateColourScheme()}
 
@@ -534,15 +513,10 @@ const BRAND_SCALES = [
   { label: 'Lumen Yellow',  prefix: 'lumen-yellow',  figmaName: 'Lumen Yellow' },
   { label: 'Nova Mint',     prefix: 'nova-mint',     figmaName: 'Nova Mint' },
   { label: 'Solar Coral',   prefix: 'solar-coral',   figmaName: 'Solar Coral' },
+  { label: 'Space White',   prefix: 'space-white',   figmaName: 'Space White' },
 ];
 
-const SHADES = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'];
-
-const NEUTRAL_ZINC = {
-  '50': '#fafafa', '100': '#f4f4f5', '200': '#e4e4e7', '300': '#d4d4d8',
-  '400': '#a1a1aa', '500': '#71717a', '600': '#52525b', '700': '#3f3f46',
-  '800': '#27272a', '900': '#18181b', '950': '#09090b',
-};
+const SHADES = ['25', '50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'];
 
 let colorsPrimitiveEntries = '';
 for (const scale of BRAND_SCALES) {
@@ -551,35 +525,14 @@ for (const scale of BRAND_SCALES) {
     colorsPrimitiveEntries += `  { name: '${scale.prefix}-${shade}', cssVar: '${cssVar}', scale: '${scale.label}' },\n`;
   }
 }
-// Add neutral
-for (const [shade] of Object.entries(NEUTRAL_ZINC)) {
-  colorsPrimitiveEntries += `  { name: 'neutral-${shade}', cssVar: '--neutral-${shade}', scale: 'Neutral' },\n`;
-}
 colorsPrimitiveEntries += `  { name: 'white', cssVar: '--white', scale: 'Neutral' },\n`;
 colorsPrimitiveEntries += `  { name: 'black', cssVar: '--black', scale: 'Neutral' },\n`;
 
-const colorSchemeEntries = `
-  { name: 'primary-50',  cssVar: '--primary-50',  description: 'Orbit Blue 50' },
-  { name: 'primary-100', cssVar: '--primary-100', description: 'Orbit Blue 100' },
-  { name: 'primary-200', cssVar: '--primary-200', description: 'Orbit Blue 200' },
-  { name: 'primary-300', cssVar: '--primary-300', description: 'Orbit Blue 300' },
-  { name: 'primary-400', cssVar: '--primary-400', description: 'Orbit Blue 400' },
-  { name: 'primary-500', cssVar: '--primary-500', description: 'Orbit Blue 500' },
-  { name: 'primary-600', cssVar: '--primary-600', description: 'Orbit Blue 600' },
-  { name: 'primary-700', cssVar: '--primary-700', description: 'Orbit Blue 700' },
-  { name: 'primary-800', cssVar: '--primary-800', description: 'Orbit Blue 800' },
-  { name: 'primary-900', cssVar: '--primary-900', description: 'Orbit Blue 900' },
-  { name: 'secondary-50',  cssVar: '--secondary-50',  description: 'Neutral 50' },
-  { name: 'secondary-100', cssVar: '--secondary-100', description: 'Neutral 100' },
-  { name: 'secondary-200', cssVar: '--secondary-200', description: 'Neutral 200' },
-  { name: 'secondary-300', cssVar: '--secondary-300', description: 'Neutral 300' },
-  { name: 'secondary-400', cssVar: '--secondary-400', description: 'Neutral 400' },
-  { name: 'secondary-500', cssVar: '--secondary-500', description: 'Neutral 500' },
-  { name: 'secondary-600', cssVar: '--secondary-600', description: 'Neutral 600' },
-  { name: 'secondary-700', cssVar: '--secondary-700', description: 'Neutral 700' },
-  { name: 'secondary-800', cssVar: '--secondary-800', description: 'Neutral 800' },
-  { name: 'secondary-900', cssVar: '--secondary-900', description: 'Neutral 900' },
-`;
+const colorSchemeEntries = SHADES.map(shade =>
+  `  { name: 'primary-${shade}', cssVar: '--primary-${shade}', description: 'Orbit Blue ${shade}' },`
+).join('\n') + '\n' + SHADES.map(shade =>
+  `  { name: 'secondary-${shade}', cssVar: '--secondary-${shade}', description: 'Space White ${shade}' },`
+).join('\n') + '\n';
 
 // Build grouped semantic color entries from Project-Colours
 const pcCol = ALL_COLS[COL.PROJECT_COLOURS];

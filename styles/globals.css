@@ -16,27 +16,78 @@
   --color-text-tertiary:          var(--text-tertiary);
   --color-text-placeholder:       var(--text-placeholder);
   --color-text-inverse:           var(--text-inverse);
+  --color-text-interactive-primary:   var(--text-interactive-primary);
+  --color-text-interactive-secondary: var(--text-interactive-secondary);
+  --color-text-interactive-disabled:  var(--text-interactive-disabled);
+  --color-text-interactive-error:     var(--text-interactive-error);
+  --color-text-interactive-success:   var(--text-interactive-success);
+  --color-text-status-info-secondary: var(--text-status-info-secondary);
 
   --color-bg-surface-base:        var(--bg-surface-base);
   --color-bg-surface-primary:     var(--bg-surface-primary);
   --color-bg-surface-secondary:   var(--bg-surface-secondary);
   --color-bg-surface-tertiary:    var(--bg-surface-tertiary);
+  --color-bg-surface-subtle:      var(--bg-surface-subtle);
+
+  --color-bg-surface-brand-primary:   var(--bg-surface-brand-primary);
+  --color-bg-surface-brand-secondary: var(--bg-surface-brand-secondary);
+  --color-bg-surface-brand-tertiary:  var(--bg-surface-brand-tertiary);
+  --color-bg-surface-brand-subtle:    var(--bg-surface-brand-subtle);
+  --color-bg-surface-brand-base:      var(--bg-surface-brand-base);
 
   --color-bg-interactive-primary-default: var(--bg-interactive-primary-default);
   --color-bg-interactive-primary-hover:   var(--bg-interactive-primary-hover);
   --color-bg-interactive-primary-pressed: var(--bg-interactive-primary-pressed);
+  --color-bg-interactive-primary-disabled: var(--bg-interactive-primary-disabled);
+  --color-bg-interactive-primary-subtle-default:  var(--bg-interactive-primary-subtle-default);
+  --color-bg-interactive-primary-subtle-hover:    var(--bg-interactive-primary-subtle-hover);
+  --color-bg-interactive-primary-subtle-pressed:  var(--bg-interactive-primary-subtle-pressed);
+  --color-bg-interactive-primary-subtle-disabled: var(--bg-interactive-primary-subtle-disabled);
 
   --color-bg-interactive-secondary-default: var(--bg-interactive-secondary-default);
   --color-bg-interactive-secondary-hover:   var(--bg-interactive-secondary-hover);
+  --color-bg-interactive-secondary-pressed: var(--bg-interactive-secondary-pressed);
+  --color-bg-interactive-secondary-disabled: var(--bg-interactive-secondary-disabled);
+  --color-bg-interactive-secondary-ghost-default:  var(--bg-interactive-secondary-ghost-default);
+  --color-bg-interactive-secondary-ghost-hover:    var(--bg-interactive-secondary-ghost-hover);
+  --color-bg-interactive-secondary-ghost-pressed:  var(--bg-interactive-secondary-ghost-pressed);
+  --color-bg-interactive-secondary-ghost-disabled: var(--bg-interactive-secondary-ghost-disabled);
 
   --color-bg-interactive-error-default: var(--bg-interactive-error-default);
   --color-bg-interactive-error-hover:   var(--bg-interactive-error-hover);
+  --color-bg-interactive-error-pressed: var(--bg-interactive-error-pressed);
+  --color-bg-interactive-error-disabled: var(--bg-interactive-error-disabled);
+  --color-bg-interactive-error-subtle-default:  var(--bg-interactive-error-subtle-default);
+  --color-bg-interactive-error-subtle-hover:    var(--bg-interactive-error-subtle-hover);
+  --color-bg-interactive-error-subtle-pressed:  var(--bg-interactive-error-subtle-pressed);
+  --color-bg-interactive-error-subtle-disabled: var(--bg-interactive-error-subtle-disabled);
 
   --color-bg-interactive-success-default: var(--bg-interactive-success-default);
+  --color-bg-interactive-success-hover:   var(--bg-interactive-success-hover);
+  --color-bg-interactive-success-pressed: var(--bg-interactive-success-pressed);
+  --color-bg-interactive-success-disabled: var(--bg-interactive-success-disabled);
+  --color-bg-interactive-success-subtle-default:  var(--bg-interactive-success-subtle-default);
+  --color-bg-interactive-success-subtle-hover:    var(--bg-interactive-success-subtle-hover);
+  --color-bg-interactive-success-subtle-pressed:  var(--bg-interactive-success-subtle-pressed);
+  --color-bg-interactive-success-subtle-disabled: var(--bg-interactive-success-subtle-disabled);
+
   --color-bg-interactive-warning-default: var(--bg-interactive-warning-default);
+  --color-bg-interactive-warning-hover:   var(--bg-interactive-warning-hover);
+  --color-bg-interactive-warning-pressed: var(--bg-interactive-warning-pressed);
+  --color-bg-interactive-warning-disabled: var(--bg-interactive-warning-disabled);
+  --color-bg-interactive-warning-subtle-default:  var(--bg-interactive-warning-subtle-default);
+  --color-bg-interactive-warning-subtle-hover:    var(--bg-interactive-warning-subtle-hover);
+  --color-bg-interactive-warning-subtle-pressed:  var(--bg-interactive-warning-subtle-pressed);
+  --color-bg-interactive-warning-subtle-disabled: var(--bg-interactive-warning-subtle-disabled);
 
   --color-border-default:     var(--border-default);
   --color-border-subtle:      var(--border-subtle);
+  --color-border-brand-default: var(--border-brand-default);
+  --color-border-brand-subtle:  var(--border-brand-subtle);
+  --color-border-success: var(--border-success);
+  --color-border-error:   var(--border-error);
+  --color-border-warning: var(--border-warning);
+  --color-border-info:    var(--border-info);
   --color-border-input-default: var(--border-input-default);
   --color-border-input-focus:   var(--border-input-focus);
 
@@ -45,6 +96,11 @@
   --color-bg-status-error:   var(--bg-status-error);
   --color-bg-status-info:    var(--bg-status-info);
   --color-bg-status-neutral: var(--bg-status-neutral);
+  --color-bg-status-default-success: var(--bg-status-default-success);
+  --color-bg-status-default-warning: var(--bg-status-default-warning);
+  --color-bg-status-default-error:   var(--bg-status-default-error);
+  --color-bg-status-default-info:    var(--bg-status-default-info);
+  --color-bg-status-default-neutral: var(--bg-status-default-neutral);
 
   /* ── Typography ── */
   --font-sans:  var(--font-family-secondary);

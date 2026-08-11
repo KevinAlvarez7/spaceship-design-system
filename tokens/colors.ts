@@ -10,6 +10,7 @@ export type ColorToken = {
 export type ColorPrimitiveToken = ColorToken & { scale: string };
 
 export const colorPrimitives: ColorPrimitiveToken[] = [
+  { name: 'orbit-blue-25', cssVar: '--orbit-blue-25', scale: 'Orbit Blue' },
   { name: 'orbit-blue-50', cssVar: '--orbit-blue-50', scale: 'Orbit Blue' },
   { name: 'orbit-blue-100', cssVar: '--orbit-blue-100', scale: 'Orbit Blue' },
   { name: 'orbit-blue-200', cssVar: '--orbit-blue-200', scale: 'Orbit Blue' },
@@ -20,6 +21,8 @@ export const colorPrimitives: ColorPrimitiveToken[] = [
   { name: 'orbit-blue-700', cssVar: '--orbit-blue-700', scale: 'Orbit Blue' },
   { name: 'orbit-blue-800', cssVar: '--orbit-blue-800', scale: 'Orbit Blue' },
   { name: 'orbit-blue-900', cssVar: '--orbit-blue-900', scale: 'Orbit Blue' },
+  { name: 'orbit-blue-950', cssVar: '--orbit-blue-950', scale: 'Orbit Blue' },
+  { name: 'cosmic-lilac-25', cssVar: '--cosmic-lilac-25', scale: 'Cosmic Lilac' },
   { name: 'cosmic-lilac-50', cssVar: '--cosmic-lilac-50', scale: 'Cosmic Lilac' },
   { name: 'cosmic-lilac-100', cssVar: '--cosmic-lilac-100', scale: 'Cosmic Lilac' },
   { name: 'cosmic-lilac-200', cssVar: '--cosmic-lilac-200', scale: 'Cosmic Lilac' },
@@ -30,6 +33,8 @@ export const colorPrimitives: ColorPrimitiveToken[] = [
   { name: 'cosmic-lilac-700', cssVar: '--cosmic-lilac-700', scale: 'Cosmic Lilac' },
   { name: 'cosmic-lilac-800', cssVar: '--cosmic-lilac-800', scale: 'Cosmic Lilac' },
   { name: 'cosmic-lilac-900', cssVar: '--cosmic-lilac-900', scale: 'Cosmic Lilac' },
+  { name: 'cosmic-lilac-950', cssVar: '--cosmic-lilac-950', scale: 'Cosmic Lilac' },
+  { name: 'lumen-yellow-25', cssVar: '--lumen-yellow-25', scale: 'Lumen Yellow' },
   { name: 'lumen-yellow-50', cssVar: '--lumen-yellow-50', scale: 'Lumen Yellow' },
   { name: 'lumen-yellow-100', cssVar: '--lumen-yellow-100', scale: 'Lumen Yellow' },
   { name: 'lumen-yellow-200', cssVar: '--lumen-yellow-200', scale: 'Lumen Yellow' },
@@ -40,6 +45,8 @@ export const colorPrimitives: ColorPrimitiveToken[] = [
   { name: 'lumen-yellow-700', cssVar: '--lumen-yellow-700', scale: 'Lumen Yellow' },
   { name: 'lumen-yellow-800', cssVar: '--lumen-yellow-800', scale: 'Lumen Yellow' },
   { name: 'lumen-yellow-900', cssVar: '--lumen-yellow-900', scale: 'Lumen Yellow' },
+  { name: 'lumen-yellow-950', cssVar: '--lumen-yellow-950', scale: 'Lumen Yellow' },
+  { name: 'nova-mint-25', cssVar: '--nova-mint-25', scale: 'Nova Mint' },
   { name: 'nova-mint-50', cssVar: '--nova-mint-50', scale: 'Nova Mint' },
   { name: 'nova-mint-100', cssVar: '--nova-mint-100', scale: 'Nova Mint' },
   { name: 'nova-mint-200', cssVar: '--nova-mint-200', scale: 'Nova Mint' },
@@ -50,6 +57,8 @@ export const colorPrimitives: ColorPrimitiveToken[] = [
   { name: 'nova-mint-700', cssVar: '--nova-mint-700', scale: 'Nova Mint' },
   { name: 'nova-mint-800', cssVar: '--nova-mint-800', scale: 'Nova Mint' },
   { name: 'nova-mint-900', cssVar: '--nova-mint-900', scale: 'Nova Mint' },
+  { name: 'nova-mint-950', cssVar: '--nova-mint-950', scale: 'Nova Mint' },
+  { name: 'solar-coral-25', cssVar: '--solar-coral-25', scale: 'Solar Coral' },
   { name: 'solar-coral-50', cssVar: '--solar-coral-50', scale: 'Solar Coral' },
   { name: 'solar-coral-100', cssVar: '--solar-coral-100', scale: 'Solar Coral' },
   { name: 'solar-coral-200', cssVar: '--solar-coral-200', scale: 'Solar Coral' },
@@ -60,17 +69,19 @@ export const colorPrimitives: ColorPrimitiveToken[] = [
   { name: 'solar-coral-700', cssVar: '--solar-coral-700', scale: 'Solar Coral' },
   { name: 'solar-coral-800', cssVar: '--solar-coral-800', scale: 'Solar Coral' },
   { name: 'solar-coral-900', cssVar: '--solar-coral-900', scale: 'Solar Coral' },
-  { name: 'neutral-50', cssVar: '--neutral-50', scale: 'Neutral' },
-  { name: 'neutral-100', cssVar: '--neutral-100', scale: 'Neutral' },
-  { name: 'neutral-200', cssVar: '--neutral-200', scale: 'Neutral' },
-  { name: 'neutral-300', cssVar: '--neutral-300', scale: 'Neutral' },
-  { name: 'neutral-400', cssVar: '--neutral-400', scale: 'Neutral' },
-  { name: 'neutral-500', cssVar: '--neutral-500', scale: 'Neutral' },
-  { name: 'neutral-600', cssVar: '--neutral-600', scale: 'Neutral' },
-  { name: 'neutral-700', cssVar: '--neutral-700', scale: 'Neutral' },
-  { name: 'neutral-800', cssVar: '--neutral-800', scale: 'Neutral' },
-  { name: 'neutral-900', cssVar: '--neutral-900', scale: 'Neutral' },
-  { name: 'neutral-950', cssVar: '--neutral-950', scale: 'Neutral' },
+  { name: 'solar-coral-950', cssVar: '--solar-coral-950', scale: 'Solar Coral' },
+  { name: 'space-white-25', cssVar: '--space-white-25', scale: 'Space White' },
+  { name: 'space-white-50', cssVar: '--space-white-50', scale: 'Space White' },
+  { name: 'space-white-100', cssVar: '--space-white-100', scale: 'Space White' },
+  { name: 'space-white-200', cssVar: '--space-white-200', scale: 'Space White' },
+  { name: 'space-white-300', cssVar: '--space-white-300', scale: 'Space White' },
+  { name: 'space-white-400', cssVar: '--space-white-400', scale: 'Space White' },
+  { name: 'space-white-500', cssVar: '--space-white-500', scale: 'Space White' },
+  { name: 'space-white-600', cssVar: '--space-white-600', scale: 'Space White' },
+  { name: 'space-white-700', cssVar: '--space-white-700', scale: 'Space White' },
+  { name: 'space-white-800', cssVar: '--space-white-800', scale: 'Space White' },
+  { name: 'space-white-900', cssVar: '--space-white-900', scale: 'Space White' },
+  { name: 'space-white-950', cssVar: '--space-white-950', scale: 'Space White' },
   { name: 'white', cssVar: '--white', scale: 'Neutral' },
   { name: 'black', cssVar: '--black', scale: 'Neutral' },
 ];
@@ -98,6 +109,8 @@ export const colorSemantic: SemanticColorGroup[] = [
     { name: 'text-interactive-primary', cssVar: '--text-interactive-primary', description: 'text / interactive / primary' },
     { name: 'text-interactive-secondary', cssVar: '--text-interactive-secondary', description: 'text / interactive / secondary' },
     { name: 'text-interactive-disabled', cssVar: '--text-interactive-disabled', description: 'text / interactive / disabled' },
+    { name: 'text-interactive-error', cssVar: '--text-interactive-error', description: 'text / interactive / error (new 2026-08-11)' },
+    { name: 'text-interactive-success', cssVar: '--text-interactive-success', description: 'text / interactive / success (new 2026-08-11)' },
     ],
   },
   {
@@ -107,6 +120,7 @@ export const colorSemantic: SemanticColorGroup[] = [
     { name: 'text-status-warning', cssVar: '--text-status-warning', description: 'text / status / warning' },
     { name: 'text-status-error', cssVar: '--text-status-error', description: 'text / status / error' },
     { name: 'text-status-info', cssVar: '--text-status-info', description: 'text / status / info' },
+    { name: 'text-status-info-secondary', cssVar: '--text-status-info-secondary', description: 'text / status / info-secondary (new 2026-08-11)' },
     ],
   },
   {
@@ -122,6 +136,8 @@ export const colorSemantic: SemanticColorGroup[] = [
     tokens: [
     { name: 'border-default', cssVar: '--border-default', description: 'border / default' },
     { name: 'border-subtle', cssVar: '--border-subtle', description: 'border / subtle' },
+    { name: 'border-brand-default', cssVar: '--border-brand-default', description: 'border / brand / default' },
+    { name: 'border-brand-subtle', cssVar: '--border-brand-subtle', description: 'border / brand / subtle' },
     { name: 'border-success', cssVar: '--border-success', description: 'border / success' },
     { name: 'border-error', cssVar: '--border-error', description: 'border / error' },
     { name: 'border-warning', cssVar: '--border-warning', description: 'border / warning' },
@@ -131,11 +147,21 @@ export const colorSemantic: SemanticColorGroup[] = [
   {
     group: 'Background / Status',
     tokens: [
-    { name: 'bg-status-success', cssVar: '--bg-status-success', description: 'bg / status / success' },
-    { name: 'bg-status-warning', cssVar: '--bg-status-warning', description: 'bg / status / warning' },
-    { name: 'bg-status-error', cssVar: '--bg-status-error', description: 'bg / status / error' },
-    { name: 'bg-status-info', cssVar: '--bg-status-info', description: 'bg / status / info' },
-    { name: 'bg-status-neutral', cssVar: '--bg-status-neutral', description: 'bg / status / neutral' },
+    { name: 'bg-status-success', cssVar: '--bg-status-success', description: 'bg / status / subtle / success' },
+    { name: 'bg-status-warning', cssVar: '--bg-status-warning', description: 'bg / status / subtle / warning' },
+    { name: 'bg-status-error', cssVar: '--bg-status-error', description: 'bg / status / subtle / error' },
+    { name: 'bg-status-info', cssVar: '--bg-status-info', description: 'bg / status / subtle / info' },
+    { name: 'bg-status-neutral', cssVar: '--bg-status-neutral', description: 'bg / status / subtle / neutral' },
+    ],
+  },
+  {
+    group: 'Background / Status / Default',
+    tokens: [
+    { name: 'bg-status-default-success', cssVar: '--bg-status-default-success', description: 'bg / status / default / success (new 2026-08-11)' },
+    { name: 'bg-status-default-warning', cssVar: '--bg-status-default-warning', description: 'bg / status / default / warning (new 2026-08-11)' },
+    { name: 'bg-status-default-error', cssVar: '--bg-status-default-error', description: 'bg / status / default / error (new 2026-08-11)' },
+    { name: 'bg-status-default-info', cssVar: '--bg-status-default-info', description: 'bg / status / default / info (new 2026-08-11)' },
+    { name: 'bg-status-default-neutral', cssVar: '--bg-status-default-neutral', description: 'bg / status / default / neutral (new 2026-08-11)' },
     ],
   },
   {
@@ -144,6 +170,7 @@ export const colorSemantic: SemanticColorGroup[] = [
     { name: 'bg-surface-primary', cssVar: '--bg-surface-primary', description: 'bg / surface / primary' },
     { name: 'bg-surface-secondary', cssVar: '--bg-surface-secondary', description: 'bg / surface / secondary' },
     { name: 'bg-surface-tertiary', cssVar: '--bg-surface-tertiary', description: 'bg / surface / tertiary' },
+    { name: 'bg-surface-subtle', cssVar: '--bg-surface-subtle', description: 'bg / surface / subtle (new 2026-08-11)' },
     { name: 'bg-surface-base', cssVar: '--bg-surface-base', description: 'bg / surface / base' },
     ],
   },
@@ -157,6 +184,15 @@ export const colorSemantic: SemanticColorGroup[] = [
     ],
   },
   {
+    group: 'Background / Interactive / Primary Subtle',
+    tokens: [
+    { name: 'bg-interactive-primary-subtle-default', cssVar: '--bg-interactive-primary-subtle-default', description: 'bg / interactive / primary-subtle / default (new 2026-08-11)' },
+    { name: 'bg-interactive-primary-subtle-hover', cssVar: '--bg-interactive-primary-subtle-hover', description: 'bg / interactive / primary-subtle / hover (new 2026-08-11)' },
+    { name: 'bg-interactive-primary-subtle-pressed', cssVar: '--bg-interactive-primary-subtle-pressed', description: 'bg / interactive / primary-subtle / pressed (new 2026-08-11)' },
+    { name: 'bg-interactive-primary-subtle-disabled', cssVar: '--bg-interactive-primary-subtle-disabled', description: 'bg / interactive / primary-subtle / disabled (new 2026-08-11)' },
+    ],
+  },
+  {
     group: 'Border / Input',
     tokens: [
     { name: 'border-input-default', cssVar: '--border-input-default', description: 'border / input / default' },
@@ -166,7 +202,7 @@ export const colorSemantic: SemanticColorGroup[] = [
   {
     group: 'Background / Input',
     tokens: [
-    { name: 'bg-input-default', cssVar: '--bg-input-default', description: 'bg / input / defa ult' },
+    { name: 'bg-input-default', cssVar: '--bg-input-default', description: 'bg / input / default' },
     ],
   },
   {
@@ -179,12 +215,30 @@ export const colorSemantic: SemanticColorGroup[] = [
     ],
   },
   {
+    group: 'Background / Interactive / Secondary Ghost',
+    tokens: [
+    { name: 'bg-interactive-secondary-ghost-default', cssVar: '--bg-interactive-secondary-ghost-default', description: 'bg / interactive / secondary-ghost / default (new 2026-08-11)' },
+    { name: 'bg-interactive-secondary-ghost-hover', cssVar: '--bg-interactive-secondary-ghost-hover', description: 'bg / interactive / secondary-ghost / hover (new 2026-08-11)' },
+    { name: 'bg-interactive-secondary-ghost-pressed', cssVar: '--bg-interactive-secondary-ghost-pressed', description: 'bg / interactive / secondary-ghost / pressed (new 2026-08-11)' },
+    { name: 'bg-interactive-secondary-ghost-disabled', cssVar: '--bg-interactive-secondary-ghost-disabled', description: 'bg / interactive / secondary-ghost / disabled (new 2026-08-11)' },
+    ],
+  },
+  {
     group: 'Background / Interactive / Success',
     tokens: [
     { name: 'bg-interactive-success-default', cssVar: '--bg-interactive-success-default', description: 'bg / interactive / success / default' },
     { name: 'bg-interactive-success-hover', cssVar: '--bg-interactive-success-hover', description: 'bg / interactive / success / hover' },
     { name: 'bg-interactive-success-pressed', cssVar: '--bg-interactive-success-pressed', description: 'bg / interactive / success / pressed' },
     { name: 'bg-interactive-success-disabled', cssVar: '--bg-interactive-success-disabled', description: 'bg / interactive / success / disabled' },
+    ],
+  },
+  {
+    group: 'Background / Interactive / Success Subtle',
+    tokens: [
+    { name: 'bg-interactive-success-subtle-default', cssVar: '--bg-interactive-success-subtle-default', description: 'bg / interactive / success-subtle / default (new 2026-08-11)' },
+    { name: 'bg-interactive-success-subtle-hover', cssVar: '--bg-interactive-success-subtle-hover', description: 'bg / interactive / success-subtle / hover (new 2026-08-11)' },
+    { name: 'bg-interactive-success-subtle-pressed', cssVar: '--bg-interactive-success-subtle-pressed', description: 'bg / interactive / success-subtle / pressed (new 2026-08-11)' },
+    { name: 'bg-interactive-success-subtle-disabled', cssVar: '--bg-interactive-success-subtle-disabled', description: 'bg / interactive / success-subtle / disabled (new 2026-08-11)' },
     ],
   },
   {
@@ -197,11 +251,21 @@ export const colorSemantic: SemanticColorGroup[] = [
     ],
   },
   {
+    group: 'Background / Interactive / Error Subtle',
+    tokens: [
+    { name: 'bg-interactive-error-subtle-default', cssVar: '--bg-interactive-error-subtle-default', description: 'bg / interactive / error-subtle / default (new 2026-08-11)' },
+    { name: 'bg-interactive-error-subtle-hover', cssVar: '--bg-interactive-error-subtle-hover', description: 'bg / interactive / error-subtle / hover (new 2026-08-11)' },
+    { name: 'bg-interactive-error-subtle-pressed', cssVar: '--bg-interactive-error-subtle-pressed', description: 'bg / interactive / error-subtle / pressed (new 2026-08-11)' },
+    { name: 'bg-interactive-error-subtle-disabled', cssVar: '--bg-interactive-error-subtle-disabled', description: 'bg / interactive / error-subtle / disabled (new 2026-08-11)' },
+    ],
+  },
+  {
     group: 'Background / Brand Surface',
     tokens: [
     { name: 'bg-surface-brand-primary', cssVar: '--bg-surface-brand-primary', description: 'bg / surface-brand / primary' },
     { name: 'bg-surface-brand-secondary', cssVar: '--bg-surface-brand-secondary', description: 'bg / surface-brand / secondary' },
     { name: 'bg-surface-brand-tertiary', cssVar: '--bg-surface-brand-tertiary', description: 'bg / surface-brand / tertiary' },
+    { name: 'bg-surface-brand-subtle', cssVar: '--bg-surface-brand-subtle', description: 'bg / surface-brand / subtle (new 2026-08-11)' },
     { name: 'bg-surface-brand-base', cssVar: '--bg-surface-brand-base', description: 'bg / surface-brand / base' },
     ],
   },
@@ -239,6 +303,15 @@ export const colorSemantic: SemanticColorGroup[] = [
     { name: 'bg-interactive-warning-hover', cssVar: '--bg-interactive-warning-hover', description: 'bg / interactive / warning / hover' },
     { name: 'bg-interactive-warning-pressed', cssVar: '--bg-interactive-warning-pressed', description: 'bg / interactive / warning / pressed' },
     { name: 'bg-interactive-warning-disabled', cssVar: '--bg-interactive-warning-disabled', description: 'bg / interactive / warning / disabled' },
+    ],
+  },
+  {
+    group: 'Background / Interactive / Warning Subtle',
+    tokens: [
+    { name: 'bg-interactive-warning-subtle-default', cssVar: '--bg-interactive-warning-subtle-default', description: 'bg / interactive / warning-subtle / default (new 2026-08-11)' },
+    { name: 'bg-interactive-warning-subtle-hover', cssVar: '--bg-interactive-warning-subtle-hover', description: 'bg / interactive / warning-subtle / hover (new 2026-08-11)' },
+    { name: 'bg-interactive-warning-subtle-pressed', cssVar: '--bg-interactive-warning-subtle-pressed', description: 'bg / interactive / warning-subtle / pressed (new 2026-08-11)' },
+    { name: 'bg-interactive-warning-subtle-disabled', cssVar: '--bg-interactive-warning-subtle-disabled', description: 'bg / interactive / warning-subtle / disabled (new 2026-08-11)' },
     ],
   },
 ];
